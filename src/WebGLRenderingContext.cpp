@@ -8,311 +8,311 @@
 namespace V8WebGL {
 
 // WebGLContextAttributes getContextAttributes();
-static v8::Handle<v8::Value> getContextAttributesCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> getContextAttributesCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // boolean isContextLost();
-static v8::Handle<v8::Value> isContextLostCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> isContextLostCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // DOMString[ ] getSupportedExtensions();
-static v8::Handle<v8::Value> getSupportedExtensionsCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> getSupportedExtensionsCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // object getExtension(DOMString name);
-static v8::Handle<v8::Value> getExtensionCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> getExtensionCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void activeTexture(GLenum texture);
-static v8::Handle<v8::Value> activeTextureCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> activeTextureCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void attachShader(WebGLProgram program, WebGLShader shader);
-static v8::Handle<v8::Value> attachShaderCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> attachShaderCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void bindAttribLocation(WebGLProgram program, GLuint index, DOMString name);
-static v8::Handle<v8::Value> bindAttribLocationCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> bindAttribLocationCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void bindBuffer(GLenum target, WebGLBuffer buffer);
-static v8::Handle<v8::Value> bindBufferCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> bindBufferCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void bindFramebuffer(GLenum target, WebGLFramebuffer framebuffer);
-static v8::Handle<v8::Value> bindFramebufferCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> bindFramebufferCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void bindRenderbuffer(GLenum target, WebGLRenderbuffer renderbuffer);
-static v8::Handle<v8::Value> bindRenderbufferCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> bindRenderbufferCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void bindTexture(GLenum target, WebGLTexture texture);
-static v8::Handle<v8::Value> bindTextureCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> bindTextureCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void blendColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
-static v8::Handle<v8::Value> blendColorCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> blendColorCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void blendEquation(GLenum mode);
-static v8::Handle<v8::Value> blendEquationCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> blendEquationCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void blendEquationSeparate(GLenum modeRGB, GLenum modeAlpha);
-static v8::Handle<v8::Value> blendEquationSeparateCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> blendEquationSeparateCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void blendFunc(GLenum sfactor, GLenum dfactor);
-static v8::Handle<v8::Value> blendFuncCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> blendFuncCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void blendFuncSeparate(GLenum srcRGB, GLenum dstRGB, 
 //                        GLenum srcAlpha, GLenum dstAlpha);
-static v8::Handle<v8::Value> blendFuncSeparateCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> blendFuncSeparateCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void bufferData(GLenum target, GLsizeiptr size, GLenum usage);
 // void bufferData(GLenum target, ArrayBufferView data, GLenum usage);
 // void bufferData(GLenum target, ArrayBuffer data, GLenum usage);
-static v8::Handle<v8::Value> bufferDataCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> bufferDataCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void bufferSubData(GLenum target, GLintptr offset, ArrayBufferView data);
 // void bufferSubData(GLenum target, GLintptr offset, ArrayBuffer data);
-static v8::Handle<v8::Value> bufferSubDataCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> bufferSubDataCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // GLenum checkFramebufferStatus(GLenum target);
-static v8::Handle<v8::Value> checkFramebufferStatusCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> checkFramebufferStatusCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void clear(GLbitfield mask);
-static v8::Handle<v8::Value> clearCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> clearCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void clearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
-static v8::Handle<v8::Value> clearColorCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> clearColorCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void clearDepth(GLclampf depth);
-static v8::Handle<v8::Value> clearDepthCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> clearDepthCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void clearStencil(GLint s);
-static v8::Handle<v8::Value> clearStencilCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> clearStencilCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void colorMask(GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha);
-static v8::Handle<v8::Value> colorMaskCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> colorMaskCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void compileShader(WebGLShader shader);
-static v8::Handle<v8::Value> compileShaderCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> compileShaderCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void copyTexImage2D(GLenum target, GLint level, GLenum internalformat, 
 //                     GLint x, GLint y, GLsizei width, GLsizei height, 
 //                     GLint border);
-static v8::Handle<v8::Value> copyTexImage2DCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> copyTexImage2DCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void copyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, 
 //                        GLint x, GLint y, GLsizei width, GLsizei height);
-static v8::Handle<v8::Value> copyTexSubImage2DCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> copyTexSubImage2DCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // WebGLBuffer createBuffer();
-static v8::Handle<v8::Value> createBufferCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> createBufferCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // WebGLFramebuffer createFramebuffer();
-static v8::Handle<v8::Value> createFramebufferCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> createFramebufferCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // WebGLProgram createProgram();
-static v8::Handle<v8::Value> createProgramCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> createProgramCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // WebGLRenderbuffer createRenderbuffer();
-static v8::Handle<v8::Value> createRenderbufferCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> createRenderbufferCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // WebGLShader createShader(GLenum type);
-static v8::Handle<v8::Value> createShaderCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> createShaderCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // WebGLTexture createTexture();
-static v8::Handle<v8::Value> createTextureCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> createTextureCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void cullFace(GLenum mode);
-static v8::Handle<v8::Value> cullFaceCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> cullFaceCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void deleteBuffer(WebGLBuffer buffer);
-static v8::Handle<v8::Value> deleteBufferCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> deleteBufferCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void deleteFramebuffer(WebGLFramebuffer framebuffer);
-static v8::Handle<v8::Value> deleteFramebufferCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> deleteFramebufferCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void deleteProgram(WebGLProgram program);
-static v8::Handle<v8::Value> deleteProgramCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> deleteProgramCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void deleteRenderbuffer(WebGLRenderbuffer renderbuffer);
-static v8::Handle<v8::Value> deleteRenderbufferCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> deleteRenderbufferCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void deleteShader(WebGLShader shader);
-static v8::Handle<v8::Value> deleteShaderCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> deleteShaderCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void deleteTexture(WebGLTexture texture);
-static v8::Handle<v8::Value> deleteTextureCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> deleteTextureCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void depthFunc(GLenum func);
-static v8::Handle<v8::Value> depthFuncCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> depthFuncCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void depthMask(GLboolean flag);
-static v8::Handle<v8::Value> depthMaskCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> depthMaskCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void depthRange(GLclampf zNear, GLclampf zFar);
-static v8::Handle<v8::Value> depthRangeCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> depthRangeCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void detachShader(WebGLProgram program, WebGLShader shader);
-static v8::Handle<v8::Value> detachShaderCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> detachShaderCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void disable(GLenum cap);
-static v8::Handle<v8::Value> disableCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> disableCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void disableVertexAttribArray(GLuint index);
-static v8::Handle<v8::Value> disableVertexAttribArrayCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> disableVertexAttribArrayCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void drawArrays(GLenum mode, GLint first, GLsizei count);
-static v8::Handle<v8::Value> drawArraysCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> drawArraysCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void drawElements(GLenum mode, GLsizei count, GLenum type, GLintptr offset);
-static v8::Handle<v8::Value> drawElementsCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> drawElementsCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void enable(GLenum cap);
-static v8::Handle<v8::Value> enableCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> enableCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void enableVertexAttribArray(GLuint index);
-static v8::Handle<v8::Value> enableVertexAttribArrayCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> enableVertexAttribArrayCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void finish();
-static v8::Handle<v8::Value> finishCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> finishCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void flush();
-static v8::Handle<v8::Value> flushCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> flushCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void framebufferRenderbuffer(GLenum target, GLenum attachment, 
 //                              GLenum renderbuffertarget, 
 //                              WebGLRenderbuffer renderbuffer);
-static v8::Handle<v8::Value> framebufferRenderbufferCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> framebufferRenderbufferCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void framebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, 
 //                           WebGLTexture texture, GLint level);
-static v8::Handle<v8::Value> framebufferTexture2DCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> framebufferTexture2DCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void frontFace(GLenum mode);
-static v8::Handle<v8::Value> frontFaceCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> frontFaceCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void generateMipmap(GLenum target);
-static v8::Handle<v8::Value> generateMipmapCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> generateMipmapCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // WebGLActiveInfo getActiveAttrib(WebGLProgram program, GLuint index);
-static v8::Handle<v8::Value> getActiveAttribCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> getActiveAttribCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // WebGLActiveInfo getActiveUniform(WebGLProgram program, GLuint index);
-static v8::Handle<v8::Value> getActiveUniformCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> getActiveUniformCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // WebGLShader[ ] getAttachedShaders(WebGLProgram program);
-static v8::Handle<v8::Value> getAttachedShadersCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> getAttachedShadersCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // GLint getAttribLocation(WebGLProgram program, DOMString name);
-static v8::Handle<v8::Value> getAttribLocationCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> getAttribLocationCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // any getParameter(GLenum pname);
-static v8::Handle<v8::Value> getParameterCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> getParameterCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // any getBufferParameter(GLenum target, GLenum pname);
-static v8::Handle<v8::Value> getBufferParameterCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> getBufferParameterCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // GLenum getError();
-static v8::Handle<v8::Value> getErrorCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> getErrorCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // any getFramebufferAttachmentParameter(GLenum target, GLenum attachment, 
 //                                       GLenum pname);
-static v8::Handle<v8::Value> getFramebufferAttachmentParameterCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> getFramebufferAttachmentParameterCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // any getProgramParameter(WebGLProgram program, GLenum pname);
-static v8::Handle<v8::Value> getProgramParameterCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> getProgramParameterCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // DOMString getProgramInfoLog(WebGLProgram program);
-static v8::Handle<v8::Value> getProgramInfoLogCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> getProgramInfoLogCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // any getRenderbufferParameter(GLenum target, GLenum pname);
-static v8::Handle<v8::Value> getRenderbufferParameterCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> getRenderbufferParameterCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // any getShaderParameter(WebGLShader shader, GLenum pname);
-static v8::Handle<v8::Value> getShaderParameterCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> getShaderParameterCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // DOMString getShaderInfoLog(WebGLShader shader);
-static v8::Handle<v8::Value> getShaderInfoLogCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> getShaderInfoLogCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // DOMString getShaderSource(WebGLShader shader);
-static v8::Handle<v8::Value> getShaderSourceCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> getShaderSourceCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // any getTexParameter(GLenum target, GLenum pname);
-static v8::Handle<v8::Value> getTexParameterCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> getTexParameterCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // any getUniform(WebGLProgram program, WebGLUniformLocation location);
-static v8::Handle<v8::Value> getUniformCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> getUniformCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // WebGLUniformLocation getUniformLocation(WebGLProgram program, DOMString name);
-static v8::Handle<v8::Value> getUniformLocationCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> getUniformLocationCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // any getVertexAttrib(GLuint index, GLenum pname);
-static v8::Handle<v8::Value> getVertexAttribCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> getVertexAttribCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // GLsizeiptr getVertexAttribOffset(GLuint index, GLenum pname);
-static v8::Handle<v8::Value> getVertexAttribOffsetCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> getVertexAttribOffsetCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void hint(GLenum target, GLenum mode);
-static v8::Handle<v8::Value> hintCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> hintCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // GLboolean isBuffer(WebGLBuffer buffer);
-static v8::Handle<v8::Value> isBufferCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> isBufferCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // GLboolean isEnabled(GLenum cap);
-static v8::Handle<v8::Value> isEnabledCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> isEnabledCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // GLboolean isFramebuffer(WebGLFramebuffer framebuffer);
-static v8::Handle<v8::Value> isFramebufferCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> isFramebufferCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // GLboolean isProgram(WebGLProgram program);
-static v8::Handle<v8::Value> isProgramCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> isProgramCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // GLboolean isRenderbuffer(WebGLRenderbuffer renderbuffer);
-static v8::Handle<v8::Value> isRenderbufferCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> isRenderbufferCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // GLboolean isShader(WebGLShader shader);
-static v8::Handle<v8::Value> isShaderCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> isShaderCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // GLboolean isTexture(WebGLTexture texture);
-static v8::Handle<v8::Value> isTextureCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> isTextureCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void lineWidth(GLfloat width);
-static v8::Handle<v8::Value> lineWidthCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> lineWidthCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void linkProgram(WebGLProgram program);
-static v8::Handle<v8::Value> linkProgramCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> linkProgramCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void pixelStorei(GLenum pname, GLint param);
-static v8::Handle<v8::Value> pixelStoreiCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> pixelStoreiCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void polygonOffset(GLfloat factor, GLfloat units);
-static v8::Handle<v8::Value> polygonOffsetCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> polygonOffsetCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void readPixels(GLint x, GLint y, GLsizei width, GLsizei height, 
 //                 GLenum format, GLenum type, ArrayBufferView pixels);
-static v8::Handle<v8::Value> readPixelsCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> readPixelsCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void renderbufferStorage(GLenum target, GLenum internalformat, 
 //                          GLsizei width, GLsizei height);
-static v8::Handle<v8::Value> renderbufferStorageCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> renderbufferStorageCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void sampleCoverage(GLclampf value, GLboolean invert);
-static v8::Handle<v8::Value> sampleCoverageCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> sampleCoverageCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void scissor(GLint x, GLint y, GLsizei width, GLsizei height);
-static v8::Handle<v8::Value> scissorCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> scissorCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void shaderSource(WebGLShader shader, DOMString source);
-static v8::Handle<v8::Value> shaderSourceCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> shaderSourceCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void stencilFunc(GLenum func, GLint ref, GLuint mask);
-static v8::Handle<v8::Value> stencilFuncCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> stencilFuncCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void stencilFuncSeparate(GLenum face, GLenum func, GLint ref, GLuint mask);
-static v8::Handle<v8::Value> stencilFuncSeparateCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> stencilFuncSeparateCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void stencilMask(GLuint mask);
-static v8::Handle<v8::Value> stencilMaskCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> stencilMaskCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void stencilMaskSeparate(GLenum face, GLuint mask);
-static v8::Handle<v8::Value> stencilMaskSeparateCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> stencilMaskSeparateCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void stencilOp(GLenum fail, GLenum zfail, GLenum zpass);
-static v8::Handle<v8::Value> stencilOpCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> stencilOpCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void stencilOpSeparate(GLenum face, GLenum fail, GLenum zfail, GLenum zpass);
-static v8::Handle<v8::Value> stencilOpSeparateCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> stencilOpSeparateCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void texImage2D(GLenum target, GLint level, GLenum internalformat, 
 //                 GLsizei width, GLsizei height, GLint border, GLenum format, 
@@ -325,13 +325,13 @@ static v8::Handle<v8::Value> stencilOpSeparateCallback(const v8::Arguments& args
 //                 GLenum format, GLenum type, HTMLCanvasElement canvas) raises (DOMException);
 // void texImage2D(GLenum target, GLint level, GLenum internalformat,
 //                 GLenum format, GLenum type, HTMLVideoElement video) raises (DOMException);
-static v8::Handle<v8::Value> texImage2DCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> texImage2DCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void texParameterf(GLenum target, GLenum pname, GLfloat param);
-static v8::Handle<v8::Value> texParameterfCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> texParameterfCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void texParameteri(GLenum target, GLenum pname, GLint param);
-static v8::Handle<v8::Value> texParameteriCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> texParameteriCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, 
 //                    GLsizei width, GLsizei height, 
@@ -344,122 +344,122 @@ static v8::Handle<v8::Value> texParameteriCallback(const v8::Arguments& args) { 
 //                    GLenum format, GLenum type, HTMLCanvasElement canvas) raises (DOMException);
 // void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, 
 //                    GLenum format, GLenum type, HTMLVideoElement video) raises (DOMException);
-static v8::Handle<v8::Value> texSubImage2DCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> texSubImage2DCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void uniform1f(WebGLUniformLocation location, GLfloat x);
-static v8::Handle<v8::Value> uniform1fCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> uniform1fCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void uniform1fv(WebGLUniformLocation location, FloatArray v);
 // void uniform1fv(WebGLUniformLocation location, sequence<float> v);
-static v8::Handle<v8::Value> uniform1fvCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> uniform1fvCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void uniform1i(WebGLUniformLocation location, GLint x);
-static v8::Handle<v8::Value> uniform1iCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> uniform1iCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void uniform1iv(WebGLUniformLocation location, Int32Array v);
 // void uniform1iv(WebGLUniformLocation location, sequence<long> v);
-static v8::Handle<v8::Value> uniform1ivCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> uniform1ivCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void uniform2f(WebGLUniformLocation location, GLfloat x, GLfloat y);
-static v8::Handle<v8::Value> uniform2fCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> uniform2fCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void uniform2fv(WebGLUniformLocation location, FloatArray v);
 // void uniform2fv(WebGLUniformLocation location, sequence<float> v);
-static v8::Handle<v8::Value> uniform2fvCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> uniform2fvCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void uniform2i(WebGLUniformLocation location, GLint x, GLint y);
-static v8::Handle<v8::Value> uniform2iCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> uniform2iCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void uniform2iv(WebGLUniformLocation location, Int32Array v);
 // void uniform2iv(WebGLUniformLocation location, sequence<long> v);
-static v8::Handle<v8::Value> uniform2ivCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> uniform2ivCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void uniform3f(WebGLUniformLocation location, GLfloat x, GLfloat y, GLfloat z);
-static v8::Handle<v8::Value> uniform3fCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> uniform3fCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void uniform3fv(WebGLUniformLocation location, FloatArray v);
 // void uniform3fv(WebGLUniformLocation location, sequence<float> v);
-static v8::Handle<v8::Value> uniform3fvCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> uniform3fvCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void uniform3i(WebGLUniformLocation location, GLint x, GLint y, GLint z);
-static v8::Handle<v8::Value> uniform3iCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> uniform3iCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void uniform3iv(WebGLUniformLocation location, Int32Array v);
 // void uniform3iv(WebGLUniformLocation location, sequence<long> v);
-static v8::Handle<v8::Value> uniform3ivCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> uniform3ivCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void uniform4f(WebGLUniformLocation location, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
-static v8::Handle<v8::Value> uniform4fCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> uniform4fCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void uniform4fv(WebGLUniformLocation location, FloatArray v);
 // void uniform4fv(WebGLUniformLocation location, sequence<float> v);
-static v8::Handle<v8::Value> uniform4fvCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> uniform4fvCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void uniform4i(WebGLUniformLocation location, GLint x, GLint y, GLint z, GLint w);
-static v8::Handle<v8::Value> uniform4iCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> uniform4iCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void uniform4iv(WebGLUniformLocation location, Int32Array v);
 // void uniform4iv(WebGLUniformLocation location, sequence<long> v);
-static v8::Handle<v8::Value> uniform4ivCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> uniform4ivCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void uniformMatrix2fv(WebGLUniformLocation location, GLboolean transpose, 
 //                       FloatArray value);
 // void uniformMatrix2fv(WebGLUniformLocation location, GLboolean transpose, 
 //                       sequence<float> value);
-static v8::Handle<v8::Value> uniformMatrix2fvCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> uniformMatrix2fvCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void uniformMatrix3fv(WebGLUniformLocation location, GLboolean transpose, 
 //                       FloatArray value);
 // void uniformMatrix3fv(WebGLUniformLocation location, GLboolean transpose, 
 //                       sequence<float> value);
-static v8::Handle<v8::Value> uniformMatrix3fvCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> uniformMatrix3fvCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void uniformMatrix4fv(WebGLUniformLocation location, GLboolean transpose, 
 //                       FloatArray value);
 // void uniformMatrix4fv(WebGLUniformLocation location, GLboolean transpose, 
 //                       sequence<float> value);
-static v8::Handle<v8::Value> uniformMatrix4fvCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> uniformMatrix4fvCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void useProgram(WebGLProgram program);
-static v8::Handle<v8::Value> useProgramCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> useProgramCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void validateProgram(WebGLProgram program);
-static v8::Handle<v8::Value> validateProgramCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> validateProgramCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void vertexAttrib1f(GLuint indx, GLfloat x);
-static v8::Handle<v8::Value> vertexAttrib1fCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> vertexAttrib1fCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void vertexAttrib1fv(GLuint indx, FloatArray values);
 // void vertexAttrib1fv(GLuint indx, sequence<float> values);
-static v8::Handle<v8::Value> vertexAttrib1fvCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> vertexAttrib1fvCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void vertexAttrib2f(GLuint indx, GLfloat x, GLfloat y);
-static v8::Handle<v8::Value> vertexAttrib2fCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> vertexAttrib2fCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void vertexAttrib2fv(GLuint indx, FloatArray values);
 // void vertexAttrib2fv(GLuint indx, sequence<float> values);
-static v8::Handle<v8::Value> vertexAttrib2fvCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> vertexAttrib2fvCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void vertexAttrib3f(GLuint indx, GLfloat x, GLfloat y, GLfloat z);
-static v8::Handle<v8::Value> vertexAttrib3fCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> vertexAttrib3fCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void vertexAttrib3fv(GLuint indx, FloatArray values);
 // void vertexAttrib3fv(GLuint indx, sequence<float> values);
-static v8::Handle<v8::Value> vertexAttrib3fvCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> vertexAttrib3fvCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void vertexAttrib4f(GLuint indx, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
-static v8::Handle<v8::Value> vertexAttrib4fCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> vertexAttrib4fCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void vertexAttrib4fv(GLuint indx, FloatArray values);
 // void vertexAttrib4fv(GLuint indx, sequence<float> values);
-static v8::Handle<v8::Value> vertexAttrib4fvCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> vertexAttrib4fvCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void vertexAttribPointer(GLuint indx, GLint size, GLenum type, 
 //                          GLboolean normalized, GLsizei stride, GLintptr offset);
-static v8::Handle<v8::Value> vertexAttribPointerCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> vertexAttribPointerCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 // void viewport(GLint x, GLint y, GLsizei width, GLsizei height);
-static v8::Handle<v8::Value> viewportCallback(const v8::Arguments& args) { return v8::Undefined(); }
+static v8::Handle<v8::Value> viewportCallback(const v8::Arguments& args) { return v8::Handle<v8::Value>(); }
 
 
 inline static void setConstant(const char* name, int value, v8::Handle<v8::ObjectTemplate> proto, v8::Handle<v8::FunctionTemplate> constructor)
