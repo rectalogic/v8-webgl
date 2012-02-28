@@ -462,13 +462,6 @@ static v8::Handle<v8::Value> vertexAttribPointerCallback(const v8::Arguments& ar
 static v8::Handle<v8::Value> viewportCallback(const v8::Arguments& args) { return v8::Undefined(); }
 
 
-inline static void setPrototypeCallback(const char* name, v8::InvocationCallback callback, v8::Handle<v8::ObjectTemplate> proto, v8::Local<v8::Signature> signature)
-{
-    proto->Set(v8::String::New(name),
-               v8::FunctionTemplate::New(callback, v8::Handle<v8::Value>(), signature),
-               v8::DontDelete);
-}
-
 inline static void setConstant(const char* name, int value, v8::Handle<v8::ObjectTemplate> proto, v8::Handle<v8::FunctionTemplate> constructor)
 {
     v8::Handle<v8::String> nameHandle = v8::String::New(name);
@@ -477,14 +470,12 @@ inline static void setConstant(const char* name, int value, v8::Handle<v8::Objec
     proto->Set(nameHandle, valueHandle, v8::ReadOnly);
 }
 
-#define PROTO_METHOD(name) setPrototypeCallback(#name, name##Callback, proto, signature)
+#define PROTO_METHOD(name) addCallback(proto, #name, name##Callback, signature)
 
 #define CONSTANT(name, value) setConstant(#name, value, proto, constructor)
 
-void WebGLRenderingContext::configureConstructorTemplate(v8::Handle<v8::ObjectTemplate> target, v8::Persistent<v8::FunctionTemplate> constructor)
+void WebGLRenderingContext::configureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> constructor)
 {
-    target->Set(v8::String::New(className()), constructor);
-
     v8::Handle<v8::ObjectTemplate> proto = constructor->PrototypeTemplate();
     v8::Local<v8::Signature> signature = v8::Signature::New(constructor);
 

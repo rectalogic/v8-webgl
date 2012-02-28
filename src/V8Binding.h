@@ -11,6 +11,12 @@ namespace V8WebGL {
 
 class V8ObjectBase {
 protected:
+    inline static void addCallback(v8::Handle<v8::ObjectTemplate> proto, const char* name, v8::InvocationCallback callback, v8::Local<v8::Signature> signature) {
+        proto->Set(v8::String::New(name),
+                   v8::FunctionTemplate::New(callback, v8::Handle<v8::Value>(), signature),
+                   v8::DontDelete);
+    };
+
     static v8::Persistent<v8::FunctionTemplate> createConstructorTemplate(const char* className);
 };
 
@@ -22,7 +28,8 @@ public:
             return;
         v8::HandleScope scope;
         s_constructorTemplate = createConstructorTemplate(T::className());
-        T::configureConstructorTemplate(target, s_constructorTemplate);
+        T::configureConstructorTemplate(s_constructorTemplate);
+        T::configureTarget(target);
     }
 
     static void uninitialize() {
@@ -30,6 +37,11 @@ public:
             return;
         s_constructorTemplate.Dispose();
         s_constructorTemplate.Clear();
+    }
+
+    // Subclasses can reimplement this if they don't want their constructor exposed
+    static void configureTarget(v8::Handle<v8::ObjectTemplate> target) {
+        target->Set(v8::String::New(T::className()), s_constructorTemplate);
     }
 
     //XXX add static toNative(Handle), hmm need to distinguish type checking from actual null value
