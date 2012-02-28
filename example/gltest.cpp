@@ -6,7 +6,7 @@ int main(int argc, char* argv[])
     v8::HandleScope handle_scope;
 
     v8::Handle<v8::ObjectTemplate> global = V8WebGL::initialize();
-    v8::Persistent<v8::Context> context = v8::Context::New(0, global);
+    v8::Persistent<v8::Context> context = v8::Context::New(NULL, global);
   
     v8::Context::Scope context_scope(context);
 

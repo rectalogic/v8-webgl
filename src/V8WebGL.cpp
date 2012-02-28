@@ -22,6 +22,7 @@ v8::Handle<v8::ObjectTemplate> initialize()
     //XXX initialize webgl classes with global
 
     //XXX no JS constructors, add createCanvas() api to global? (or webvfx object in global)
+    return s_global;
 }
 
 void uninitialize()
