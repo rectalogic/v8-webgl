@@ -3,33 +3,33 @@
 // found in the LICENSE file.
 
 #include "V8WebGL.h"
-#include "V8WebGLRenderingContext.h"
+#include "WebGLRenderingContext.h"
 
 namespace V8WebGL {
 
-static v8::Persistent<v8::ObjectTemplate> s_global = 0;
+static v8::Persistent<v8::ObjectTemplate> s_global;
 
 v8::Handle<v8::ObjectTemplate> initialize()
 {
-    if (s_global)
+    if (!s_global.IsEmpty())
         return s_global;
-    {
-        HandleScope scope;
-        v8::Local<v8::ObjectTemplate global = v8::ObjectTemplate::New();
-        s_global = v8::Persistent<v8::ObjectTemplate>::New(global);
 
-        WebGLRenderingContext::uninitialize(s_global);
-        //XXX initialize webgl classes with global
+    v8::HandleScope scope;
+    v8::Local<v8::ObjectTemplate> global = v8::ObjectTemplate::New();
+    s_global = v8::Persistent<v8::ObjectTemplate>::New(global);
 
-        //XXX no JS constructors, add createCanvas() api to global? (or webvfx object in global)
-    }
+    WebGLRenderingContext::initialize(s_global);
+    //XXX initialize webgl classes with global
+
+    //XXX no JS constructors, add createCanvas() api to global? (or webvfx object in global)
 }
 
 void uninitialize()
 {
-    if (!s_global)
+    if (s_global.IsEmpty())
         return;
     s_global.Dispose();
+    s_global.Clear();
 
     WebGLRenderingContext::uninitialize();
     //XXX uninitialize webgl classes

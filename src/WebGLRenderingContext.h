@@ -13,7 +13,8 @@ namespace V8WebGL {
     {
     public:
         static const char* const className() { return "WebGLRenderingContext"; }
-    }
+        static void configureConstructorTemplate(v8::Handle<v8::ObjectTemplate> target, v8::Persistent<v8::FunctionTemplate> constructor);
+    };
 
 }
 

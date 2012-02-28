@@ -19,7 +19,7 @@ namespace V8WebGL {
     {
     public:
         static void initialize(v8::Handle<v8::ObjectTemplate> target) {
-            if (s_constructorTemplate)
+            if (!s_constructorTemplate.IsEmpty())
                 return;
             v8::HandleScope scope;
             s_constructorTemplate = createConstructorTemplate(T::className());
@@ -27,10 +27,10 @@ namespace V8WebGL {
         }
 
         static void uninitialize() {
-            if (!s_constructorTemplate)
+            if (s_constructorTemplate.IsEmpty())
                 return;
             s_constructorTemplate.Dispose();
-            s_constructorTemplate = 0;
+            s_constructorTemplate.Clear();
         }
 
         //XXX add static toNative(Handle), hmm need to distinguish type checking from actual null value
@@ -40,7 +40,7 @@ namespace V8WebGL {
         static v8::Persistent<v8::FunctionTemplate> s_constructorTemplate;
     };
 
-    template<class T> v8::Persistent<v8::FunctionTemplate> V8Object<T>::s_constructorTemplate = 0;
+    template<class T> v8::Persistent<v8::FunctionTemplate> V8Object<T>::s_constructorTemplate;
 
 }
 
