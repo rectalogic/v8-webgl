@@ -5,14 +5,14 @@
 #ifndef V8WEBGL_WEBGL_RENDERING_CONTEXT_H
 #define V8WEBGL_WEBGL_RENDERING_CONTEXT_H
 
-#include "V8Binding.h"
+#include "v8_binding.h"
 
-namespace V8WebGL {
+namespace v8_webgl {
 
 class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
 public:
-    static const char* const className() { return "WebGLRenderingContext"; }
-    static void configureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> constructor);
+  static const char* const ClassName() { return "WebGLRenderingContext"; }
+  static void ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> constructor);
 };
 
 }

@@ -5,14 +5,17 @@
 #ifndef V8WEBGL_CANVAS_H
 #define V8WEBGL_CANVAS_H
 
-#include "V8Binding.h"
+#include "v8_binding.h"
 
-namespace V8WebGL {
+namespace v8_webgl {
 
 class Canvas : public V8Object<Canvas> {
 public:
-    static const char* const className() { return "Canvas"; }
-    static void configureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> constructor);
+  static const char* const ClassName() { return "Canvas"; }
+  static void ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> constructor);
+private:
+  // Always allow construction
+  static ConstructorMode<Canvas> s_mode;
 };
 
 }
