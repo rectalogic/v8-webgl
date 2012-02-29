@@ -7,4 +7,4 @@ Program('gltest',
          'src/webgl_rendering_context.cc',
         ],
         CCFLAGS='-ggdb3',
-        LIBS=['v8'], LIBPATH='../v8', CPPPATH=['../v8/include', 'src'])
+        LIBS=['v8'], LIBPATH='../v8', CPPPATH=['../v8/include', 'src', 'include'])
