@@ -6,11 +6,14 @@
 #define V8WEBGL_V8BINDING_H
 
 #include <v8.h>
+#include <assert.h>
 
 namespace v8_webgl {
 
 class V8ObjectBase {
-protected:
+ protected:
+  virtual ~V8ObjectBase() {}
+
   inline static void AddCallback(v8::Handle<v8::ObjectTemplate> proto, const char* name, v8::InvocationCallback callback, v8::Local<v8::Signature> signature) {
     proto->Set(v8::String::New(name),
                v8::FunctionTemplate::New(callback, v8::Handle<v8::Value>(), signature),
@@ -24,11 +27,11 @@ protected:
 
 template<class T>
 class ConstructorMode {
-public:
+ public:
   ConstructorMode() { s_allow_construction = true; }
   ~ConstructorMode() { s_allow_construction = false; }
-  static bool AllowConstruction() { return s_allow_construction; }
-private:
+  static bool IsConstructionAllowed() { return s_allow_construction; }
+ private:
   static bool s_allow_construction;
 };
 template<class T>
@@ -38,7 +41,7 @@ bool ConstructorMode<T>::s_allow_construction = false;
 
 template<class T>
 class V8Object : public V8ObjectBase {
-public:
+ public:
   static void Initialize(v8::Handle<v8::ObjectTemplate> target) {
     if (!s_constructor_template.IsEmpty())
       return;
@@ -55,43 +58,64 @@ public:
     s_constructor_template.Clear();
   }
 
-  // Subclasses can reimplement this if they don't want their constructor exposed
+  // Subclasses can reimplement this if they don't want their constructor name exposed
   static void ConfigureTarget(v8::Handle<v8::ObjectTemplate> target) {
     target->Set(v8::String::New(T::ClassName()), s_constructor_template);
   }
 
   inline static T* ToNative(v8::Handle<v8::Object> value) {
-    v8::Local<v8::External> wrap = v8::Local<v8::External>::Cast(value->GetInternalField(0));
-    return static_cast<T*>(wrap->Value());
+    return static_cast<T*>(value->GetPointerFromInternalField(0));
   }
-//XXX add toV8() that returns JS object (class member, persistent and weak)
 
   inline static bool HasInstance(v8::Handle<v8::Value> value){
     return s_constructor_template->HasInstance(value);
   }
 
-  //XXX add static toNative(Handle), hmm need to distinguish type checking from actual null value
-  //XXX add wrap(T*) - return JS wrapper for T, with weakref etc.
+  inline v8::Handle<v8::Object> ToV8() {
+    return instance_;
+  }
 
-protected:
-  //XXX constructor that takes default empty instance, if empty then create new instance from template, if not empty then persist that one. Either way, make weak with callback to delete this
-  V8Object(v8::Local<v8::Object> instance=v8::Local<v8::Object>()) {
+ protected:
+  V8Object(v8::Local<v8::Object> instance = v8::Local<v8::Object>()) {
+    // If no instance, construct a new one
     if (instance.IsEmpty()) {
       ConstructorMode<T> mode;
       instance = s_constructor_template->GetFunction()->NewInstance();
     }
-    //XXX
+
+    instance_ = v8::Persistent<v8::Object>::New(instance);
+    instance_->SetPointerInInternalField(0, this);
+    instance_.MakeWeak(this, WeakCallback);
   }
 
-private:
-  static v8::Persistent<v8::FunctionTemplate> s_constructor_template;
+  ~V8Object() {
+    //XXX is this right? instance_ won't be empty if Disposed - needs to be Cleared
+    if (!instance_.IsEmpty()) {
+      assert(instance_.IsNearDeath());
+      instance_.ClearWeak();
+      instance_->SetInternalField(0, v8::Undefined());
+      instance_.Dispose();
+      instance_.Clear();
+    }
+  }
 
   static v8::Handle<v8::Value> ConstructorCallback(const v8::Arguments& args) {
-    if (!ConstructorMode<T>::AllowConstruction())
+    if (!ConstructorMode<T>::IsConstructionAllowed())
       return v8::ThrowException(v8::Exception::TypeError(v8::String::New("Illegal constructor")));
 
     return args.This();
   }
+
+ private:
+  static void WeakCallback(v8::Persistent<v8::Value> value, void* data) {
+    value.Dispose();
+    T* object = static_cast<T*>(data);
+    assert(value == object->instance_);
+    delete object;
+  }
+
+  static v8::Persistent<v8::FunctionTemplate> s_constructor_template;
+  v8::Persistent<v8::Object> instance_;
 };
 
 template<class T>

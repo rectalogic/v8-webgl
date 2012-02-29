@@ -10,12 +10,13 @@
 namespace v8_webgl {
 
 class Canvas : public V8Object<Canvas> {
-public:
+ public:
   static const char* const ClassName() { return "Canvas"; }
   static void ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> constructor);
-private:
-  // Always allow construction
-  static ConstructorMode<Canvas> s_mode;
+ protected:
+  Canvas(v8::Local<v8::Object> instance, int width, int height);
+ private:
+  static v8::Handle<v8::Value> ConstructorCallback(const v8::Arguments& args);
 };
 
 }

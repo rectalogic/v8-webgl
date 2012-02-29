@@ -9,6 +9,12 @@ namespace v8_webgl {
 
 #define PROTO_METHOD(name) AddCallback(proto, #name, Callback_##name, signature)
 
+Canvas::Canvas(v8::Local<v8::Object> instance, int width, int height)
+    : V8Object<Canvas>(instance) {
+  //XXX create GLContext of given size
+  //XXX need ability to resize too
+}
+
 // WebGLRenderingContext getContext(DOMString type, hash);
 static v8::Handle<v8::Value> Callback_getContext(const v8::Arguments& args) {
   Canvas* self = Canvas::ToNative(args.Holder());
@@ -16,11 +22,15 @@ static v8::Handle<v8::Value> Callback_getContext(const v8::Arguments& args) {
   return v8::Undefined();
 }
 
+v8::Handle<v8::Value> Canvas::ConstructorCallback(const v8::Arguments& args) {
+  //XXX get width/height and options from args, construct canvas with them
+  Canvas* canvas = new Canvas(args.This(), 0, 0 /*XXX width, height */);
+  return args.This();
+}
+
 void Canvas::ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> constructor) {
   v8::Handle<v8::ObjectTemplate> proto = constructor->PrototypeTemplate();
   v8::Local<v8::Signature> signature = v8::Signature::New(constructor);
-
-//XXX need real JS constructor, Arguments are width, height
 
   PROTO_METHOD(getContext);
   //XXX add attributes (width, height etc.)?
