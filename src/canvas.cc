@@ -17,12 +17,14 @@ Canvas::Canvas(v8::Local<v8::Object> instance, int width, int height)
 
 // WebGLRenderingContext getContext(DOMString type, hash);
 static v8::Handle<v8::Value> Callback_getContext(const v8::Arguments& args) {
+  v8::HandleScope scope;
   Canvas* self = Canvas::ToNative(args.Holder());
   //XXX return existing WebGLRenderingContext or create and store one
   return v8::Undefined();
 }
 
 v8::Handle<v8::Value> Canvas::ConstructorCallback(const v8::Arguments& args) {
+  v8::HandleScope scope;
   //XXX get width/height and options from args, construct canvas with them
   Canvas* canvas = new Canvas(args.This(), 0, 0 /*XXX width, height */);
   return args.This();

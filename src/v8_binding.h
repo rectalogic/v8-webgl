@@ -100,6 +100,7 @@ class V8Object : public V8ObjectBase {
   }
 
   static v8::Handle<v8::Value> ConstructorCallback(const v8::Arguments& args) {
+    v8::HandleScope scope;
     if (!ConstructorMode<T>::IsConstructionAllowed())
       return v8::ThrowException(v8::Exception::TypeError(v8::String::New("Illegal constructor")));
 
