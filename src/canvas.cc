@@ -7,15 +7,14 @@
 
 namespace v8_webgl {
 
+#define PROTO_METHOD(name) AddCallback(proto, #name, Callback_##name, signature)
+
 // WebGLRenderingContext getContext(DOMString type, hash);
 static v8::Handle<v8::Value> Callback_getContext(const v8::Arguments& args) {
   Canvas* self = Canvas::ToNative(args.Holder());
   //XXX return existing WebGLRenderingContext or create and store one
-  return v8::Handle<v8::Value>();
+  return v8::Undefined();
 }
-
-#define PROTO_METHOD(name) AddCallback(proto, #name, Callback_##name, signature)
-
 
 void Canvas::ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> constructor) {
   v8::Handle<v8::ObjectTemplate> proto = constructor->PrototypeTemplate();
