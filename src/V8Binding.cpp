@@ -6,14 +6,9 @@
 
 namespace V8WebGL {
 
-static v8::Handle<v8::Value> illegalConstructor(const v8::Arguments& args)
+v8::Persistent<v8::FunctionTemplate> V8ObjectBase::createConstructorTemplate(const char* className, v8::InvocationCallback callback)
 {
-    return v8::ThrowException(v8::Exception::TypeError(v8::String::New("Illegal constructor")));
-}
-
-v8::Persistent<v8::FunctionTemplate> V8ObjectBase::createConstructorTemplate(const char* className)
-{
-    v8::Local<v8::FunctionTemplate> result = v8::FunctionTemplate::New(illegalConstructor);
+    v8::Local<v8::FunctionTemplate> result = v8::FunctionTemplate::New(callback);
     v8::Persistent<v8::FunctionTemplate> constructor = v8::Persistent<v8::FunctionTemplate>::New(result);
     constructor->SetClassName(v8::String::New(className));
     constructor->ReadOnlyPrototype();
