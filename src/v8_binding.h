@@ -42,13 +42,13 @@ bool ConstructorMode<T>::s_allow_construction = false;
 template<class T>
 class V8Object : public V8ObjectBase {
  public:
-  static void Initialize(v8::Handle<v8::ObjectTemplate> target) {
+  static void Initialize(v8::Handle<v8::ObjectTemplate> global) {
     if (!s_constructor_template.IsEmpty())
       return;
     v8::HandleScope scope;
     s_constructor_template = CreateConstructorTemplate(T::ClassName(), ConstructorCallback);
     T::ConfigureConstructorTemplate(s_constructor_template);
-    T::ConfigureTarget(target);
+    T::ConfigureGlobal(global);
   }
 
   static void Uninitialize() {
@@ -59,8 +59,8 @@ class V8Object : public V8ObjectBase {
   }
 
   // Subclasses can reimplement this if they don't want their constructor name exposed
-  static void ConfigureTarget(v8::Handle<v8::ObjectTemplate> target) {
-    target->Set(v8::String::New(T::ClassName()), s_constructor_template);
+  static void ConfigureGlobal(v8::Handle<v8::ObjectTemplate> global) {
+    global->Set(v8::String::New(T::ClassName()), s_constructor_template);
   }
 
   inline static T* ToNative(v8::Handle<v8::Object> value) {

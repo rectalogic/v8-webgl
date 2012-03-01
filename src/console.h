@@ -15,7 +15,7 @@ class Console : public V8Object<Console> {
  public:
   static const char* const ClassName() { return "Console"; }
   static void ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> constructor);
-  static void ConfigureTarget(v8::Handle<v8::ObjectTemplate> target);
+  static void ConfigureGlobal(v8::Handle<v8::ObjectTemplate> global);
 
   Logger* GetLogger() { return logger_; }
 

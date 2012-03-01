@@ -40,6 +40,8 @@ void Uninitialize() {
   Console::Uninitialize();
   WebGLRenderingContext::Uninitialize();
   //XXX uninitialize webgl classes
+
+  v8::V8::Dispose();
 }
 
 Factory* GetFactory() {

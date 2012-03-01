@@ -55,10 +55,10 @@ static v8::Handle<v8::Value> Callback_error(const v8::Arguments& args) {
   return Log(args, Logger::kError);
 }
 
-void Console::ConfigureTarget(v8::Handle<v8::ObjectTemplate> target) {
+void Console::ConfigureGlobal(v8::Handle<v8::ObjectTemplate> global) {
   Console* console = new Console(GetFactory()->CreateLogger());
   // Add a "console" instance
-  target->Set(v8::String::New("console"), console->ToV8());
+  global->Set(v8::String::New("console"), console->ToV8());
 }
 
 void Console::ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> constructor) {
