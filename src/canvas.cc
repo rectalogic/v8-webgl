@@ -9,7 +9,7 @@
 namespace v8_webgl {
 
 #define PROTO_METHOD(name) AddCallback(proto, #name, Callback_##name, signature)
-#define ACCESSOR(name) proto->SetAccessor(v8::String::New(#name), Getter_##name, Setter_##name)
+#define ACCESSOR(name) instance->SetAccessor(v8::String::New(#name), Getter_##name, Setter_##name)
 
 Canvas::Canvas(v8::Local<v8::Object> instance)
     : V8Object<Canvas>(instance)
@@ -51,6 +51,7 @@ void Canvas::set_height(int height) {
 static v8::Handle<v8::Value> Callback_getContext(const v8::Arguments& args) {
   v8::HandleScope scope;
   Canvas* canvas = Canvas::ToNative(args.Holder());
+  //XXX validate first arg is "experimental-webgl", handle optional second arg params
   return canvas->GetRenderingContext()->ToV8();
 }
 
@@ -86,6 +87,7 @@ v8::Handle<v8::Value> Canvas::ConstructorCallback(const v8::Arguments& args) {
 
 void Canvas::ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> constructor) {
   v8::Handle<v8::ObjectTemplate> proto = constructor->PrototypeTemplate();
+  v8::Handle<v8::ObjectTemplate> instance = constructor->InstanceTemplate();
   v8::Local<v8::Signature> signature = v8::Signature::New(constructor);
 
   PROTO_METHOD(getContext);
