@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "v8_webgl_internal.h"
 #include "v8_binding.h"
 #include "webgl_rendering_context.h"
 
@@ -10,6 +11,21 @@ namespace v8_webgl {
 #define PROTO_METHOD(name) AddCallback(proto, #name, Callback_##name, signature)
 #define CONSTANT(name, value) SetConstant(#name, value, proto, constructor)
 
+// Only Canvas creates us - so make ourself not weak
+WebGLRenderingContext::WebGLRenderingContext(int width, int height)
+    : V8Object<WebGLRenderingContext>(v8::Local<v8::Object>(), false)
+    , graphic_context_(GetFactory()->CreateGraphicContext(width, height)) {
+}
+
+WebGLRenderingContext::~WebGLRenderingContext() {
+  delete graphic_context_;
+}
+
+void WebGLRenderingContext::Resize(int width, int height) {
+  graphic_context_->Resize(width, height);
+}
+
+//////
 
 // WebGLContextAttributes getContextAttributes();
 static v8::Handle<v8::Value> Callback_getContextAttributes(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }

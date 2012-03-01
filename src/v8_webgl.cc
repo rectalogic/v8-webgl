@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #include <v8_webgl.h>
+#include "canvas.h"
 #include "console.h"
 #include "webgl_rendering_context.h"
 
@@ -22,6 +23,7 @@ v8::Persistent<v8::ObjectTemplate> Initialize(Factory* factory) {
   s_global = v8::Persistent<v8::ObjectTemplate>::New(global);
 
   Console::Initialize(s_global);
+  Canvas::Initialize(s_global);
   WebGLRenderingContext::Initialize(s_global);
   //XXX initialize webgl classes with global
 
@@ -38,6 +40,7 @@ void Uninitialize() {
   s_factory = 0;
 
   Console::Uninitialize();
+  Canvas::Uninitialize();
   WebGLRenderingContext::Uninitialize();
   //XXX uninitialize webgl classes
 

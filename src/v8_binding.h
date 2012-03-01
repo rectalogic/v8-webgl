@@ -46,7 +46,7 @@ class V8Object : public V8ObjectBase {
     if (!s_constructor_template.IsEmpty())
       return;
     v8::HandleScope scope;
-    s_constructor_template = CreateConstructorTemplate(T::ClassName(), ConstructorCallback);
+    s_constructor_template = CreateConstructorTemplate(T::ClassName(), T::ConstructorCallback);
     T::ConfigureConstructorTemplate(s_constructor_template);
     T::ConfigureGlobal(global);
   }
@@ -76,7 +76,7 @@ class V8Object : public V8ObjectBase {
   }
 
  protected:
-  V8Object(v8::Local<v8::Object> instance = v8::Local<v8::Object>()) {
+  V8Object(v8::Local<v8::Object> instance = v8::Local<v8::Object>(), bool weak = true) {
     // If no instance, construct a new one
     if (instance.IsEmpty()) {
       ConstructorMode<T> mode;
@@ -85,13 +85,13 @@ class V8Object : public V8ObjectBase {
 
     instance_ = v8::Persistent<v8::Object>::New(instance);
     instance_->SetPointerInInternalField(0, this);
-    instance_.MakeWeak(this, WeakCallback);
+
+    if (weak)
+      instance_.MakeWeak(this, WeakCallback);
   }
 
   ~V8Object() {
-    //XXX is this right? instance_ won't be empty if Disposed - needs to be Cleared
     if (!instance_.IsEmpty()) {
-      assert(instance_.IsNearDeath());
       instance_.ClearWeak();
       instance_->SetInternalField(0, v8::Undefined());
       instance_.Dispose();
@@ -109,9 +109,10 @@ class V8Object : public V8ObjectBase {
 
  private:
   static void WeakCallback(v8::Persistent<v8::Value> value, void* data) {
-    value.Dispose();
     T* object = static_cast<T*>(data);
     assert(value == object->instance_);
+    value.Dispose();
+    value.Clear();
     delete object;
   }
 

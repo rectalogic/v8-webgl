@@ -9,10 +9,14 @@ class Factory : public v8_webgl::Factory {
       std::cerr << msg << std::endl;
     }
   };
+  class GraphicContext : public v8_webgl::GraphicContext {
+    void Resize(int width, int height) {}
+    void MakeCurrent() {}
+  };
   Logger logger;
 
  public:
-  v8_webgl::GraphicContext* CreateGraphicContext() { return 0; }
+  v8_webgl::GraphicContext* CreateGraphicContext(int width, int height) { return new GraphicContext(); }
   Logger* GetLogger() { return &logger; }
 };
 
@@ -25,7 +29,7 @@ int main(int argc, char* argv[])
 
     v8::Context::Scope context_scope(context);
 
-    v8::Handle<v8::String> source = v8::String::New("console.log('FRONT=' + WebGLRenderingContext.FRONT)");
+    v8::Handle<v8::String> source = v8::String::New("var canvas = new Canvas(); canvas.width = canvas.height = 200; var rc = canvas.getContext(); console.log('canvas=' + canvas); console.log('context=' + rc); console.log('FRONT=' + WebGLRenderingContext.FRONT)");
     v8::Handle<v8::Script> script = v8::Script::Compile(source);
 
     v8::Handle<v8::Value> result = script->Run();

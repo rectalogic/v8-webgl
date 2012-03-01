@@ -18,6 +18,8 @@ class GraphicContext {
   virtual void MakeCurrent() = 0;
 };
 
+//////
+
 class Logger {
  public:
   enum Level { kLog, kInfo, kWarn, kError };
@@ -25,19 +27,23 @@ class Logger {
   virtual void Log(Level level, std::string& msg) = 0;
 };
 
+//////
+
 class Factory {
  public:
   virtual ~Factory() {}
-  virtual GraphicContext* CreateGraphicContext() = 0;
+  virtual GraphicContext* CreateGraphicContext(int width, int height) = 0;
   // Logger instance, return 0 to disable logging via console.
   // Logger instance should live for as long as Factory.
   virtual Logger* GetLogger() { return 0; }
   //XXX image method - pass in string name - don't want to return data though, want to upload to gpu (and need to know size, format etc.)
 };
 
-// Initialize v8-webgl and return the global object.
+//////
+
+// Initialize v8-webgl and return the global object template.
 // This will be valid until uninitialize().
-// Factory will be destroyed when Unintialized
+// Factory will be destroyed when Unintialized.
 v8::Persistent<v8::ObjectTemplate> Initialize(Factory* factory);
 
 void Uninitialize();

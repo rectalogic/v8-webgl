@@ -8,11 +8,25 @@
 #include "v8_binding.h"
 
 namespace v8_webgl {
+class Canvas;
+class GraphicContext;
 
 class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
  public:
   static const char* const ClassName() { return "WebGLRenderingContext"; }
   static void ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> constructor);
+
+  void Resize(int width, int height);
+
+  ~WebGLRenderingContext();
+
+ protected:
+  WebGLRenderingContext(int width, int height);
+
+ private:
+  GraphicContext* graphic_context_;
+
+  friend class Canvas;
 };
 
 }
