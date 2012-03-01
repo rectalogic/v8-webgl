@@ -29,7 +29,9 @@ class Factory {
  public:
   virtual ~Factory() {}
   virtual GraphicContext* CreateGraphicContext() = 0;
-  virtual Logger* CreateLogger() { return 0; }
+  // Logger instance, return 0 to disable logging via console.
+  // Logger instance should live for as long as Factory.
+  virtual Logger* GetLogger() { return 0; }
   //XXX image method - pass in string name - don't want to return data though, want to upload to gpu (and need to know size, format etc.)
 };
 

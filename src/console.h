@@ -5,28 +5,16 @@
 #ifndef V8WEBGL_CONSOLE_H
 #define V8WEBGL_CONSOLE_H
 
-#include "v8_binding.h"
+#include <v8.h>
 
 namespace v8_webgl {
 
 class Logger;
 
-class Console : public V8Object<Console> {
+class Console {
  public:
-  static const char* const ClassName() { return "Console"; }
-  static void ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> constructor);
-  static void ConfigureGlobal(v8::Handle<v8::ObjectTemplate> global);
-
-  Logger* GetLogger() { return logger_; }
-
- protected:
-  Console(Logger* logger);
-  ~Console();
-
- private:
-  Logger* logger_;
-
-  friend class V8Object<Console>;
+  static void Initialize(v8::Handle<v8::ObjectTemplate> global);
+  static void Uninitialize() {}
 };
 
 }

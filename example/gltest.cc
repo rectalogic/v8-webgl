@@ -1,10 +1,19 @@
 #include <v8.h>
 #include <v8_webgl.h>
+#include <iostream>
 
 class Factory : public v8_webgl::Factory {
+ private:
+  class Logger : public v8_webgl::Logger {
+    void Log(Level level, std::string& msg) {
+      std::cerr << msg << std::endl;
+    }
+  };
+  Logger logger;
+
  public:
   v8_webgl::GraphicContext* CreateGraphicContext() { return 0; }
-  //  Logger* CreateLogger() { return 0; }
+  Logger* GetLogger() { return &logger; }
 };
 
 int main(int argc, char* argv[])

@@ -6,31 +6,19 @@
 #include "v8_binding.h"
 #include "console.h"
 #include <string>
-#include <iostream>
 
 namespace v8_webgl {
 
-#define PROTO_METHOD(name) AddCallback(proto, #name, Callback_##name, signature)
-
-Console::Console(Logger* logger)
-    : V8Object<Console>()
-    , logger_(logger) {
-}
-
-Console::~Console() {
-  delete logger_;
-}
+#define ADD_METHOD(target, name) target->Set(v8::String::New(#name), v8::FunctionTemplate::New(Callback_##name))
 
 static v8::Handle<v8::Value> Log(const v8::Arguments& args, Logger::Level level) {
-  v8::HandleScope scope;
-  Console* self = Console::ToNative(args.Holder());
-  v8::String::Utf8Value utf8(args[0]);
-  std::string msg(*utf8);
-  Logger* logger = self->GetLogger();
-  if (logger)
+  Logger* logger = GetFactory()->GetLogger();
+  if (logger) {
+    v8::HandleScope scope;
+    v8::String::Utf8Value utf8(args[0]);
+    std::string msg(*utf8);
     logger->Log(level, msg);
-  else
-    std::cerr << msg << std::endl;
+  }
   return v8::Undefined();
 }
 
@@ -55,21 +43,14 @@ static v8::Handle<v8::Value> Callback_error(const v8::Arguments& args) {
   return Log(args, Logger::kError);
 }
 
-void Console::ConfigureGlobal(v8::Handle<v8::ObjectTemplate> global) {
-  Console* console = new Console(GetFactory()->CreateLogger());
-  // Add a "console" instance
-  global->Set(v8::String::New("console"), console->ToV8());
-}
-
-void Console::ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> constructor) {
-  v8::Handle<v8::ObjectTemplate> proto = constructor->PrototypeTemplate();
-  v8::Local<v8::Signature> signature = v8::Signature::New(constructor);
-
-  PROTO_METHOD(log);
-  PROTO_METHOD(debug);
-  PROTO_METHOD(info);
-  PROTO_METHOD(warn);
-  PROTO_METHOD(error);
+void Console::Initialize(v8::Handle<v8::ObjectTemplate> global) {
+  v8::Handle<v8::ObjectTemplate> console = v8::ObjectTemplate::New();
+  ADD_METHOD(console, log);
+  ADD_METHOD(console, debug);
+  ADD_METHOD(console, info);
+  ADD_METHOD(console, warn);
+  ADD_METHOD(console, error);
+  global->Set(v8::String::New("console"), console);
 }
 
 }
