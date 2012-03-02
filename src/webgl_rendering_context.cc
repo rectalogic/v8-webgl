@@ -11,6 +11,13 @@ namespace v8_webgl {
 #define PROTO_METHOD(name) AddCallback(proto, #name, Callback_##name, signature)
 #define CONSTANT(name, value) SetConstant(#name, value, proto, constructor)
 
+#define CALLBACK_PREAMBLE() \
+  v8::HandleScope scope; \
+  WebGLRenderingContext* context = WebGLRenderingContext::ToNative(args.Holder()); \
+  if (!context) \
+    return ThrowHandleDisposed();
+
+
 // Only Canvas creates us - so make ourself not weak
 WebGLRenderingContext::WebGLRenderingContext(int width, int height)
     : V8Object<WebGLRenderingContext>(v8::Local<v8::Object>(), false)
@@ -28,7 +35,11 @@ void WebGLRenderingContext::Resize(int width, int height) {
 //////
 
 // WebGLContextAttributes getContextAttributes();
-static v8::Handle<v8::Value> Callback_getContextAttributes(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_getContextAttributes(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  /*XXX finish*/
+  return v8::Undefined();
+}
 
 // boolean isContextLost();
 static v8::Handle<v8::Value> Callback_isContextLost(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
