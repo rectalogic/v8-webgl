@@ -5,7 +5,15 @@
 #include <v8_webgl.h>
 #include "canvas.h"
 #include "console.h"
+#include "webgl_active_info.h"
+#include "webgl_buffer.h"
+#include "webgl_framebuffer.h"
+#include "webgl_program.h"
+#include "webgl_renderbuffer.h"
 #include "webgl_rendering_context.h"
+#include "webgl_shader.h"
+#include "webgl_texture.h"
+#include "webgl_uniform_location.h"
 
 namespace v8_webgl {
 
@@ -24,7 +32,15 @@ v8::Persistent<v8::ObjectTemplate> Initialize(Factory* factory) {
 
   Console::Initialize(s_global);
   Canvas::Initialize(s_global);
+  WebGLActiveInfo::Initialize(s_global);
+  WebGLBuffer::Initialize(s_global);
+  WebGLFramebuffer::Initialize(s_global);
+  WebGLProgram::Initialize(s_global);
+  WebGLRenderbuffer::Initialize(s_global);
   WebGLRenderingContext::Initialize(s_global);
+  WebGLShader::Initialize(s_global);
+  WebGLTexture::Initialize(s_global);
+  WebGLUniformLocation::Initialize(s_global);
   //XXX initialize webgl classes with global
 
   return s_global;
@@ -41,11 +57,20 @@ void Uninitialize() {
 
   Console::Uninitialize();
   Canvas::Uninitialize();
+  WebGLActiveInfo::Uninitialize();
+  WebGLBuffer::Uninitialize();
+  WebGLFramebuffer::Uninitialize();
+  WebGLProgram::Uninitialize();
+  WebGLRenderbuffer::Uninitialize();
   WebGLRenderingContext::Uninitialize();
+  WebGLShader::Uninitialize();
+  WebGLTexture::Uninitialize();
+  WebGLUniformLocation::Uninitialize();
   //XXX uninitialize webgl classes
 
   // Run GC until everything is freed
   while (!v8::V8::IdleNotification()) {}
+
   v8::V8::Dispose();
 }
 

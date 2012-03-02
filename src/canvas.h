@@ -22,15 +22,16 @@ class Canvas : public V8Object<Canvas> {
   void set_width(int width);
   void set_height(int height);
 
-  ~Canvas();
-
  protected:
   Canvas(v8::Local<v8::Object> instance);
+  ~Canvas();
 
  private:
   WebGLRenderingContext* rendering_context_;
   int width_;
   int height_;
+
+  friend class V8Object<Canvas>;
 };
 
 }

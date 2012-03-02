@@ -17,16 +17,20 @@ class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
   static void ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> constructor);
 
   void Resize(int width, int height);
-
-  ~WebGLRenderingContext();
+  unsigned long get_context_id() { return context_id_; }
 
  protected:
   WebGLRenderingContext(int width, int height);
+  ~WebGLRenderingContext();
 
  private:
   GraphicContext* graphic_context_;
+  unsigned long context_id_;
+
+  static unsigned long s_context_counter;
 
   friend class Canvas;
+  friend class V8Object<WebGLRenderingContext>;
 };
 
 }

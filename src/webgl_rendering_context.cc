@@ -8,6 +8,8 @@
 
 namespace v8_webgl {
 
+unsigned long WebGLRenderingContext::s_context_counter = 0;
+
 #define PROTO_METHOD(name) AddCallback(proto, #name, Callback_##name, signature)
 #define CONSTANT(name, value) SetConstant(#name, value, proto, constructor)
 
@@ -21,7 +23,8 @@ namespace v8_webgl {
 // Only Canvas creates us - so make ourself not weak
 WebGLRenderingContext::WebGLRenderingContext(int width, int height)
     : V8Object<WebGLRenderingContext>(v8::Local<v8::Object>(), false)
-    , graphic_context_(GetFactory()->CreateGraphicContext(width, height)) {
+    , graphic_context_(GetFactory()->CreateGraphicContext(width, height))
+    , context_id_(s_context_counter++) {
 }
 
 WebGLRenderingContext::~WebGLRenderingContext() {

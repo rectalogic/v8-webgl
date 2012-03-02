@@ -63,11 +63,6 @@ class V8Object : public V8ObjectBase {
     s_constructor_template.Clear();
   }
 
-  // Subclasses can reimplement this if they don't want their constructor name exposed
-  static void ConfigureGlobal(v8::Handle<v8::ObjectTemplate> global) {
-    global->Set(v8::String::New(T::ClassName()), s_constructor_template);
-  }
-
   inline static T* ToNative(v8::Handle<v8::Object> value) {
     return static_cast<T*>(value->GetPointerFromInternalField(0));
   }
@@ -102,6 +97,14 @@ class V8Object : public V8ObjectBase {
       instance_.Dispose();
       instance_.Clear();
     }
+  }
+
+  // Subclasses should reimplement
+  static void ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> constructor) {}
+
+  // Subclasses can reimplement this if they don't want their constructor name exposed
+  static void ConfigureGlobal(v8::Handle<v8::ObjectTemplate> global) {
+    global->Set(v8::String::New(T::ClassName()), s_constructor_template);
   }
 
   static v8::Handle<v8::Value> ConstructorCallback(const v8::Arguments& args) {
