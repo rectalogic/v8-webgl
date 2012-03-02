@@ -49,7 +49,6 @@ void Canvas::set_height(int height) {
 
 // WebGLRenderingContext getContext(DOMString type, hash);
 static v8::Handle<v8::Value> Callback_getContext(const v8::Arguments& args) {
-  v8::HandleScope scope;
   Canvas* canvas = Canvas::ToNative(args.Holder());
   if (!canvas)
     return Canvas::ThrowHandleDisposed();
@@ -58,7 +57,6 @@ static v8::Handle<v8::Value> Callback_getContext(const v8::Arguments& args) {
 }
 
 static void Setter_width(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {
-  v8::HandleScope scope;
   Canvas* canvas = Canvas::ToNative(info.Holder());
   if (!canvas) {
     Canvas::ThrowHandleDisposed();
@@ -68,15 +66,13 @@ static void Setter_width(v8::Local<v8::String> property, v8::Local<v8::Value> va
 }
 
 static v8::Handle<v8::Value> Getter_width(v8::Local<v8::String> property, const v8::AccessorInfo& info) {
-  v8::HandleScope scope;
   Canvas* canvas = Canvas::ToNative(info.Holder());
   if (!canvas)
     return Canvas::ThrowHandleDisposed();
-  return scope.Close(v8::Integer::New(canvas->get_width()));
+  return v8::Integer::New(canvas->get_width());
 }
 
 static void Setter_height(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {
-  v8::HandleScope scope;
   Canvas* canvas = Canvas::ToNative(info.Holder());
   if (!canvas) {
     Canvas::ThrowHandleDisposed();
@@ -86,15 +82,13 @@ static void Setter_height(v8::Local<v8::String> property, v8::Local<v8::Value> v
 }
 
 static v8::Handle<v8::Value> Getter_height(v8::Local<v8::String> property, const v8::AccessorInfo& info) {
-  v8::HandleScope scope;
   Canvas* canvas = Canvas::ToNative(info.Holder());
   if (!canvas)
     return Canvas::ThrowHandleDisposed();
-  return scope.Close(v8::Integer::New(canvas->get_height()));
+  return v8::Integer::New(canvas->get_height());
 }
 
 v8::Handle<v8::Value> Canvas::ConstructorCallback(const v8::Arguments& args) {
-  v8::HandleScope scope;
   Canvas* canvas = new Canvas(args.This());
   return args.This();
 }

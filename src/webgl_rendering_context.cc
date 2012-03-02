@@ -14,7 +14,6 @@ unsigned long WebGLRenderingContext::s_context_counter = 0;
 #define CONSTANT(name, value) SetConstant(#name, value, proto, constructor)
 
 #define CALLBACK_PREAMBLE() \
-  v8::HandleScope scope; \
   WebGLRenderingContext* context = WebGLRenderingContext::ToNative(args.Holder()); \
   if (!context) \
     return WebGLRenderingContext::ThrowHandleDisposed();
@@ -45,7 +44,10 @@ static v8::Handle<v8::Value> Callback_getContextAttributes(const v8::Arguments& 
 }
 
 // boolean isContextLost();
-static v8::Handle<v8::Value> Callback_isContextLost(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_isContextLost(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  return v8::Boolean::New(false);
+}
 
 // DOMString[ ] getSupportedExtensions();
 static v8::Handle<v8::Value> Callback_getSupportedExtensions(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
