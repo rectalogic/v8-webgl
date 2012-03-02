@@ -10,12 +10,20 @@
 
 namespace v8_webgl {
 
-class V8ObjectBase {
- public:
-  static inline v8::Handle<v8::Value> ThrowHandleDisposed() {
-    return v8::ThrowException(v8::String::New("Object has been disposed"));
-  }
+inline v8::Handle<v8::Value> ThrowObjectDisposed() {
+  return v8::ThrowException(v8::Exception::ReferenceError(v8::String::New("Object has been disposed")));
+}
 
+inline v8::Handle<v8::Boolean> BooleanToV8(bool value) {
+  return value ? v8::True() : v8::False();
+}
+
+int32_t V8ToInt32(v8::Handle<v8::Value> value, bool& ok);
+uint32_t V8ToUint32(v8::Handle<v8::Value> value, bool& ok);
+
+//////
+
+class V8ObjectBase {
  protected:
   virtual ~V8ObjectBase() {}
 

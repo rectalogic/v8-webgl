@@ -16,7 +16,8 @@ unsigned long WebGLRenderingContext::s_context_counter = 0;
 #define CALLBACK_PREAMBLE() \
   WebGLRenderingContext* context = WebGLRenderingContext::ToNative(args.Holder()); \
   if (!context) \
-    return WebGLRenderingContext::ThrowHandleDisposed();
+    return ThrowObjectDisposed(); \
+  context->MakeCurrent();
 
 
 // Only Canvas creates us - so make ourself not weak
@@ -28,10 +29,6 @@ WebGLRenderingContext::WebGLRenderingContext(int width, int height)
 
 WebGLRenderingContext::~WebGLRenderingContext() {
   delete graphic_context_;
-}
-
-void WebGLRenderingContext::Resize(int width, int height) {
-  graphic_context_->Resize(width, height);
 }
 
 //////
@@ -46,7 +43,7 @@ static v8::Handle<v8::Value> Callback_getContextAttributes(const v8::Arguments& 
 // boolean isContextLost();
 static v8::Handle<v8::Value> Callback_isContextLost(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
-  return v8::Boolean::New(false);
+  return BooleanToV8(false);
 }
 
 // DOMString[ ] getSupportedExtensions();

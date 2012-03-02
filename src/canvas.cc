@@ -6,6 +6,7 @@
 #include "canvas.h"
 #include "webgl_rendering_context.h"
 
+
 namespace v8_webgl {
 
 #define PROTO_METHOD(name) AddCallback(proto, #name, Callback_##name, signature)
@@ -51,7 +52,7 @@ void Canvas::set_height(int height) {
 static v8::Handle<v8::Value> Callback_getContext(const v8::Arguments& args) {
   Canvas* canvas = Canvas::ToNative(args.Holder());
   if (!canvas)
-    return Canvas::ThrowHandleDisposed();
+    return ThrowObjectDisposed();
   //XXX validate first arg is "experimental-webgl", handle optional second arg params
   return canvas->GetRenderingContext()->ToV8();
 }
@@ -59,7 +60,7 @@ static v8::Handle<v8::Value> Callback_getContext(const v8::Arguments& args) {
 static void Setter_width(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {
   Canvas* canvas = Canvas::ToNative(info.Holder());
   if (!canvas) {
-    Canvas::ThrowHandleDisposed();
+    ThrowObjectDisposed();
     return;
   }
   canvas->set_width(value->Int32Value());
@@ -68,14 +69,14 @@ static void Setter_width(v8::Local<v8::String> property, v8::Local<v8::Value> va
 static v8::Handle<v8::Value> Getter_width(v8::Local<v8::String> property, const v8::AccessorInfo& info) {
   Canvas* canvas = Canvas::ToNative(info.Holder());
   if (!canvas)
-    return Canvas::ThrowHandleDisposed();
+    return ThrowObjectDisposed();
   return v8::Integer::New(canvas->get_width());
 }
 
 static void Setter_height(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {
   Canvas* canvas = Canvas::ToNative(info.Holder());
   if (!canvas) {
-    Canvas::ThrowHandleDisposed();
+    ThrowObjectDisposed();
     return;
   }
   canvas->set_height(value->Int32Value());
@@ -84,7 +85,7 @@ static void Setter_height(v8::Local<v8::String> property, v8::Local<v8::Value> v
 static v8::Handle<v8::Value> Getter_height(v8::Local<v8::String> property, const v8::AccessorInfo& info) {
   Canvas* canvas = Canvas::ToNative(info.Holder());
   if (!canvas)
-    return Canvas::ThrowHandleDisposed();
+    return ThrowObjectDisposed();
   return v8::Integer::New(canvas->get_height());
 }
 

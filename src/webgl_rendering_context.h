@@ -5,18 +5,26 @@
 #ifndef V8WEBGL_WEBGL_RENDERING_CONTEXT_H
 #define V8WEBGL_WEBGL_RENDERING_CONTEXT_H
 
+#include <v8_webgl.h>
 #include "v8_binding.h"
 
 namespace v8_webgl {
-class Canvas;
 class GraphicContext;
+class Canvas;
 
 class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
  public:
   static const char* const ClassName() { return "WebGLRenderingContext"; }
   static void ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> constructor);
 
-  void Resize(int width, int height);
+  void MakeCurrent() {
+    graphic_context_->MakeCurrent();
+  }
+
+  void Resize(int width, int height) {
+    graphic_context_->Resize(width, height);
+  }
+
   unsigned long get_context_id() { return context_id_; }
 
  protected:
