@@ -20,6 +20,10 @@ class V8ObjectBase {
                v8::DontDelete);
   };
 
+  static inline v8::Handle<v8::Value> ThrowHandleDisposed() {
+    return v8::ThrowException(v8::Exception(v8::String::New("Object has been disposed")));
+  }
+
   static v8::Persistent<v8::FunctionTemplate> CreateConstructorTemplate(const char* class_name, v8::InvocationCallback callback);
 };
 
@@ -93,7 +97,7 @@ class V8Object : public V8ObjectBase {
   ~V8Object() {
     if (!instance_.IsEmpty()) {
       instance_.ClearWeak();
-      instance_->SetInternalField(0, v8::Undefined());
+      instance_->SetPointerInInternalField(0, 0);
       instance_.Dispose();
       instance_.Clear();
     }
@@ -111,8 +115,6 @@ class V8Object : public V8ObjectBase {
   static void WeakCallback(v8::Persistent<v8::Value> value, void* data) {
     T* object = static_cast<T*>(data);
     assert(value == object->instance_);
-    value.Dispose();
-    value.Clear();
     delete object;
   }
 
