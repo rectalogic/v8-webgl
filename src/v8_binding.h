@@ -22,6 +22,14 @@ inline v8::Handle<v8::Boolean> BooleanToV8(bool value) {
   return value ? v8::True() : v8::False();
 }
 
+inline v8::Handle<v8::Integer> Uint32ToV8(uint32_t value) {
+  return v8::Integer::NewFromUnsigned(value);
+}
+
+inline double V8ToBoolean(v8::Handle<v8::Value> value, bool& ok) {
+  ok = true;
+  return value->BooleanValue();
+}
 double V8ToNumber(v8::Handle<v8::Value> value, bool& ok);
 inline float V8ToFloat(v8::Handle<v8::Value> value, bool& ok) {
   return static_cast<float>(V8ToNumber(value, ok));

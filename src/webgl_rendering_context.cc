@@ -117,14 +117,37 @@ static v8::Handle<v8::Value> Callback_blendEquation(const v8::Arguments& args) {
 }
 
 // void blendEquationSeparate(GLenum modeRGB, GLenum modeAlpha);
-static v8::Handle<v8::Value> Callback_blendEquationSeparate(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_blendEquationSeparate(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(2);
+  uint32_t modeRGB = CONVERT_ARG(0, V8ToUint32);
+  uint32_t modeAlpha = CONVERT_ARG(1, V8ToUint32);
+  glBlendEquationSeparate(modeRGB, modeAlpha);
+  return v8::Undefined();
+}
 
 // void blendFunc(GLenum sfactor, GLenum dfactor);
-static v8::Handle<v8::Value> Callback_blendFunc(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_blendFunc(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(2);
+  uint32_t sfactor = CONVERT_ARG(0, V8ToUint32);
+  uint32_t dfactor = CONVERT_ARG(1, V8ToUint32);
+  glBlendFunc(sfactor, dfactor);
+  return v8::Undefined();
+}
 
 // void blendFuncSeparate(GLenum srcRGB, GLenum dstRGB, 
 //                        GLenum srcAlpha, GLenum dstAlpha);
-static v8::Handle<v8::Value> Callback_blendFuncSeparate(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_blendFuncSeparate(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(4);
+  uint32_t srcRGB = CONVERT_ARG(0, V8ToUint32);
+  uint32_t dstRGB = CONVERT_ARG(1, V8ToUint32);
+  uint32_t srcAlpha = CONVERT_ARG(2, V8ToUint32);
+  uint32_t dstAlpha = CONVERT_ARG(3, V8ToUint32);
+  glBlendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
+  return v8::Undefined();
+}
 
 // void bufferData(GLenum target, GLsizeiptr size, GLenum usage);
 // void bufferData(GLenum target, ArrayBufferView data, GLenum usage);
@@ -136,22 +159,63 @@ static v8::Handle<v8::Value> Callback_bufferData(const v8::Arguments& args) { re
 static v8::Handle<v8::Value> Callback_bufferSubData(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
 
 // GLenum checkFramebufferStatus(GLenum target);
-static v8::Handle<v8::Value> Callback_checkFramebufferStatus(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_checkFramebufferStatus(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  uint32_t target = CONVERT_ARG(0, V8ToUint32);
+  return Uint32ToV8(glCheckFramebufferStatus(target));
+}
 
 // void clear(GLbitfield mask);
-static v8::Handle<v8::Value> Callback_clear(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_clear(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  uint32_t mask = CONVERT_ARG(0, V8ToUint32);
+  glClear(mask);
+  return v8::Undefined();
+}
 
 // void clearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
-static v8::Handle<v8::Value> Callback_clearColor(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_clearColor(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(4);
+  float red = CONVERT_ARG(0, V8ToFloat);
+  float green = CONVERT_ARG(1, V8ToFloat);
+  float blue = CONVERT_ARG(2, V8ToFloat);
+  float alpha = CONVERT_ARG(3, V8ToFloat);
+  glClearColor(red, green, blue, alpha);
+  return v8::Undefined();
+}
 
 // void clearDepth(GLclampf depth);
-static v8::Handle<v8::Value> Callback_clearDepth(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_clearDepth(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  float depth = CONVERT_ARG(0, V8ToFloat);
+  glClearDepth(depth);
+  return v8::Undefined();
+}
 
 // void clearStencil(GLint s);
-static v8::Handle<v8::Value> Callback_clearStencil(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_clearStencil(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  int32_t s = CONVERT_ARG(0, V8ToInt32);
+  glClearStencil(s);
+  return v8::Undefined();
+}
 
 // void colorMask(GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha);
-static v8::Handle<v8::Value> Callback_colorMask(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_colorMask(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(4);
+  bool red = CONVERT_ARG(0, V8ToBoolean);
+  bool green = CONVERT_ARG(1, V8ToBoolean);
+  bool blue = CONVERT_ARG(2, V8ToBoolean);
+  bool alpha = CONVERT_ARG(3, V8ToBoolean);
+  glColorMask(red, green, blue, alpha);
+  return v8::Undefined();
+}
 
 // void compileShader(WebGLShader shader);
 static v8::Handle<v8::Value> Callback_compileShader(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
@@ -159,11 +223,37 @@ static v8::Handle<v8::Value> Callback_compileShader(const v8::Arguments& args) {
 // void copyTexImage2D(GLenum target, GLint level, GLenum internalformat, 
 //                     GLint x, GLint y, GLsizei width, GLsizei height, 
 //                     GLint border);
-static v8::Handle<v8::Value> Callback_copyTexImage2D(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_copyTexImage2D(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(8);
+  uint32_t target = CONVERT_ARG(0, V8ToUint32);
+  int32_t level = CONVERT_ARG(1, V8ToInt32);
+  uint32_t internalformat = CONVERT_ARG(2, V8ToUint32);
+  int32_t x = CONVERT_ARG(3, V8ToInt32);
+  int32_t y = CONVERT_ARG(4, V8ToInt32);
+  int32_t width = CONVERT_ARG(5, V8ToInt32);
+  int32_t height = CONVERT_ARG(6, V8ToInt32);
+  int32_t border = CONVERT_ARG(7, V8ToInt32);
+  glCopyTexImage2D(target, level, internalformat, x, y, width, height, border);
+  return v8::Undefined();
+}
 
 // void copyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, 
 //                        GLint x, GLint y, GLsizei width, GLsizei height);
-static v8::Handle<v8::Value> Callback_copyTexSubImage2D(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_copyTexSubImage2D(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(8);
+  uint32_t target = CONVERT_ARG(0, V8ToUint32);
+  int32_t level = CONVERT_ARG(1, V8ToInt32);
+  int32_t xoffset = CONVERT_ARG(2, V8ToInt32);
+  int32_t yoffset = CONVERT_ARG(3, V8ToInt32);
+  int32_t x = CONVERT_ARG(4, V8ToInt32);
+  int32_t y = CONVERT_ARG(5, V8ToInt32);
+  int32_t width = CONVERT_ARG(6, V8ToInt32);
+  int32_t height = CONVERT_ARG(7, V8ToInt32);
+  glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
+  return v8::Undefined();
+}
 
 // WebGLBuffer createBuffer();
 static v8::Handle<v8::Value> Callback_createBuffer(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
