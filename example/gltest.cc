@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
 
     v8::Context::Scope context_scope(context);
 
-    v8::Handle<v8::String> source = v8::String::New("var canvas = new Canvas(); canvas.width = canvas.height = 200; var rc = canvas.getContext(); console.log('canvas=' + canvas); console.log('context=' + rc); console.log('width=' + canvas.width); console.log('FRONT=' + WebGLRenderingContext.FRONT); canvas = null; /*gc();*/");
+    v8::Handle<v8::String> source = v8::String::New("var canvas = new Canvas(); canvas.width = canvas.height = 200; var gl = canvas.getContext(); console.log('canvas=' + canvas); console.log('context=' + gl); console.log('width=' + canvas.width); console.log('FRONT=' + WebGLRenderingContext.FRONT); canvas = null; /*gc();*/");
     v8::Handle<v8::Script> script = v8::Script::Compile(source);
 
     v8::Handle<v8::Value> result = script->Run();

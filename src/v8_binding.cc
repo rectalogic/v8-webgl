@@ -16,6 +16,16 @@ v8::Persistent<v8::FunctionTemplate> V8ObjectBase::CreateConstructorTemplate(con
   return constructor;
 }
 
+double V8ToNumber(v8::Handle<v8::Value> value, bool& ok) {
+  ok = true;
+  v8::Local<v8::Number> numValue = value->ToNumber();
+  if (numValue.IsEmpty()) {
+    ok = false;
+    return 0;
+  }
+  return numValue->Value();
+}
+
 int32_t V8ToInt32(v8::Handle<v8::Value> value, bool& ok) {
   ok = true;
   v8::Local<v8::Int32> intValue = value->ToInt32();

@@ -90,7 +90,7 @@ static v8::Handle<v8::Value> Getter_height(v8::Local<v8::String> property, const
 }
 
 v8::Handle<v8::Value> Canvas::ConstructorCallback(const v8::Arguments& args) {
-  Canvas* canvas = new Canvas(args.This());
+  new Canvas(args.This());
   return args.This();
 }
 

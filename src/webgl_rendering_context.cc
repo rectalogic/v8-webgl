@@ -2,6 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#if defined(__APPLE__)
+#include <OpenGL/gl.h>
+#else
+#include <GL/gl.h>
+#endif
+
 #include "v8_webgl_internal.h"
 #include "v8_binding.h"
 #include "webgl_rendering_context.h"
@@ -13,11 +19,21 @@ unsigned long WebGLRenderingContext::s_context_counter = 0;
 #define PROTO_METHOD(name) AddCallback(proto, #name, Callback_##name, signature)
 #define CONSTANT(name, value) SetConstant(#name, value, proto, constructor)
 
+#define CHECK_ARGS(num) \
+  if (args.Length() < num) \
+    return ThrowArgCount();
+
+#define CONVERT_ARG(num, converter) \
+  converter(args[num], ok); \
+  if (!ok) return v8::Undefined();
+
 #define CALLBACK_PREAMBLE() \
   WebGLRenderingContext* context = WebGLRenderingContext::ToNative(args.Holder()); \
   if (!context) \
     return ThrowObjectDisposed(); \
-  context->MakeCurrent();
+  context->MakeCurrent(); \
+  bool ok = true; \
+  (void)ok;
 
 
 // Only Canvas creates us - so make ourself not weak
@@ -53,7 +69,13 @@ static v8::Handle<v8::Value> Callback_getSupportedExtensions(const v8::Arguments
 static v8::Handle<v8::Value> Callback_getExtension(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
 
 // void activeTexture(GLenum texture);
-static v8::Handle<v8::Value> Callback_activeTexture(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_activeTexture(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  uint32_t texture = CONVERT_ARG(0, V8ToUint32);
+  glActiveTexture(texture);
+  return v8::Undefined();
+}
 
 // void attachShader(WebGLProgram program, WebGLShader shader);
 static v8::Handle<v8::Value> Callback_attachShader(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
@@ -74,10 +96,25 @@ static v8::Handle<v8::Value> Callback_bindRenderbuffer(const v8::Arguments& args
 static v8::Handle<v8::Value> Callback_bindTexture(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
 
 // void blendColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
-static v8::Handle<v8::Value> Callback_blendColor(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_blendColor(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(4);
+  float red = CONVERT_ARG(0, V8ToFloat);
+  float green = CONVERT_ARG(1, V8ToFloat);
+  float blue = CONVERT_ARG(2, V8ToFloat);
+  float alpha = CONVERT_ARG(3, V8ToFloat);
+  glBlendColor(red, green, blue, alpha);
+  return v8::Undefined();
+ }
 
 // void blendEquation(GLenum mode);
-static v8::Handle<v8::Value> Callback_blendEquation(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_blendEquation(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  uint32_t mode = CONVERT_ARG(0, V8ToUint32);
+  glBlendEquation(mode);
+  return v8::Undefined();
+}
 
 // void blendEquationSeparate(GLenum modeRGB, GLenum modeAlpha);
 static v8::Handle<v8::Value> Callback_blendEquationSeparate(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }

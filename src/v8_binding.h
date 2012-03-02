@@ -14,10 +14,18 @@ inline v8::Handle<v8::Value> ThrowObjectDisposed() {
   return v8::ThrowException(v8::Exception::ReferenceError(v8::String::New("Object has been disposed")));
 }
 
+inline v8::Handle<v8::Value> ThrowArgCount() {
+  return v8::ThrowException(v8::Exception::TypeError(v8::String::New("Not enough arguments")));
+}
+
 inline v8::Handle<v8::Boolean> BooleanToV8(bool value) {
   return value ? v8::True() : v8::False();
 }
 
+double V8ToNumber(v8::Handle<v8::Value> value, bool& ok);
+inline float V8ToFloat(v8::Handle<v8::Value> value, bool& ok) {
+  return static_cast<float>(V8ToNumber(value, ok));
+}
 int32_t V8ToInt32(v8::Handle<v8::Value> value, bool& ok);
 uint32_t V8ToUint32(v8::Handle<v8::Value> value, bool& ok);
 
