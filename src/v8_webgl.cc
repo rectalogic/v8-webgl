@@ -44,6 +44,8 @@ void Uninitialize() {
   WebGLRenderingContext::Uninitialize();
   //XXX uninitialize webgl classes
 
+  // Run GC until everything is freed
+  while (!v8::V8::IdleNotification()) {}
   v8::V8::Dispose();
 }
 
