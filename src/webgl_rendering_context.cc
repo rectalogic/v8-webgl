@@ -15,7 +15,7 @@ namespace v8_webgl {
   v8::HandleScope scope; \
   WebGLRenderingContext* context = WebGLRenderingContext::ToNative(args.Holder()); \
   if (!context) \
-    return ThrowHandleDisposed();
+    return WebGLRenderingContext::ThrowHandleDisposed();
 
 
 // Only Canvas creates us - so make ourself not weak

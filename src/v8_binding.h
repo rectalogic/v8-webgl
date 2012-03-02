@@ -11,6 +11,11 @@
 namespace v8_webgl {
 
 class V8ObjectBase {
+ public:
+  static inline v8::Handle<v8::Value> ThrowHandleDisposed() {
+    return v8::ThrowException(v8::String::New("Object has been disposed"));
+  }
+
  protected:
   virtual ~V8ObjectBase() {}
 
@@ -19,10 +24,6 @@ class V8ObjectBase {
                v8::FunctionTemplate::New(callback, v8::Handle<v8::Value>(), signature),
                v8::DontDelete);
   };
-
-  static inline v8::Handle<v8::Value> ThrowHandleDisposed() {
-    return v8::ThrowException(v8::Exception(v8::String::New("Object has been disposed")));
-  }
 
   static v8::Persistent<v8::FunctionTemplate> CreateConstructorTemplate(const char* class_name, v8::InvocationCallback callback);
 };

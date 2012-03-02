@@ -52,7 +52,7 @@ static v8::Handle<v8::Value> Callback_getContext(const v8::Arguments& args) {
   v8::HandleScope scope;
   Canvas* canvas = Canvas::ToNative(args.Holder());
   if (!canvas)
-    return ThrowHandleDisposed();
+    return Canvas::ThrowHandleDisposed();
   //XXX validate first arg is "experimental-webgl", handle optional second arg params
   return canvas->GetRenderingContext()->ToV8();
 }
@@ -61,7 +61,7 @@ static void Setter_width(v8::Local<v8::String> property, v8::Local<v8::Value> va
   v8::HandleScope scope;
   Canvas* canvas = Canvas::ToNative(info.Holder());
   if (!canvas) {
-    ThrowHandleDisposed();
+    Canvas::ThrowHandleDisposed();
     return;
   }
   canvas->set_width(value->Int32Value());
@@ -71,7 +71,7 @@ static v8::Handle<v8::Value> Getter_width(v8::Local<v8::String> property, const 
   v8::HandleScope scope;
   Canvas* canvas = Canvas::ToNative(info.Holder());
   if (!canvas)
-    return ThrowHandleDisposed();
+    return Canvas::ThrowHandleDisposed();
   return scope.Close(v8::Integer::New(canvas->get_width()));
 }
 
@@ -79,7 +79,7 @@ static void Setter_height(v8::Local<v8::String> property, v8::Local<v8::Value> v
   v8::HandleScope scope;
   Canvas* canvas = Canvas::ToNative(info.Holder());
   if (!canvas) {
-    ThrowHandleDisposed();
+    Canvas::ThrowHandleDisposed();
     return;
   }
   canvas->set_height(value->Int32Value());
@@ -89,7 +89,7 @@ static v8::Handle<v8::Value> Getter_height(v8::Local<v8::String> property, const
   v8::HandleScope scope;
   Canvas* canvas = Canvas::ToNative(info.Holder());
   if (!canvas)
-    return ThrowHandleDisposed();
+    return Canvas::ThrowHandleDisposed();
   return scope.Close(v8::Integer::New(canvas->get_height()));
 }
 
