@@ -23,6 +23,8 @@ class WebGLProgram : public V8Object<WebGLProgram> {
 
  private:
   unsigned long context_id_;
+
+  friend class WebGLRenderingContext;
 };
 
 }

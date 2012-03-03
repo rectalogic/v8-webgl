@@ -23,6 +23,8 @@ class WebGLFramebuffer : public V8Object<WebGLFramebuffer> {
 
  private:
   unsigned long context_id_;
+
+  friend class WebGLRenderingContext;
 };
 
 }

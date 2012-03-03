@@ -23,6 +23,8 @@ class WebGLActiveInfo : public V8Object<WebGLActiveInfo> {
 
  private:
   unsigned long context_id_;
+
+  friend class WebGLRenderingContext;
 };
 
 }

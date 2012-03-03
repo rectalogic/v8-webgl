@@ -10,7 +10,16 @@
 
 #include "v8_webgl_internal.h"
 #include "v8_binding.h"
+#include "webgl_active_info.h"
+#include "webgl_buffer.h"
+#include "webgl_framebuffer.h"
+#include "webgl_program.h"
+#include "webgl_renderbuffer.h"
 #include "webgl_rendering_context.h"
+#include "webgl_shader.h"
+#include "webgl_texture.h"
+#include "webgl_uniform_location.h"
+
 
 namespace v8_webgl {
 
@@ -45,6 +54,30 @@ WebGLRenderingContext::WebGLRenderingContext(int width, int height)
 
 WebGLRenderingContext::~WebGLRenderingContext() {
   delete graphic_context_;
+}
+WebGLActiveInfo* WebGLRenderingContext::CreateActiveInfo() {
+  return new WebGLActiveInfo(this);
+}
+WebGLBuffer* WebGLRenderingContext::CreateBuffer(uint32_t buffer_id) {
+  return new WebGLBuffer(this, buffer_id);
+}
+WebGLFramebuffer* WebGLRenderingContext::CreateFramebuffer() {
+  return new WebGLFramebuffer(this);
+}
+WebGLProgram* WebGLRenderingContext::CreateProgram() {
+  return new WebGLProgram(this);
+}
+WebGLRenderbuffer* WebGLRenderingContext::CreateRenderbuffer() {
+  return new WebGLRenderbuffer(this);
+}
+WebGLShader* WebGLRenderingContext::CreateShader() {
+  return new WebGLShader(this);
+}
+WebGLTexture* WebGLRenderingContext::CreateTexture() {
+  return new WebGLTexture(this);
+}
+WebGLUniformLocation* WebGLRenderingContext::CreateUniformLocation() {
+  return new WebGLUniformLocation(this);
 }
 
 //////
@@ -256,7 +289,13 @@ static v8::Handle<v8::Value> Callback_copyTexSubImage2D(const v8::Arguments& arg
 }
 
 // WebGLBuffer createBuffer();
-static v8::Handle<v8::Value> Callback_createBuffer(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_createBuffer(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  GLuint buffer_id = 0;
+  glGenBuffers(1, &buffer_id);
+  WebGLBuffer* buffer = context->CreateBuffer(buffer_id);
+  return buffer->ToV8();
+}
 
 // WebGLFramebuffer createFramebuffer();
 static v8::Handle<v8::Value> Callback_createFramebuffer(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }

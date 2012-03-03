@@ -23,6 +23,8 @@ class WebGLRenderbuffer : public V8Object<WebGLRenderbuffer> {
 
  private:
   unsigned long context_id_;
+
+  friend class WebGLRenderingContext;
 };
 
 }

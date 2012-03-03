@@ -23,6 +23,8 @@ class WebGLUniformLocation : public V8Object<WebGLUniformLocation> {
 
  private:
   unsigned long context_id_;
+
+  friend class WebGLRenderingContext;
 };
 
 }

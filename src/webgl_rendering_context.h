@@ -11,6 +11,14 @@
 namespace v8_webgl {
 class GraphicContext;
 class Canvas;
+class WebGLActiveInfo;
+class WebGLBuffer;
+class WebGLFramebuffer;
+class WebGLProgram;
+class WebGLRenderbuffer;
+class WebGLShader;
+class WebGLTexture;
+class WebGLUniformLocation;
 
 class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
  public:
@@ -24,6 +32,15 @@ class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
   void Resize(int width, int height) {
     graphic_context_->Resize(width, height);
   }
+
+  WebGLActiveInfo* CreateActiveInfo();
+  WebGLBuffer* CreateBuffer(uint32_t buffer_id);
+  WebGLFramebuffer* CreateFramebuffer();
+  WebGLProgram* CreateProgram();
+  WebGLRenderbuffer* CreateRenderbuffer();
+  WebGLShader* CreateShader();
+  WebGLTexture* CreateTexture();
+  WebGLUniformLocation* CreateUniformLocation();
 
   unsigned long get_context_id() { return context_id_; }
 

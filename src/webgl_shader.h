@@ -23,6 +23,8 @@ class WebGLShader : public V8Object<WebGLShader> {
 
  private:
   unsigned long context_id_;
+
+  friend class WebGLRenderingContext;
 };
 
 }

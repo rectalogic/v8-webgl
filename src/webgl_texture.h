@@ -23,6 +23,8 @@ class WebGLTexture : public V8Object<WebGLTexture> {
 
  private:
   unsigned long context_id_;
+
+  friend class WebGLRenderingContext;
 };
 
 }
