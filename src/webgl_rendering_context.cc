@@ -61,8 +61,8 @@ WebGLActiveInfo* WebGLRenderingContext::CreateActiveInfo() {
 WebGLBuffer* WebGLRenderingContext::CreateBuffer(uint32_t buffer_id) {
   return new WebGLBuffer(this, buffer_id);
 }
-WebGLFramebuffer* WebGLRenderingContext::CreateFramebuffer() {
-  return new WebGLFramebuffer(this);
+WebGLFramebuffer* WebGLRenderingContext::CreateFramebuffer(uint32_t framebuffer_id) {
+  return new WebGLFramebuffer(this, framebuffer_id);
 }
 WebGLProgram* WebGLRenderingContext::CreateProgram() {
   return new WebGLProgram(this);
@@ -298,7 +298,14 @@ static v8::Handle<v8::Value> Callback_createBuffer(const v8::Arguments& args) {
 }
 
 // WebGLFramebuffer createFramebuffer();
-static v8::Handle<v8::Value> Callback_createFramebuffer(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_createFramebuffer(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  GLuint framebuffer_id = 0;
+  //XXX glGenFramebuffersEXT etc.
+  glGenFramebuffers(1, &framebuffer_id);
+  WebGLFramebuffer* framebuffer = context->CreateFramebuffer(framebuffer_id);
+  return framebuffer->ToV8();
+}
 
 // WebGLProgram createProgram();
 static v8::Handle<v8::Value> Callback_createProgram(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
