@@ -61,6 +61,7 @@ int main(int argc, char* argv[])
          "console.log('FRONT=' + WebGLRenderingContext.FRONT);"
          "console.log('buffer=' + gl.createBuffer());"
          "console.log('program=' + gl.createProgram());"
+         "console.log('renderbuffer=' + gl.createRenderbuffer());"
          "canvas = null;"
          "/*gc();*/"
          );

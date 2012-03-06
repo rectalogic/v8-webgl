@@ -67,8 +67,8 @@ WebGLFramebuffer* WebGLRenderingContext::CreateFramebuffer(uint32_t framebuffer_
 WebGLProgram* WebGLRenderingContext::CreateProgram(uint32_t program_id) {
   return new WebGLProgram(this, program_id);
 }
-WebGLRenderbuffer* WebGLRenderingContext::CreateRenderbuffer() {
-  return new WebGLRenderbuffer(this);
+WebGLRenderbuffer* WebGLRenderingContext::CreateRenderbuffer(uint32_t renderbuffer_id) {
+  return new WebGLRenderbuffer(this, renderbuffer_id);
 }
 WebGLShader* WebGLRenderingContext::CreateShader() {
   return new WebGLShader(this);
@@ -316,7 +316,14 @@ static v8::Handle<v8::Value> Callback_createProgram(const v8::Arguments& args) {
 }
 
 // WebGLRenderbuffer createRenderbuffer();
-static v8::Handle<v8::Value> Callback_createRenderbuffer(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_createRenderbuffer(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  GLuint renderbuffer_id = 0;
+  //XXX glGenRenderbuffersEXT etc.
+  glGenRenderbuffers(1, &renderbuffer_id);
+  WebGLRenderbuffer* renderbuffer = context->CreateRenderbuffer(renderbuffer_id);
+  return renderbuffer->ToV8();
+}
 
 // WebGLShader createShader(GLenum type);
 static v8::Handle<v8::Value> Callback_createShader(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }

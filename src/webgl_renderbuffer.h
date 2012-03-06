@@ -15,14 +15,17 @@ class WebGLRenderbuffer : public V8Object<WebGLRenderbuffer> {
   static const char* const ClassName() { return "WebGLRenderbuffer"; }
 
   unsigned long get_context_id() { return context_id_; }
+  uint32_t get_renderbuffer_id() { return renderbuffer_id_; }
 
  protected:
-  WebGLRenderbuffer(WebGLRenderingContext* context)
+  WebGLRenderbuffer(WebGLRenderingContext* context, uint32_t renderbuffer_id)
       : V8Object<WebGLRenderbuffer>()
-      , context_id_(context->get_context_id()) {}
+      , context_id_(context->get_context_id())
+      , renderbuffer_id_(renderbuffer_id) {}
 
  private:
   unsigned long context_id_;
+  uint32_t renderbuffer_id_;
 
   friend class WebGLRenderingContext;
 };
