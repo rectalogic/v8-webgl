@@ -372,10 +372,26 @@ static v8::Handle<v8::Value> Callback_deleteBuffer(const v8::Arguments& args) {
 }
 
 // void deleteFramebuffer(WebGLFramebuffer framebuffer);
-static v8::Handle<v8::Value> Callback_deleteFramebuffer(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_deleteFramebuffer(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  WebGLFramebuffer* framebuffer = CONVERT_ARG(0, V8ToNative<WebGLFramebuffer>);
+  VALIDATE_CONTEXT(framebuffer);
+  GLuint framebuffer_id = framebuffer->get_framebuffer_id();
+  //XXX glDeleteFramebuffersEXT etc.
+  glDeleteFramebuffers(1, &framebuffer_id);
+  return v8::Undefined();
+}
 
 // void deleteProgram(WebGLProgram program);
-static v8::Handle<v8::Value> Callback_deleteProgram(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_deleteProgram(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  WebGLProgram* program = CONVERT_ARG(0, V8ToNative<WebGLProgram>);
+  VALIDATE_CONTEXT(program);
+  glDeleteProgram(program->get_program_id());
+  return v8::Undefined();
+}
 
 // void deleteRenderbuffer(WebGLRenderbuffer renderbuffer);
 static v8::Handle<v8::Value> Callback_deleteRenderbuffer(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
