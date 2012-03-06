@@ -394,7 +394,16 @@ static v8::Handle<v8::Value> Callback_deleteProgram(const v8::Arguments& args) {
 }
 
 // void deleteRenderbuffer(WebGLRenderbuffer renderbuffer);
-static v8::Handle<v8::Value> Callback_deleteRenderbuffer(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_deleteRenderbuffer(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  WebGLRenderbuffer* renderbuffer = CONVERT_ARG(0, V8ToNative<WebGLRenderbuffer>);
+  VALIDATE_CONTEXT(renderbuffer);
+  GLuint renderbuffer_id = renderbuffer->get_renderbuffer_id();
+  //XXX glDeleteRenderbuffersEXT etc.
+  glDeleteRenderbuffers(1, &renderbuffer_id);
+  return v8::Undefined();
+}
 
 // void deleteShader(WebGLShader shader);
 static v8::Handle<v8::Value> Callback_deleteShader(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
