@@ -38,7 +38,7 @@ class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
   WebGLFramebuffer* CreateFramebuffer(uint32_t framebuffer_id);
   WebGLProgram* CreateProgram(uint32_t program_id);
   WebGLRenderbuffer* CreateRenderbuffer(uint32_t renderbuffer_id);
-  WebGLShader* CreateShader();
+  WebGLShader* CreateShader(uint32_t shader_id);
   WebGLTexture* CreateTexture();
   WebGLUniformLocation* CreateUniformLocation();
 

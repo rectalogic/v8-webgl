@@ -15,14 +15,17 @@ class WebGLShader : public V8Object<WebGLShader> {
   static const char* const ClassName() { return "WebGLShader"; }
 
   unsigned long get_context_id() { return context_id_; }
+  uint32_t get_shader_id() { return shader_id_; }
 
  protected:
-  WebGLShader(WebGLRenderingContext* context)
+  WebGLShader(WebGLRenderingContext* context, uint32_t shader_id)
       : V8Object<WebGLShader>()
-      , context_id_(context->get_context_id()) {}
+      , context_id_(context->get_context_id())
+      , shader_id_(shader_id) {}
 
  private:
   unsigned long context_id_;
+  uint32_t shader_id_;
 
   friend class WebGLRenderingContext;
 };

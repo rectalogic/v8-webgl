@@ -70,8 +70,8 @@ WebGLProgram* WebGLRenderingContext::CreateProgram(uint32_t program_id) {
 WebGLRenderbuffer* WebGLRenderingContext::CreateRenderbuffer(uint32_t renderbuffer_id) {
   return new WebGLRenderbuffer(this, renderbuffer_id);
 }
-WebGLShader* WebGLRenderingContext::CreateShader() {
-  return new WebGLShader(this);
+WebGLShader* WebGLRenderingContext::CreateShader(uint32_t shader_id) {
+  return new WebGLShader(this, shader_id);
 }
 WebGLTexture* WebGLRenderingContext::CreateTexture() {
   return new WebGLTexture(this);
@@ -326,7 +326,14 @@ static v8::Handle<v8::Value> Callback_createRenderbuffer(const v8::Arguments& ar
 }
 
 // WebGLShader createShader(GLenum type);
-static v8::Handle<v8::Value> Callback_createShader(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_createShader(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  uint32_t type = CONVERT_ARG(0, V8ToUint32);
+  GLuint shader_id = glCreateShader(type);
+  WebGLShader* shader = context->CreateShader(shader_id);
+  return shader->ToV8();
+}
 
 // WebGLTexture createTexture();
 static v8::Handle<v8::Value> Callback_createTexture(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
