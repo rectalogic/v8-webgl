@@ -36,6 +36,10 @@ unsigned long WebGLRenderingContext::s_context_counter = 0;
   converter(args[num], ok); \
   if (!ok) return v8::Undefined();
 
+#define VALIDATE_CONTEXT(object) \
+  if (!object->ValidateContext(context)) \
+    return ThrowInvalidContext();
+
 #define CALLBACK_PREAMBLE() \
   WebGLRenderingContext* context = WebGLRenderingContext::ToNative(args.Holder()); \
   if (!context) \
@@ -44,6 +48,9 @@ unsigned long WebGLRenderingContext::s_context_counter = 0;
   bool ok = true; \
   (void)ok;
 
+static inline v8::Handle<v8::Value> ThrowInvalidContext() {
+  return v8::ThrowException(v8::Exception::TypeError(v8::String::New("Object not created with this WebGLRenderingContext")));
+}
 
 // Only Canvas creates us - so make ourself not weak
 WebGLRenderingContext::WebGLRenderingContext(int width, int height)
@@ -345,10 +352,24 @@ static v8::Handle<v8::Value> Callback_createTexture(const v8::Arguments& args) {
 }
 
 // void cullFace(GLenum mode);
-static v8::Handle<v8::Value> Callback_cullFace(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_cullFace(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  uint32_t mode = CONVERT_ARG(0, V8ToUint32);
+  glCullFace(mode);
+  return v8::Undefined();
+}
 
 // void deleteBuffer(WebGLBuffer buffer);
-static v8::Handle<v8::Value> Callback_deleteBuffer(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_deleteBuffer(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  WebGLBuffer* buffer = CONVERT_ARG(0, V8ToNative<WebGLBuffer>);
+  VALIDATE_CONTEXT(buffer);
+  GLuint buffer_id = buffer->get_buffer_id();
+  glDeleteBuffers(1, &buffer_id);
+  return v8::Undefined();
+}
 
 // void deleteFramebuffer(WebGLFramebuffer framebuffer);
 static v8::Handle<v8::Value> Callback_deleteFramebuffer(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }

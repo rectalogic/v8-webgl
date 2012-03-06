@@ -14,7 +14,7 @@ class WebGLTexture : public V8Object<WebGLTexture> {
  public:
   static const char* const ClassName() { return "WebGLTexture"; }
 
-  unsigned long get_context_id() { return context_id_; }
+  bool ValidateContext(WebGLRenderingContext* context) { return context->get_context_id() == context_id_; }
   uint32_t get_texture_id() { return texture_id_; }
 
  protected:

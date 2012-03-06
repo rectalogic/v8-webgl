@@ -37,6 +37,24 @@ inline float V8ToFloat(v8::Handle<v8::Value> value, bool& ok) {
 int32_t V8ToInt32(v8::Handle<v8::Value> value, bool& ok);
 uint32_t V8ToUint32(v8::Handle<v8::Value> value, bool& ok);
 
+template<class T>
+T* V8ToNative(v8::Handle<v8::Value> value, bool& ok) {
+  ok = true;
+
+  if (!T::HasInstance(value)) {
+    ok = false;
+    return 0;
+  }
+  v8::Handle<v8::Object> object = value->ToObject();
+  T* native = T::ToNative(object);
+  if (!native) {
+    ok = false;
+    ThrowObjectDisposed();
+    return 0;
+  }
+  return native;
+}
+
 //////
 
 class V8ObjectBase {

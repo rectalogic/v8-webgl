@@ -14,7 +14,7 @@ class WebGLFramebuffer : public V8Object<WebGLFramebuffer> {
  public:
   static const char* const ClassName() { return "WebGLFramebuffer"; }
 
-  unsigned long get_context_id() { return context_id_; }
+  bool ValidateContext(WebGLRenderingContext* context) { return context->get_context_id() == context_id_; }
   uint32_t get_framebuffer_id() { return framebuffer_id_; }
 
  protected:

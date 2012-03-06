@@ -14,7 +14,7 @@ class WebGLActiveInfo : public V8Object<WebGLActiveInfo> {
  public:
   static const char* const ClassName() { return "WebGLActiveInfo"; }
 
-  unsigned long get_context_id() { return context_id_; }
+  bool ValidateContext(WebGLRenderingContext* context) { return context->get_context_id() == context_id_; }
 
  protected:
   WebGLActiveInfo(WebGLRenderingContext* context)

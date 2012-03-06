@@ -14,7 +14,7 @@ class WebGLBuffer : public V8Object<WebGLBuffer> {
  public:
   static const char* const ClassName() { return "WebGLBuffer"; }
 
-  unsigned long get_context_id() { return context_id_; }
+  bool ValidateContext(WebGLRenderingContext* context) { return context->get_context_id() == context_id_; }
   uint32_t get_buffer_id() { return buffer_id_; }
 
  protected:

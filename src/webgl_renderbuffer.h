@@ -14,7 +14,7 @@ class WebGLRenderbuffer : public V8Object<WebGLRenderbuffer> {
  public:
   static const char* const ClassName() { return "WebGLRenderbuffer"; }
 
-  unsigned long get_context_id() { return context_id_; }
+  bool ValidateContext(WebGLRenderingContext* context) { return context->get_context_id() == context_id_; }
   uint32_t get_renderbuffer_id() { return renderbuffer_id_; }
 
  protected:

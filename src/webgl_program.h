@@ -14,7 +14,7 @@ class WebGLProgram : public V8Object<WebGLProgram> {
  public:
   static const char* const ClassName() { return "WebGLProgram"; }
 
-  unsigned long get_context_id() { return context_id_; }
+  bool ValidateContext(WebGLRenderingContext* context) { return context->get_context_id() == context_id_; }
   uint32_t get_program_id() { return program_id_; }
 
  protected:

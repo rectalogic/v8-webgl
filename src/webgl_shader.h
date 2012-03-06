@@ -14,7 +14,7 @@ class WebGLShader : public V8Object<WebGLShader> {
  public:
   static const char* const ClassName() { return "WebGLShader"; }
 
-  unsigned long get_context_id() { return context_id_; }
+  bool ValidateContext(WebGLRenderingContext* context) { return context->get_context_id() == context_id_; }
   uint32_t get_shader_id() { return shader_id_; }
 
  protected:
