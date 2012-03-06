@@ -416,13 +416,33 @@ static v8::Handle<v8::Value> Callback_deleteShader(const v8::Arguments& args) {
 }
 
 // void deleteTexture(WebGLTexture texture);
-static v8::Handle<v8::Value> Callback_deleteTexture(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_deleteTexture(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  WebGLTexture* texture = CONVERT_ARG(0, V8ToNative<WebGLTexture>);
+  VALIDATE_CONTEXT(texture);
+  GLuint texture_id = texture->get_texture_id();
+  glDeleteTextures(1, &texture_id);
+  return v8::Undefined();
+}
 
 // void depthFunc(GLenum func);
-static v8::Handle<v8::Value> Callback_depthFunc(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_depthFunc(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  uint32_t func = CONVERT_ARG(0, V8ToUint32);
+  glDepthFunc(func);
+  return v8::Undefined();
+}
 
 // void depthMask(GLboolean flag);
-static v8::Handle<v8::Value> Callback_depthMask(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_depthMask(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  GLboolean flag = CONVERT_ARG(0, V8ToBoolean);
+  glDepthMask(flag);
+  return v8::Undefined();
+}
 
 // void depthRange(GLclampf zNear, GLclampf zFar);
 static v8::Handle<v8::Value> Callback_depthRange(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
@@ -431,10 +451,22 @@ static v8::Handle<v8::Value> Callback_depthRange(const v8::Arguments& args) { re
 static v8::Handle<v8::Value> Callback_detachShader(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
 
 // void disable(GLenum cap);
-static v8::Handle<v8::Value> Callback_disable(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_disable(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  uint32_t cap = CONVERT_ARG(0, V8ToUint32);
+  glDisable(cap);
+  return v8::Undefined();
+}
 
 // void disableVertexAttribArray(GLuint index);
-static v8::Handle<v8::Value> Callback_disableVertexAttribArray(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_disableVertexAttribArray(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  uint32_t index = CONVERT_ARG(0, V8ToUint32);
+  glDisableVertexAttribArray(index);
+  return v8::Undefined();
+}
 
 // void drawArrays(GLenum mode, GLint first, GLsizei count);
 static v8::Handle<v8::Value> Callback_drawArrays(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
@@ -443,16 +475,36 @@ static v8::Handle<v8::Value> Callback_drawArrays(const v8::Arguments& args) { re
 static v8::Handle<v8::Value> Callback_drawElements(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
 
 // void enable(GLenum cap);
-static v8::Handle<v8::Value> Callback_enable(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_enable(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  uint32_t cap = CONVERT_ARG(0, V8ToUint32);
+  glEnable(cap);
+  return v8::Undefined();
+}
 
 // void enableVertexAttribArray(GLuint index);
-static v8::Handle<v8::Value> Callback_enableVertexAttribArray(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_enableVertexAttribArray(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  uint32_t index = CONVERT_ARG(0, V8ToUint32);
+  glEnableVertexAttribArray(index);
+  return v8::Undefined();
+}
 
 // void finish();
-static v8::Handle<v8::Value> Callback_finish(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_finish(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  glFinish();
+  return v8::Undefined();
+}
 
 // void flush();
-static v8::Handle<v8::Value> Callback_flush(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_flush(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  glFlush();
+  return v8::Undefined();
+}
 
 // void framebufferRenderbuffer(GLenum target, GLenum attachment, 
 //                              GLenum renderbuffertarget, 
@@ -464,10 +516,23 @@ static v8::Handle<v8::Value> Callback_framebufferRenderbuffer(const v8::Argument
 static v8::Handle<v8::Value> Callback_framebufferTexture2D(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
 
 // void frontFace(GLenum mode);
-static v8::Handle<v8::Value> Callback_frontFace(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_frontFace(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  uint32_t mode = CONVERT_ARG(0, V8ToUint32);
+  glFrontFace(mode);
+  return v8::Undefined();
+}
 
 // void generateMipmap(GLenum target);
-static v8::Handle<v8::Value> Callback_generateMipmap(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_generateMipmap(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  uint32_t target = CONVERT_ARG(0, V8ToUint32);
+  //XXX glGenerateMipmapEXT etc.
+  glGenerateMipmap(target);
+  return v8::Undefined();
+}
 
 // WebGLActiveInfo getActiveAttrib(WebGLProgram program, GLuint index);
 static v8::Handle<v8::Value> Callback_getActiveAttrib(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
@@ -534,7 +599,13 @@ static v8::Handle<v8::Value> Callback_hint(const v8::Arguments& args) { return v
 static v8::Handle<v8::Value> Callback_isBuffer(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
 
 // GLboolean isEnabled(GLenum cap);
-static v8::Handle<v8::Value> Callback_isEnabled(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_isEnabled(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  uint32_t cap = CONVERT_ARG(0, V8ToUint32);
+  glIsEnabled(cap);
+  return v8::Undefined();
+}
 
 // GLboolean isFramebuffer(WebGLFramebuffer framebuffer);
 static v8::Handle<v8::Value> Callback_isFramebuffer(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
@@ -587,7 +658,13 @@ static v8::Handle<v8::Value> Callback_stencilFunc(const v8::Arguments& args) { r
 static v8::Handle<v8::Value> Callback_stencilFuncSeparate(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
 
 // void stencilMask(GLuint mask);
-static v8::Handle<v8::Value> Callback_stencilMask(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_stencilMask(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  uint32_t mask = CONVERT_ARG(0, V8ToUint32);
+  glStencilMask(mask);
+  return v8::Undefined();
+}
 
 // void stencilMaskSeparate(GLenum face, GLuint mask);
 static v8::Handle<v8::Value> Callback_stencilMaskSeparate(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }

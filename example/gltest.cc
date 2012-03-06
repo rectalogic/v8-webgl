@@ -75,7 +75,9 @@ int main(int argc, char* argv[])
          "var shader = gl.createShader(gl.FRAGMENT_SHADER);"
          "console.log('shader=' + shader);"
          "gl.deleteShader(shader);"
-         "console.log('texture=' + gl.createTexture());"
+         "var texture = gl.createTexture();"
+         "console.log('texture=' + texture);"
+         "gl.deleteTexture(texture);"
          "canvas = null;"
          "/*gc();*/"
          );
