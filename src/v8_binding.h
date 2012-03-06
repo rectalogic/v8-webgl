@@ -124,7 +124,7 @@ class V8Object : public V8ObjectBase {
   }
 
   // Subclasses should reimplement
-  static void ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> constructor) {}
+  static void ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> /* constructor */) {}
 
   // Subclasses can reimplement this if they don't want their constructor name exposed
   static void ConfigureGlobal(v8::Handle<v8::ObjectTemplate> global) {

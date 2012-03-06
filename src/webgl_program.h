@@ -15,14 +15,17 @@ class WebGLProgram : public V8Object<WebGLProgram> {
   static const char* const ClassName() { return "WebGLProgram"; }
 
   unsigned long get_context_id() { return context_id_; }
+  uint32_t get_program_id() { return program_id_; }
 
  protected:
-  WebGLProgram(WebGLRenderingContext* context)
+  WebGLProgram(WebGLRenderingContext* context, uint32_t program_id)
       : V8Object<WebGLProgram>()
-      , context_id_(context->get_context_id()) {}
+      , context_id_(context->get_context_id())
+      , program_id_(program_id) {}
 
  private:
   unsigned long context_id_;
+  uint32_t program_id_;
 
   friend class WebGLRenderingContext;
 };

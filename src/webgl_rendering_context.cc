@@ -64,8 +64,8 @@ WebGLBuffer* WebGLRenderingContext::CreateBuffer(uint32_t buffer_id) {
 WebGLFramebuffer* WebGLRenderingContext::CreateFramebuffer(uint32_t framebuffer_id) {
   return new WebGLFramebuffer(this, framebuffer_id);
 }
-WebGLProgram* WebGLRenderingContext::CreateProgram() {
-  return new WebGLProgram(this);
+WebGLProgram* WebGLRenderingContext::CreateProgram(uint32_t program_id) {
+  return new WebGLProgram(this, program_id);
 }
 WebGLRenderbuffer* WebGLRenderingContext::CreateRenderbuffer() {
   return new WebGLRenderbuffer(this);
@@ -308,7 +308,12 @@ static v8::Handle<v8::Value> Callback_createFramebuffer(const v8::Arguments& arg
 }
 
 // WebGLProgram createProgram();
-static v8::Handle<v8::Value> Callback_createProgram(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_createProgram(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  GLuint program_id = glCreateProgram();
+  WebGLProgram* program = context->CreateProgram(program_id);
+  return program->ToV8();
+}
 
 // WebGLRenderbuffer createRenderbuffer();
 static v8::Handle<v8::Value> Callback_createRenderbuffer(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
