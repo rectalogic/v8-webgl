@@ -406,7 +406,14 @@ static v8::Handle<v8::Value> Callback_deleteRenderbuffer(const v8::Arguments& ar
 }
 
 // void deleteShader(WebGLShader shader);
-static v8::Handle<v8::Value> Callback_deleteShader(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_deleteShader(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  WebGLShader* shader = CONVERT_ARG(0, V8ToNative<WebGLShader>);
+  VALIDATE_CONTEXT(shader);
+  glDeleteShader(shader->get_shader_id());
+  return v8::Undefined();
+}
 
 // void deleteTexture(WebGLTexture texture);
 static v8::Handle<v8::Value> Callback_deleteTexture(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
