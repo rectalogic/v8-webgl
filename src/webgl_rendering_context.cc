@@ -73,8 +73,8 @@ WebGLRenderbuffer* WebGLRenderingContext::CreateRenderbuffer(uint32_t renderbuff
 WebGLShader* WebGLRenderingContext::CreateShader(uint32_t shader_id) {
   return new WebGLShader(this, shader_id);
 }
-WebGLTexture* WebGLRenderingContext::CreateTexture() {
-  return new WebGLTexture(this);
+WebGLTexture* WebGLRenderingContext::CreateTexture(uint32_t texture_id) {
+  return new WebGLTexture(this, texture_id);
 }
 WebGLUniformLocation* WebGLRenderingContext::CreateUniformLocation() {
   return new WebGLUniformLocation(this);
@@ -336,7 +336,13 @@ static v8::Handle<v8::Value> Callback_createShader(const v8::Arguments& args) {
 }
 
 // WebGLTexture createTexture();
-static v8::Handle<v8::Value> Callback_createTexture(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_createTexture(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  GLuint texture_id = 0;
+  glGenTextures(1, &texture_id);
+  WebGLTexture* texture = context->CreateTexture(texture_id);
+  return texture->ToV8();
+}
 
 // void cullFace(GLenum mode);
 static v8::Handle<v8::Value> Callback_cullFace(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }

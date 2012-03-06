@@ -63,6 +63,7 @@ int main(int argc, char* argv[])
          "console.log('program=' + gl.createProgram());"
          "console.log('renderbuffer=' + gl.createRenderbuffer());"
          "console.log('shader=' + gl.createShader(gl.FRAGMENT_SHADER));"
+         "console.log('texture=' + gl.createTexture());"
          "canvas = null;"
          "/*gc();*/"
          );

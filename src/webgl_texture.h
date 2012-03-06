@@ -15,14 +15,17 @@ class WebGLTexture : public V8Object<WebGLTexture> {
   static const char* const ClassName() { return "WebGLTexture"; }
 
   unsigned long get_context_id() { return context_id_; }
+  uint32_t get_texture_id() { return texture_id_; }
 
  protected:
-  WebGLTexture(WebGLRenderingContext* context)
+  WebGLTexture(WebGLRenderingContext* context, uint32_t texture_id)
       : V8Object<WebGLTexture>()
-      , context_id_(context->get_context_id()) {}
+      , context_id_(context->get_context_id())
+      , texture_id_(texture_id) {}
 
  private:
   unsigned long context_id_;
+  uint32_t texture_id_;
 
   friend class WebGLRenderingContext;
 };
