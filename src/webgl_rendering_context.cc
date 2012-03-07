@@ -219,10 +219,10 @@ static v8::Handle<v8::Value> Callback_clear(const v8::Arguments& args) {
 static v8::Handle<v8::Value> Callback_clearColor(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(4);
-  float red = CONVERT_ARG(0, V8ToFloat);
-  float green = CONVERT_ARG(1, V8ToFloat);
-  float blue = CONVERT_ARG(2, V8ToFloat);
-  float alpha = CONVERT_ARG(3, V8ToFloat);
+  GLclampf red = CONVERT_ARG(0, V8ToFloat);
+  GLclampf green = CONVERT_ARG(1, V8ToFloat);
+  GLclampf blue = CONVERT_ARG(2, V8ToFloat);
+  GLclampf alpha = CONVERT_ARG(3, V8ToFloat);
   glClearColor(red, green, blue, alpha);
   return v8::Undefined();
 }
@@ -231,7 +231,7 @@ static v8::Handle<v8::Value> Callback_clearColor(const v8::Arguments& args) {
 static v8::Handle<v8::Value> Callback_clearDepth(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(1);
-  float depth = CONVERT_ARG(0, V8ToFloat);
+  GLclampf depth = CONVERT_ARG(0, V8ToFloat);
   glClearDepth(depth);
   return v8::Undefined();
 }
@@ -445,10 +445,26 @@ static v8::Handle<v8::Value> Callback_depthMask(const v8::Arguments& args) {
 }
 
 // void depthRange(GLclampf zNear, GLclampf zFar);
-static v8::Handle<v8::Value> Callback_depthRange(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_depthRange(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(2);
+  GLclampf zNear = CONVERT_ARG(0, V8ToFloat);
+  GLclampf zFar = CONVERT_ARG(1, V8ToFloat);
+  glDepthRange(zNear, zFar);
+  return v8::Undefined();
+}
 
 // void detachShader(WebGLProgram program, WebGLShader shader);
-static v8::Handle<v8::Value> Callback_detachShader(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_detachShader(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(2);
+  WebGLProgram* program = CONVERT_ARG(0, V8ToNative<WebGLProgram>);
+  VALIDATE_CONTEXT(program);
+  WebGLShader* shader = CONVERT_ARG(1, V8ToNative<WebGLShader>);
+  VALIDATE_CONTEXT(shader);
+  glDetachShader(program->get_program_id(), shader->get_shader_id());
+  return v8::Undefined();
+}
 
 // void disable(GLenum cap);
 static v8::Handle<v8::Value> Callback_disable(const v8::Arguments& args) {
@@ -469,7 +485,15 @@ static v8::Handle<v8::Value> Callback_disableVertexAttribArray(const v8::Argumen
 }
 
 // void drawArrays(GLenum mode, GLint first, GLsizei count);
-static v8::Handle<v8::Value> Callback_drawArrays(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_drawArrays(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(3);
+  GLenum mode = CONVERT_ARG(0, V8ToUint32);
+  GLint first = CONVERT_ARG(1, V8ToInt32);
+  GLsizei count = CONVERT_ARG(2, V8ToInt32);
+  glDrawArrays(mode, first, count);
+  return v8::Undefined();
+}
 
 // void drawElements(GLenum mode, GLsizei count, GLenum type, GLintptr offset);
 static v8::Handle<v8::Value> Callback_drawElements(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
