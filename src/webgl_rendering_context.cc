@@ -553,7 +553,11 @@ static v8::Handle<v8::Value> Callback_getParameter(const v8::Arguments& args) { 
 static v8::Handle<v8::Value> Callback_getBufferParameter(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
 
 // GLenum getError();
-static v8::Handle<v8::Value> Callback_getError(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_getError(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  GLenum error = glGetError();
+  return Uint32ToV8(error);
+}
 
 // any getFramebufferAttachmentParameter(GLenum target, GLenum attachment, 
 //                                       GLenum pname);

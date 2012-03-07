@@ -78,6 +78,7 @@ int main(int argc, char* argv[])
          "var texture = gl.createTexture();"
          "console.log('texture=' + texture);"
          "gl.deleteTexture(texture);"
+         "console.log('error=' + gl.getError());"
          "canvas = null;"
          "/*gc();*/"
          );
