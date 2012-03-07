@@ -22,6 +22,9 @@ inline v8::Handle<v8::Boolean> BooleanToV8(bool value) {
   return value ? v8::True() : v8::False();
 }
 
+inline v8::Handle<v8::Integer> Int32ToV8(int32_t value) {
+  return v8::Integer::New(value);
+}
 inline v8::Handle<v8::Integer> Uint32ToV8(uint32_t value) {
   return v8::Integer::NewFromUnsigned(value);
 }

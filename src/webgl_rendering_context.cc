@@ -112,7 +112,7 @@ static v8::Handle<v8::Value> Callback_getExtension(const v8::Arguments& args) { 
 static v8::Handle<v8::Value> Callback_activeTexture(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(1);
-  uint32_t texture = CONVERT_ARG(0, V8ToUint32);
+  GLenum texture = CONVERT_ARG(0, V8ToUint32);
   glActiveTexture(texture);
   return v8::Undefined();
 }
@@ -139,10 +139,10 @@ static v8::Handle<v8::Value> Callback_bindTexture(const v8::Arguments& args) { r
 static v8::Handle<v8::Value> Callback_blendColor(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(4);
-  float red = CONVERT_ARG(0, V8ToFloat);
-  float green = CONVERT_ARG(1, V8ToFloat);
-  float blue = CONVERT_ARG(2, V8ToFloat);
-  float alpha = CONVERT_ARG(3, V8ToFloat);
+  GLclampf red = CONVERT_ARG(0, V8ToFloat);
+  GLclampf green = CONVERT_ARG(1, V8ToFloat);
+  GLclampf blue = CONVERT_ARG(2, V8ToFloat);
+  GLclampf alpha = CONVERT_ARG(3, V8ToFloat);
   glBlendColor(red, green, blue, alpha);
   return v8::Undefined();
  }
@@ -151,7 +151,7 @@ static v8::Handle<v8::Value> Callback_blendColor(const v8::Arguments& args) {
 static v8::Handle<v8::Value> Callback_blendEquation(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(1);
-  uint32_t mode = CONVERT_ARG(0, V8ToUint32);
+  GLenum mode = CONVERT_ARG(0, V8ToUint32);
   glBlendEquation(mode);
   return v8::Undefined();
 }
@@ -160,8 +160,8 @@ static v8::Handle<v8::Value> Callback_blendEquation(const v8::Arguments& args) {
 static v8::Handle<v8::Value> Callback_blendEquationSeparate(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(2);
-  uint32_t modeRGB = CONVERT_ARG(0, V8ToUint32);
-  uint32_t modeAlpha = CONVERT_ARG(1, V8ToUint32);
+  GLenum modeRGB = CONVERT_ARG(0, V8ToUint32);
+  GLenum modeAlpha = CONVERT_ARG(1, V8ToUint32);
   glBlendEquationSeparate(modeRGB, modeAlpha);
   return v8::Undefined();
 }
@@ -170,8 +170,8 @@ static v8::Handle<v8::Value> Callback_blendEquationSeparate(const v8::Arguments&
 static v8::Handle<v8::Value> Callback_blendFunc(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(2);
-  uint32_t sfactor = CONVERT_ARG(0, V8ToUint32);
-  uint32_t dfactor = CONVERT_ARG(1, V8ToUint32);
+  GLenum sfactor = CONVERT_ARG(0, V8ToUint32);
+  GLenum dfactor = CONVERT_ARG(1, V8ToUint32);
   glBlendFunc(sfactor, dfactor);
   return v8::Undefined();
 }
@@ -181,10 +181,10 @@ static v8::Handle<v8::Value> Callback_blendFunc(const v8::Arguments& args) {
 static v8::Handle<v8::Value> Callback_blendFuncSeparate(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(4);
-  uint32_t srcRGB = CONVERT_ARG(0, V8ToUint32);
-  uint32_t dstRGB = CONVERT_ARG(1, V8ToUint32);
-  uint32_t srcAlpha = CONVERT_ARG(2, V8ToUint32);
-  uint32_t dstAlpha = CONVERT_ARG(3, V8ToUint32);
+  GLenum srcRGB = CONVERT_ARG(0, V8ToUint32);
+  GLenum dstRGB = CONVERT_ARG(1, V8ToUint32);
+  GLenum srcAlpha = CONVERT_ARG(2, V8ToUint32);
+  GLenum dstAlpha = CONVERT_ARG(3, V8ToUint32);
   glBlendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
   return v8::Undefined();
 }
@@ -202,7 +202,7 @@ static v8::Handle<v8::Value> Callback_bufferSubData(const v8::Arguments& args) {
 static v8::Handle<v8::Value> Callback_checkFramebufferStatus(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(1);
-  uint32_t target = CONVERT_ARG(0, V8ToUint32);
+  GLenum target = CONVERT_ARG(0, V8ToUint32);
   return Uint32ToV8(glCheckFramebufferStatus(target));
 }
 
@@ -210,7 +210,7 @@ static v8::Handle<v8::Value> Callback_checkFramebufferStatus(const v8::Arguments
 static v8::Handle<v8::Value> Callback_clear(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(1);
-  uint32_t mask = CONVERT_ARG(0, V8ToUint32);
+  GLbitfield mask = CONVERT_ARG(0, V8ToUint32);
   glClear(mask);
   return v8::Undefined();
 }
@@ -240,7 +240,7 @@ static v8::Handle<v8::Value> Callback_clearDepth(const v8::Arguments& args) {
 static v8::Handle<v8::Value> Callback_clearStencil(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(1);
-  int32_t s = CONVERT_ARG(0, V8ToInt32);
+  GLint s = CONVERT_ARG(0, V8ToInt32);
   glClearStencil(s);
   return v8::Undefined();
 }
@@ -249,10 +249,10 @@ static v8::Handle<v8::Value> Callback_clearStencil(const v8::Arguments& args) {
 static v8::Handle<v8::Value> Callback_colorMask(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(4);
-  bool red = CONVERT_ARG(0, V8ToBoolean);
-  bool green = CONVERT_ARG(1, V8ToBoolean);
-  bool blue = CONVERT_ARG(2, V8ToBoolean);
-  bool alpha = CONVERT_ARG(3, V8ToBoolean);
+  GLboolean red = CONVERT_ARG(0, V8ToBoolean);
+  GLboolean green = CONVERT_ARG(1, V8ToBoolean);
+  GLboolean blue = CONVERT_ARG(2, V8ToBoolean);
+  GLboolean alpha = CONVERT_ARG(3, V8ToBoolean);
   glColorMask(red, green, blue, alpha);
   return v8::Undefined();
 }
@@ -266,14 +266,14 @@ static v8::Handle<v8::Value> Callback_compileShader(const v8::Arguments& args) {
 static v8::Handle<v8::Value> Callback_copyTexImage2D(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(8);
-  uint32_t target = CONVERT_ARG(0, V8ToUint32);
-  int32_t level = CONVERT_ARG(1, V8ToInt32);
-  uint32_t internalformat = CONVERT_ARG(2, V8ToUint32);
-  int32_t x = CONVERT_ARG(3, V8ToInt32);
-  int32_t y = CONVERT_ARG(4, V8ToInt32);
-  int32_t width = CONVERT_ARG(5, V8ToInt32);
-  int32_t height = CONVERT_ARG(6, V8ToInt32);
-  int32_t border = CONVERT_ARG(7, V8ToInt32);
+  GLenum target = CONVERT_ARG(0, V8ToUint32);
+  GLint level = CONVERT_ARG(1, V8ToInt32);
+  GLenum internalformat = CONVERT_ARG(2, V8ToUint32);
+  GLint x = CONVERT_ARG(3, V8ToInt32);
+  GLint y = CONVERT_ARG(4, V8ToInt32);
+  GLsizei width = CONVERT_ARG(5, V8ToInt32);
+  GLsizei height = CONVERT_ARG(6, V8ToInt32);
+  GLint border = CONVERT_ARG(7, V8ToInt32);
   glCopyTexImage2D(target, level, internalformat, x, y, width, height, border);
   return v8::Undefined();
 }
@@ -283,14 +283,14 @@ static v8::Handle<v8::Value> Callback_copyTexImage2D(const v8::Arguments& args) 
 static v8::Handle<v8::Value> Callback_copyTexSubImage2D(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(8);
-  uint32_t target = CONVERT_ARG(0, V8ToUint32);
-  int32_t level = CONVERT_ARG(1, V8ToInt32);
-  int32_t xoffset = CONVERT_ARG(2, V8ToInt32);
-  int32_t yoffset = CONVERT_ARG(3, V8ToInt32);
-  int32_t x = CONVERT_ARG(4, V8ToInt32);
-  int32_t y = CONVERT_ARG(5, V8ToInt32);
-  int32_t width = CONVERT_ARG(6, V8ToInt32);
-  int32_t height = CONVERT_ARG(7, V8ToInt32);
+  GLenum target = CONVERT_ARG(0, V8ToUint32);
+  GLint level = CONVERT_ARG(1, V8ToInt32);
+  GLint xoffset = CONVERT_ARG(2, V8ToInt32);
+  GLint yoffset = CONVERT_ARG(3, V8ToInt32);
+  GLint x = CONVERT_ARG(4, V8ToInt32);
+  GLint y = CONVERT_ARG(5, V8ToInt32);
+  GLsizei width = CONVERT_ARG(6, V8ToInt32);
+  GLsizei height = CONVERT_ARG(7, V8ToInt32);
   glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
   return v8::Undefined();
 }
@@ -336,7 +336,7 @@ static v8::Handle<v8::Value> Callback_createRenderbuffer(const v8::Arguments& ar
 static v8::Handle<v8::Value> Callback_createShader(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(1);
-  uint32_t type = CONVERT_ARG(0, V8ToUint32);
+  GLenum type = CONVERT_ARG(0, V8ToUint32);
   GLuint shader_id = glCreateShader(type);
   WebGLShader* shader = context->CreateShader(shader_id);
   return shader->ToV8();
@@ -355,7 +355,7 @@ static v8::Handle<v8::Value> Callback_createTexture(const v8::Arguments& args) {
 static v8::Handle<v8::Value> Callback_cullFace(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(1);
-  uint32_t mode = CONVERT_ARG(0, V8ToUint32);
+  GLenum mode = CONVERT_ARG(0, V8ToUint32);
   glCullFace(mode);
   return v8::Undefined();
 }
@@ -430,7 +430,7 @@ static v8::Handle<v8::Value> Callback_deleteTexture(const v8::Arguments& args) {
 static v8::Handle<v8::Value> Callback_depthFunc(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(1);
-  uint32_t func = CONVERT_ARG(0, V8ToUint32);
+  GLenum func = CONVERT_ARG(0, V8ToUint32);
   glDepthFunc(func);
   return v8::Undefined();
 }
@@ -454,7 +454,7 @@ static v8::Handle<v8::Value> Callback_detachShader(const v8::Arguments& args) { 
 static v8::Handle<v8::Value> Callback_disable(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(1);
-  uint32_t cap = CONVERT_ARG(0, V8ToUint32);
+  GLenum cap = CONVERT_ARG(0, V8ToUint32);
   glDisable(cap);
   return v8::Undefined();
 }
@@ -463,7 +463,7 @@ static v8::Handle<v8::Value> Callback_disable(const v8::Arguments& args) {
 static v8::Handle<v8::Value> Callback_disableVertexAttribArray(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(1);
-  uint32_t index = CONVERT_ARG(0, V8ToUint32);
+  GLuint index = CONVERT_ARG(0, V8ToUint32);
   glDisableVertexAttribArray(index);
   return v8::Undefined();
 }
@@ -478,7 +478,7 @@ static v8::Handle<v8::Value> Callback_drawElements(const v8::Arguments& args) { 
 static v8::Handle<v8::Value> Callback_enable(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(1);
-  uint32_t cap = CONVERT_ARG(0, V8ToUint32);
+  GLenum cap = CONVERT_ARG(0, V8ToUint32);
   glEnable(cap);
   return v8::Undefined();
 }
@@ -487,7 +487,7 @@ static v8::Handle<v8::Value> Callback_enable(const v8::Arguments& args) {
 static v8::Handle<v8::Value> Callback_enableVertexAttribArray(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(1);
-  uint32_t index = CONVERT_ARG(0, V8ToUint32);
+  GLuint index = CONVERT_ARG(0, V8ToUint32);
   glEnableVertexAttribArray(index);
   return v8::Undefined();
 }
@@ -519,7 +519,7 @@ static v8::Handle<v8::Value> Callback_framebufferTexture2D(const v8::Arguments& 
 static v8::Handle<v8::Value> Callback_frontFace(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(1);
-  uint32_t mode = CONVERT_ARG(0, V8ToUint32);
+  GLenum mode = CONVERT_ARG(0, V8ToUint32);
   glFrontFace(mode);
   return v8::Undefined();
 }
@@ -528,7 +528,7 @@ static v8::Handle<v8::Value> Callback_frontFace(const v8::Arguments& args) {
 static v8::Handle<v8::Value> Callback_generateMipmap(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(1);
-  uint32_t target = CONVERT_ARG(0, V8ToUint32);
+  GLenum target = CONVERT_ARG(0, V8ToUint32);
   //XXX glGenerateMipmapEXT etc.
   glGenerateMipmap(target);
   return v8::Undefined();
@@ -561,7 +561,17 @@ static v8::Handle<v8::Value> Callback_getError(const v8::Arguments& args) {
 
 // any getFramebufferAttachmentParameter(GLenum target, GLenum attachment, 
 //                                       GLenum pname);
-static v8::Handle<v8::Value> Callback_getFramebufferAttachmentParameter(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_getFramebufferAttachmentParameter(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(3);
+  GLenum target = CONVERT_ARG(0, V8ToUint32);
+  GLenum attachment = CONVERT_ARG(1, V8ToUint32);
+  GLenum pname = CONVERT_ARG(2, V8ToUint32);
+  GLint value = 0;
+  //XXX glGetFramebufferAttachmentParameterivEXT etc.
+  glGetFramebufferAttachmentParameteriv(target, attachment, pname, &value);
+  return Int32ToV8(value);
+}
 
 // any getProgramParameter(WebGLProgram program, GLenum pname);
 static v8::Handle<v8::Value> Callback_getProgramParameter(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
@@ -606,7 +616,7 @@ static v8::Handle<v8::Value> Callback_isBuffer(const v8::Arguments& args) { retu
 static v8::Handle<v8::Value> Callback_isEnabled(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(1);
-  uint32_t cap = CONVERT_ARG(0, V8ToUint32);
+  GLenum cap = CONVERT_ARG(0, V8ToUint32);
   glIsEnabled(cap);
   return v8::Undefined();
 }
@@ -665,7 +675,7 @@ static v8::Handle<v8::Value> Callback_stencilFuncSeparate(const v8::Arguments& a
 static v8::Handle<v8::Value> Callback_stencilMask(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(1);
-  uint32_t mask = CONVERT_ARG(0, V8ToUint32);
+  GLuint mask = CONVERT_ARG(0, V8ToUint32);
   glStencilMask(mask);
   return v8::Undefined();
 }
