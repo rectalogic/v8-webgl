@@ -6,6 +6,7 @@
 #define V8WEBGL_WEBGL_BUFFER_H
 
 #include "v8_binding.h"
+#include "webgl_object.h"
 #include "webgl_rendering_context.h"
 
 namespace v8_webgl {
@@ -14,18 +15,15 @@ class WebGLBuffer : public V8Object<WebGLBuffer> {
  public:
   static const char* const ClassName() { return "WebGLBuffer"; }
 
-  bool ValidateContext(WebGLRenderingContext* context) { return context->get_context_id() == context_id_; }
-  uint32_t get_buffer_id() { return buffer_id_; }
+  WebGLObject* get_webgl_object() { return &webgl_object_; }
 
  protected:
   WebGLBuffer(WebGLRenderingContext* context, uint32_t buffer_id)
       : V8Object<WebGLBuffer>()
-      , context_id_(context->get_context_id())
-      , buffer_id_(buffer_id) {}
+      , webgl_object_(context, buffer_id) {}
 
  private:
-  unsigned long context_id_;
-  uint32_t buffer_id_;
+  WebGLObject webgl_object_;
 
   friend class WebGLRenderingContext;
 };

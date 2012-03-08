@@ -37,8 +37,15 @@ unsigned long WebGLRenderingContext::s_context_counter = 0;
   if (!ok) return v8::Undefined();
 
 #define VALIDATE_CONTEXT(object) \
-  if (!object->ValidateContext(context)) \
+  if (object && !object->get_webgl_object()->ValidateContext(context))    \
     return ThrowInvalidContext();
+
+#define REQUIRE_OBJECT(object) \
+  if (!object) \
+    return v8::Undefined();
+
+#define WEBGL_ID(object) \
+  object ? object->get_webgl_object()->get_webgl_id() : 0
 
 #define CALLBACK_PREAMBLE() \
   WebGLRenderingContext* context = WebGLRenderingContext::ToNative(args.Holder()); \
@@ -118,7 +125,20 @@ static v8::Handle<v8::Value> Callback_activeTexture(const v8::Arguments& args) {
 }
 
 // void attachShader(WebGLProgram program, WebGLShader shader);
-static v8::Handle<v8::Value> Callback_attachShader(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_attachShader(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(2);
+  WebGLProgram* program = CONVERT_ARG(0, V8ToNative<WebGLProgram>);
+  REQUIRE_OBJECT(program);
+  VALIDATE_CONTEXT(program);
+  GLuint program_id = WEBGL_ID(program);
+  WebGLShader* shader = CONVERT_ARG(1, V8ToNative<WebGLShader>);
+  REQUIRE_OBJECT(shader);
+  VALIDATE_CONTEXT(shader);
+  GLuint shader_id = WEBGL_ID(shader);
+  glAttachShader(program_id, shader_id);
+  return v8::Undefined();
+}
 
 // void bindAttribLocation(WebGLProgram program, GLuint index, DOMString name);
 static v8::Handle<v8::Value> Callback_bindAttribLocation(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
@@ -366,7 +386,7 @@ static v8::Handle<v8::Value> Callback_deleteBuffer(const v8::Arguments& args) {
   CHECK_ARGS(1);
   WebGLBuffer* buffer = CONVERT_ARG(0, V8ToNative<WebGLBuffer>);
   VALIDATE_CONTEXT(buffer);
-  GLuint buffer_id = buffer->get_buffer_id();
+  GLuint buffer_id = WEBGL_ID(buffer);
   glDeleteBuffers(1, &buffer_id);
   return v8::Undefined();
 }
@@ -377,7 +397,7 @@ static v8::Handle<v8::Value> Callback_deleteFramebuffer(const v8::Arguments& arg
   CHECK_ARGS(1);
   WebGLFramebuffer* framebuffer = CONVERT_ARG(0, V8ToNative<WebGLFramebuffer>);
   VALIDATE_CONTEXT(framebuffer);
-  GLuint framebuffer_id = framebuffer->get_framebuffer_id();
+  GLuint framebuffer_id = WEBGL_ID(framebuffer);
   //XXX glDeleteFramebuffersEXT etc.
   glDeleteFramebuffers(1, &framebuffer_id);
   return v8::Undefined();
@@ -389,7 +409,8 @@ static v8::Handle<v8::Value> Callback_deleteProgram(const v8::Arguments& args) {
   CHECK_ARGS(1);
   WebGLProgram* program = CONVERT_ARG(0, V8ToNative<WebGLProgram>);
   VALIDATE_CONTEXT(program);
-  glDeleteProgram(program->get_program_id());
+  GLuint program_id = WEBGL_ID(program);
+  glDeleteProgram(program_id);
   return v8::Undefined();
 }
 
@@ -399,7 +420,7 @@ static v8::Handle<v8::Value> Callback_deleteRenderbuffer(const v8::Arguments& ar
   CHECK_ARGS(1);
   WebGLRenderbuffer* renderbuffer = CONVERT_ARG(0, V8ToNative<WebGLRenderbuffer>);
   VALIDATE_CONTEXT(renderbuffer);
-  GLuint renderbuffer_id = renderbuffer->get_renderbuffer_id();
+  GLuint renderbuffer_id = WEBGL_ID(renderbuffer);
   //XXX glDeleteRenderbuffersEXT etc.
   glDeleteRenderbuffers(1, &renderbuffer_id);
   return v8::Undefined();
@@ -411,7 +432,8 @@ static v8::Handle<v8::Value> Callback_deleteShader(const v8::Arguments& args) {
   CHECK_ARGS(1);
   WebGLShader* shader = CONVERT_ARG(0, V8ToNative<WebGLShader>);
   VALIDATE_CONTEXT(shader);
-  glDeleteShader(shader->get_shader_id());
+  GLuint shader_id = WEBGL_ID(shader);
+  glDeleteShader(shader_id);
   return v8::Undefined();
 }
 
@@ -421,7 +443,7 @@ static v8::Handle<v8::Value> Callback_deleteTexture(const v8::Arguments& args) {
   CHECK_ARGS(1);
   WebGLTexture* texture = CONVERT_ARG(0, V8ToNative<WebGLTexture>);
   VALIDATE_CONTEXT(texture);
-  GLuint texture_id = texture->get_texture_id();
+  GLuint texture_id = WEBGL_ID(texture);
   glDeleteTextures(1, &texture_id);
   return v8::Undefined();
 }
@@ -459,10 +481,14 @@ static v8::Handle<v8::Value> Callback_detachShader(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(2);
   WebGLProgram* program = CONVERT_ARG(0, V8ToNative<WebGLProgram>);
+  REQUIRE_OBJECT(program);
   VALIDATE_CONTEXT(program);
+  GLuint program_id = WEBGL_ID(program);
   WebGLShader* shader = CONVERT_ARG(1, V8ToNative<WebGLShader>);
+  REQUIRE_OBJECT(shader);
   VALIDATE_CONTEXT(shader);
-  glDetachShader(program->get_program_id(), shader->get_shader_id());
+  GLuint shader_id = WEBGL_ID(shader);
+  glDetachShader(program_id, shader_id);
   return v8::Undefined();
 }
 
@@ -865,8 +891,8 @@ static v8::Handle<v8::Value> Callback_viewport(const v8::Arguments& args) { retu
 inline static void SetConstant(const char* name, int value, v8::Handle<v8::ObjectTemplate> proto, v8::Handle<v8::FunctionTemplate> constructor) {
   v8::Handle<v8::String> name_handle = v8::String::New(name);
   v8::Handle<v8::Integer> value_handle = v8::Integer::New(value);
-  constructor->Set(name_handle, value_handle, v8::ReadOnly);
-  proto->Set(name_handle, value_handle, v8::ReadOnly);
+  constructor->Set(name_handle, value_handle, static_cast<v8::PropertyAttribute>(v8::ReadOnly|v8::DontDelete));
+  proto->Set(name_handle, value_handle, static_cast<v8::PropertyAttribute>(v8::ReadOnly|v8::DontDelete));
 }
 
 void WebGLRenderingContext::ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> constructor) {

@@ -6,6 +6,7 @@
 #define V8WEBGL_WEBGL_TEXTURE_H
 
 #include "v8_binding.h"
+#include "webgl_object.h"
 #include "webgl_rendering_context.h"
 
 namespace v8_webgl {
@@ -14,18 +15,15 @@ class WebGLTexture : public V8Object<WebGLTexture> {
  public:
   static const char* const ClassName() { return "WebGLTexture"; }
 
-  bool ValidateContext(WebGLRenderingContext* context) { return context->get_context_id() == context_id_; }
-  uint32_t get_texture_id() { return texture_id_; }
+  WebGLObject* get_webgl_object() { return &webgl_object_; }
 
  protected:
   WebGLTexture(WebGLRenderingContext* context, uint32_t texture_id)
       : V8Object<WebGLTexture>()
-      , context_id_(context->get_context_id())
-      , texture_id_(texture_id) {}
+      , webgl_object_(context, texture_id) {}
 
  private:
-  unsigned long context_id_;
-  uint32_t texture_id_;
+  WebGLObject webgl_object_;
 
   friend class WebGLRenderingContext;
 };

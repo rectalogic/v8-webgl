@@ -44,6 +44,10 @@ template<class T>
 T* V8ToNative(v8::Handle<v8::Value> value, bool& ok) {
   ok = true;
 
+  // Not an error if undefined/null
+  if (value->IsUndefined() || value->IsNull())
+    return 0;
+
   if (!T::HasInstance(value)) {
     ok = false;
     return 0;
