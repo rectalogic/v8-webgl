@@ -7,6 +7,7 @@
 
 #include <v8.h>
 #include <assert.h>
+#include <string>
 
 namespace v8_webgl {
 
@@ -29,6 +30,7 @@ inline v8::Handle<v8::Integer> Uint32ToV8(uint32_t value) {
   return v8::Integer::NewFromUnsigned(value);
 }
 
+std::string V8ToString(v8::Handle<v8::Value> value, bool& ok);
 inline double V8ToBoolean(v8::Handle<v8::Value> value, bool& ok) {
   ok = true;
   return value->BooleanValue();

@@ -141,7 +141,18 @@ static v8::Handle<v8::Value> Callback_attachShader(const v8::Arguments& args) {
 }
 
 // void bindAttribLocation(WebGLProgram program, GLuint index, DOMString name);
-static v8::Handle<v8::Value> Callback_bindAttribLocation(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_bindAttribLocation(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(3);
+  WebGLProgram* program = CONVERT_ARG(0, V8ToNative<WebGLProgram>);
+  REQUIRE_OBJECT(program);
+  VALIDATE_CONTEXT(program);
+  GLuint program_id = WEBGL_ID(program);
+  GLuint index = CONVERT_ARG(1, V8ToUint32);
+  std::string name = CONVERT_ARG(2, V8ToString);
+  glBindAttribLocation(program_id, index, name.c_str());
+  return v8::Undefined();
+}
 
 // void bindBuffer(GLenum target, WebGLBuffer buffer);
 static v8::Handle<v8::Value> Callback_bindBuffer(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
