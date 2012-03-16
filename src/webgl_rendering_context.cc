@@ -155,16 +155,54 @@ static v8::Handle<v8::Value> Callback_bindAttribLocation(const v8::Arguments& ar
 }
 
 // void bindBuffer(GLenum target, WebGLBuffer buffer);
-static v8::Handle<v8::Value> Callback_bindBuffer(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_bindBuffer(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(2);
+  GLenum target = CONVERT_ARG(0, V8ToUint32);
+  WebGLBuffer* buffer = CONVERT_ARG(1, V8ToNative<WebGLBuffer>);
+  VALIDATE_CONTEXT(buffer);
+  GLuint buffer_id = WEBGL_ID(buffer);
+  glBindBuffer(target, buffer_id);
+  return v8::Undefined();
+}
 
 // void bindFramebuffer(GLenum target, WebGLFramebuffer framebuffer);
-static v8::Handle<v8::Value> Callback_bindFramebuffer(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_bindFramebuffer(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(2);
+  GLenum target = CONVERT_ARG(0, V8ToUint32);
+  WebGLFramebuffer* framebuffer = CONVERT_ARG(1, V8ToNative<WebGLFramebuffer>);
+  VALIDATE_CONTEXT(framebuffer);
+  GLuint framebuffer_id = WEBGL_ID(framebuffer);
+  //XXX glBindFramebufferEXT
+  glBindFramebuffer(target, framebuffer_id);
+  return v8::Undefined();
+}
 
 // void bindRenderbuffer(GLenum target, WebGLRenderbuffer renderbuffer);
-static v8::Handle<v8::Value> Callback_bindRenderbuffer(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_bindRenderbuffer(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(2);
+  GLenum target = CONVERT_ARG(0, V8ToUint32);
+  WebGLRenderbuffer* renderbuffer = CONVERT_ARG(1, V8ToNative<WebGLRenderbuffer>);
+  VALIDATE_CONTEXT(renderbuffer);
+  GLuint renderbuffer_id = WEBGL_ID(renderbuffer);
+  //XXX glBindRenderbufferEXT
+  glBindRenderbuffer(target, renderbuffer_id);
+  return v8::Undefined();
+}
 
 // void bindTexture(GLenum target, WebGLTexture texture);
-static v8::Handle<v8::Value> Callback_bindTexture(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_bindTexture(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(2);
+  GLenum target = CONVERT_ARG(0, V8ToUint32);
+  WebGLTexture* texture = CONVERT_ARG(1, V8ToNative<WebGLTexture>);
+  VALIDATE_CONTEXT(texture);
+  GLuint texture_id = WEBGL_ID(texture);
+  glBindTexture(target, texture_id);
+  return v8::Undefined();
+}
 
 // void blendColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
 static v8::Handle<v8::Value> Callback_blendColor(const v8::Arguments& args) {
@@ -288,8 +326,18 @@ static v8::Handle<v8::Value> Callback_colorMask(const v8::Arguments& args) {
   return v8::Undefined();
 }
 
+//XXX need to use ANGLE to translate shader source - see GraphicsContext3D::compileShader
 // void compileShader(WebGLShader shader);
-static v8::Handle<v8::Value> Callback_compileShader(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_compileShader(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  WebGLShader* shader = CONVERT_ARG(0, V8ToNative<WebGLShader>);
+  REQUIRE_OBJECT(shader);
+  VALIDATE_CONTEXT(shader);
+  GLuint shader_id = WEBGL_ID(shader);
+  glCompileShader(shader_id);
+  return v8::Undefined();
+}
 
 // void copyTexImage2D(GLenum target, GLint level, GLenum internalformat, 
 //                     GLint x, GLint y, GLsizei width, GLsizei height, 
@@ -533,7 +581,16 @@ static v8::Handle<v8::Value> Callback_drawArrays(const v8::Arguments& args) {
 }
 
 // void drawElements(GLenum mode, GLsizei count, GLenum type, GLintptr offset);
-static v8::Handle<v8::Value> Callback_drawElements(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_drawElements(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(4);
+  GLenum mode = CONVERT_ARG(0, V8ToUint32);
+  GLsizei count = CONVERT_ARG(1, V8ToInt32);
+  GLenum type = CONVERT_ARG(2, V8ToUint32);
+  GLintptr offset = CONVERT_ARG(3, V8ToInt32);
+  glDrawElements(mode, count, type, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(offset)));
+  return v8::Undefined();
+}
 
 // void enable(GLenum cap);
 static v8::Handle<v8::Value> Callback_enable(const v8::Arguments& args) {
@@ -570,11 +627,36 @@ static v8::Handle<v8::Value> Callback_flush(const v8::Arguments& args) {
 // void framebufferRenderbuffer(GLenum target, GLenum attachment, 
 //                              GLenum renderbuffertarget, 
 //                              WebGLRenderbuffer renderbuffer);
-static v8::Handle<v8::Value> Callback_framebufferRenderbuffer(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_framebufferRenderbuffer(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(4);
+  GLenum target = CONVERT_ARG(0, V8ToUint32);
+  GLenum attachment = CONVERT_ARG(1, V8ToUint32);
+  GLenum renderbuffertarget = CONVERT_ARG(2, V8ToUint32);
+  WebGLRenderbuffer* renderbuffer = CONVERT_ARG(3, V8ToNative<WebGLRenderbuffer>);
+  VALIDATE_CONTEXT(renderbuffer);
+  GLuint renderbuffer_id = WEBGL_ID(renderbuffer);
+  //XXX glFramebufferRenderbufferEXT
+  glFramebufferRenderbuffer(target, attachment, renderbuffertarget, renderbuffer_id);
+  return v8::Undefined();
+}
 
 // void framebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, 
 //                           WebGLTexture texture, GLint level);
-static v8::Handle<v8::Value> Callback_framebufferTexture2D(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_framebufferTexture2D(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(5);
+  GLenum target = CONVERT_ARG(0, V8ToUint32);
+  GLenum attachment = CONVERT_ARG(1, V8ToUint32);
+  GLenum textarget = CONVERT_ARG(2, V8ToUint32);
+  WebGLTexture* texture = CONVERT_ARG(3, V8ToNative<WebGLTexture>);
+  VALIDATE_CONTEXT(texture);
+  GLuint texture_id = WEBGL_ID(texture);
+  GLint level = CONVERT_ARG(4, V8ToInt32);
+  //XXX glFramebufferTexture2DEXT
+  glFramebufferTexture2D(target, attachment, textarget, texture_id, level);
+  return v8::Undefined();
+}
 
 // void frontFace(GLenum mode);
 static v8::Handle<v8::Value> Callback_frontFace(const v8::Arguments& args) {
@@ -604,11 +686,28 @@ static v8::Handle<v8::Value> Callback_getActiveUniform(const v8::Arguments& args
 // WebGLShader[ ] getAttachedShaders(WebGLProgram program);
 static v8::Handle<v8::Value> Callback_getAttachedShaders(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
 
+//XXX should return -1 (webkit) or 0 (firefox) on error, not Undefined - should preamble define a fail: label that can return whatever is needed?
 // GLint getAttribLocation(WebGLProgram program, DOMString name);
-static v8::Handle<v8::Value> Callback_getAttribLocation(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_getAttribLocation(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(2);
+  WebGLProgram* program = CONVERT_ARG(0, V8ToNative<WebGLProgram>);
+  REQUIRE_OBJECT(program);
+  VALIDATE_CONTEXT(program);
+  GLuint program_id = WEBGL_ID(program);
+  std::string name = CONVERT_ARG(1, V8ToString);
+  GLint location = glGetAttribLocation(program_id, name.c_str());
+  return Int32ToV8(location);
+}
 
 // any getParameter(GLenum pname);
-static v8::Handle<v8::Value> Callback_getParameter(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_getParameter(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  GLenum pname = CONVERT_ARG(0, V8ToUint32);
+  //XXX need big switch statement for pname, each param has a different datatype (int, float, array etc.) and will need its own gl call to retrieve
+  return v8::Undefined(); /*XXX finish*/
+}
 
 // any getBufferParameter(GLenum target, GLenum pname);
 static v8::Handle<v8::Value> Callback_getBufferParameter(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
@@ -628,6 +727,7 @@ static v8::Handle<v8::Value> Callback_getFramebufferAttachmentParameter(const v8
   GLenum target = CONVERT_ARG(0, V8ToUint32);
   GLenum attachment = CONVERT_ARG(1, V8ToUint32);
   GLenum pname = CONVERT_ARG(2, V8ToUint32);
+  //XXX this is wrong - need to check pname and return correct datatype - also some parameters e.g. GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME need to return an object, WebGLTexture* - so we need to keep track of attached objects to the framebuffer - can context keep a map of IDs to persistent v8 instances for each WebGLObject type we care about - and maintain this list when creating/deleting
   GLint value = 0;
   //XXX glGetFramebufferAttachmentParameterivEXT etc.
   glGetFramebufferAttachmentParameteriv(target, attachment, pname, &value);
@@ -635,8 +735,31 @@ static v8::Handle<v8::Value> Callback_getFramebufferAttachmentParameter(const v8
 }
 
 // any getProgramParameter(WebGLProgram program, GLenum pname);
-static v8::Handle<v8::Value> Callback_getProgramParameter(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_getProgramParameter(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(2);
+  WebGLProgram* program = CONVERT_ARG(0, V8ToNative<WebGLProgram>);
+  REQUIRE_OBJECT(program);
+  VALIDATE_CONTEXT(program);
+  GLuint program_id = WEBGL_ID(program);
+  GLenum pname = CONVERT_ARG(1, V8ToUint32);
+  GLint value = 0;
+  glGetProgramiv(program_id, pname, &value);
 
+  switch (pname) {
+    case GL_DELETE_STATUS:
+    case GL_VALIDATE_STATUS:
+    case GL_LINK_STATUS:
+      return BooleanToV8(static_cast<bool>(value));
+    case GL_ATTACHED_SHADERS:
+    case GL_ACTIVE_ATTRIBUTES:
+    case GL_ACTIVE_UNIFORMS:
+      return Int32ToV8(value);
+  }
+  return v8::Undefined();
+}
+
+//XXX should use log from ANGLE
 // DOMString getProgramInfoLog(WebGLProgram program);
 static v8::Handle<v8::Value> Callback_getProgramInfoLog(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
 
