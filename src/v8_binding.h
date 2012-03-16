@@ -137,8 +137,12 @@ class V8Object : public V8ObjectBase {
     instance_ = v8::Persistent<v8::Object>::New(instance);
     instance_->SetPointerInInternalField(0, this);
 
-    if (weak)
+    if (weak) {
+      // Since we aren't using object grouping API, mark independent
+      // so our weak callback is called earlier.
+      instance_.MarkIndependent();
       instance_.MakeWeak(this, WeakCallback);
+    }
   }
 
   ~V8Object() {
