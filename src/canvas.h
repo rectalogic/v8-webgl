@@ -23,7 +23,7 @@ class Canvas : public V8Object<Canvas> {
   void set_height(int height);
 
  protected:
-  Canvas(v8::Local<v8::Object> instance);
+  Canvas(v8::Handle<v8::Object> instance);
   ~Canvas();
 
  private:

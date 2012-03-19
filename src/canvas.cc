@@ -13,7 +13,7 @@ namespace v8_webgl {
 #define ACCESSOR(name) instance->SetAccessor(v8::String::New(#name), Getter_##name, Setter_##name)
 
 //XXX Canvas is weak - maybe should be strong with dispose method?
-Canvas::Canvas(v8::Local<v8::Object> instance)
+Canvas::Canvas(v8::Handle<v8::Object> instance)
     : V8Object<Canvas>(true, instance)
     , rendering_context_(0)
     , width_(0)

@@ -127,7 +127,7 @@ class V8Object : public V8ObjectBase {
   }
 
  protected:
-  V8Object(bool weak = false, v8::Local<v8::Object> instance = v8::Local<v8::Object>()) {
+  V8Object(bool weak = false, v8::Handle<v8::Object> instance = v8::Local<v8::Object>()) {
     // If no instance, construct a new one
     if (instance.IsEmpty()) {
       ConstructorMode<T> mode;
