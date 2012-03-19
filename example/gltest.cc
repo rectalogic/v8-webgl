@@ -52,7 +52,9 @@ int main(int argc, char* argv[])
 
     v8::Handle<v8::String> source =
         v8::String::New
-        ("var canvas = new Canvas();"
+        ("var a = new ArrayBuffer(3);"
+         "console.log('ArrayBuffer=' + a + ' el=' + a[1]);"
+         "var canvas = new Canvas();"
          "canvas.width = canvas.height = 200;"
          "var gl = canvas.getContext();"
          "console.log('canvas=' + canvas);"

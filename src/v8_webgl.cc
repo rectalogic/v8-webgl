@@ -5,6 +5,7 @@
 #include <v8_webgl.h>
 #include "canvas.h"
 #include "console.h"
+#include "typed_array.h"
 #include "webgl_active_info.h"
 #include "webgl_buffer.h"
 #include "webgl_framebuffer.h"
@@ -30,6 +31,7 @@ v8::Persistent<v8::ObjectTemplate> Initialize(Factory* factory) {
   v8::Local<v8::ObjectTemplate> global = v8::ObjectTemplate::New();
   s_global = v8::Persistent<v8::ObjectTemplate>::New(global);
 
+  ArrayBuffer::Initialize(s_global);
   Console::Initialize(s_global);
   Canvas::Initialize(s_global);
   WebGLActiveInfo::Initialize(s_global);
@@ -55,6 +57,7 @@ void Uninitialize() {
   delete s_factory;
   s_factory = 0;
 
+  ArrayBuffer::Uninitialize();
   Console::Uninitialize();
   Canvas::Uninitialize();
   WebGLActiveInfo::Uninitialize();

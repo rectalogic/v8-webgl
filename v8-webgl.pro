@@ -3,6 +3,7 @@ TEMPLATE = app
 SOURCES += example/gltest.cc
 SOURCES += src/canvas.cc
 SOURCES += src/console.cc
+SOURCES += src/typed_array.cc
 SOURCES += src/v8_binding.cc
 SOURCES += src/v8_webgl.cc
 SOURCES += src/webgl_rendering_context.cc

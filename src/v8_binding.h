@@ -11,6 +11,10 @@
 
 namespace v8_webgl {
 
+inline v8::Handle<v8::Value> ThrowError(const char* msg) {
+  return v8::ThrowException(v8::String::New(msg));
+}
+
 inline v8::Handle<v8::Value> ThrowObjectDisposed() {
   return v8::ThrowException(v8::Exception::ReferenceError(v8::String::New("Object has been disposed")));
 }
