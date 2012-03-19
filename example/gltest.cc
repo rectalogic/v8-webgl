@@ -54,6 +54,9 @@ int main(int argc, char* argv[])
         v8::String::New
         ("var a = new ArrayBuffer(3);"
          "console.log('ArrayBuffer=' + a + ' el=' + a[1]);"
+         "var ia = new Int8Array(a); ia[1] = 7;"
+         "console.log('a[1]=' + a[1]);"
+         "console.log('ia[1]=' + ia[1]);"
          "var canvas = new Canvas();"
          "canvas.width = canvas.height = 200;"
          "var gl = canvas.getContext();"

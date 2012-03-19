@@ -8,7 +8,7 @@
 
 namespace v8_webgl {
 
-ArrayBuffer::ArrayBuffer(v8::Handle<v8::Object> instance, void* data, uint32_t data_length)
+ArrayBuffer::ArrayBuffer(void* data, uint32_t data_length, v8::Handle<v8::Object> instance)
     : V8Object<ArrayBuffer>(true, instance)
     , data_length_(data_length)
     , data_(data)
@@ -20,23 +20,33 @@ ArrayBuffer::~ArrayBuffer() {
   v8::V8::AdjustAmountOfExternalAllocatedMemory(-data_length_);
 }
 
+v8::Handle<v8::Object> ArrayBuffer::Create(uint32_t length) {
+  v8::Handle<v8::Value> argv[1] = { Uint32ToV8(length) };
+  return GetTemplate()->GetFunction()->NewInstance(1, argv);
+}
+
 // ArrayBuffer(unsigned long length)
 v8::Handle<v8::Value> ArrayBuffer::ConstructorCallback(const v8::Arguments& args) {
-  bool ok = true;
-  uint32_t length = V8ToUint32(args[0], ok);
-  if (!ok)
-    return v8::Undefined();
+  uint32_t length = 0;
+  void* data = 0;
+  if (args.Length() >= 1) {
+    bool ok = true;
+    length = V8ToUint32(args[0], ok);
+    if (!ok)
+      return v8::Undefined();
 
-  void* data = calloc(length, 1);
-  if (!data)
-    return ThrowError("Unable to allocate ArrayBuffer.");
+    data = calloc(length, 1);
+    if (!data)
+      return ThrowError("Unable to allocate ArrayBuffer.");
+  }
 
   v8::Handle<v8::Object> self(args.This());
 
-  self->Set(v8::String::New("byteLength"), args[0],
-            static_cast<v8::PropertyAttribute>(v8::ReadOnly|v8::DontDelete));
+  SetProperty(self, "byteLength", Uint32ToV8(length));
 
-  new ArrayBuffer(self, data, length);
+  //XXX need ArrayBuffer slice(long begin, optional long end)
+
+  new ArrayBuffer(data, length, self);
   self->SetIndexedPropertiesToExternalArrayData(data, v8::kExternalUnsignedByteArray, length);
 
   v8::V8::AdjustAmountOfExternalAllocatedMemory(length);

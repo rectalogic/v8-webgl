@@ -34,6 +34,7 @@ v8::Persistent<v8::ObjectTemplate> Initialize(Factory* factory) {
   ArrayBuffer::Initialize(s_global);
   Console::Initialize(s_global);
   Canvas::Initialize(s_global);
+  Int8Array::Initialize(s_global);
   WebGLActiveInfo::Initialize(s_global);
   WebGLBuffer::Initialize(s_global);
   WebGLFramebuffer::Initialize(s_global);
@@ -60,6 +61,7 @@ void Uninitialize() {
   ArrayBuffer::Uninitialize();
   Console::Uninitialize();
   Canvas::Uninitialize();
+  Int8Array::Uninitialize();
   WebGLActiveInfo::Uninitialize();
   WebGLBuffer::Uninitialize();
   WebGLFramebuffer::Uninitialize();

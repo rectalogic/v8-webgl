@@ -18,8 +18,13 @@ class ArrayBuffer : public V8Object<ArrayBuffer> {
   static const char* const ClassName() { return "ArrayBuffer"; }
   static v8::Handle<v8::Value> ConstructorCallback(const v8::Arguments& args);
 
+  uint32_t get_data_length() { return data_length_; }
+  void* get_data() { return data_; }
+
+  static v8::Handle<v8::Object> Create(uint32_t length);
+
  protected:
-  ArrayBuffer(v8::Handle<v8::Object> instance, void* data, uint32_t data_length);
+  ArrayBuffer(void* data, uint32_t data_length, v8::Handle<v8::Object> instance = v8::Local<v8::Object>());
   ~ArrayBuffer();
 
  private:
@@ -29,16 +34,145 @@ class ArrayBuffer : public V8Object<ArrayBuffer> {
 
 //////
 
-//XXX use sizeof(TNative) to get bytes per el
+
 template<class T, v8::ExternalArrayType TArrayType, typename TNative>
 class TypedArray : public V8Object<T> {
+ public:
+  static void ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> constructor) {
+    v8::Handle<v8::ObjectTemplate> proto = constructor->PrototypeTemplate();
+    v8::Handle<v8::ObjectTemplate> instance = constructor->InstanceTemplate();
+    v8::Local<v8::Signature> signature = v8::Signature::New(constructor);
+
+    V8ObjectBase::AddConstant("BYTES_PER_ELEMENT", Uint32ToV8(sizeof(TNative)), proto, constructor);
+    //XXX need subarray and set() with array arg
+  }
+
+  // TypedArray(unsigned long length)
+  // TypedArray(TypedArray array)
+  // TypedArray(type[] array)
+  // TypedArray(ArrayBuffer buffer, optional unsigned long byteOffset, optional unsigned long length)
+  static v8::Handle<v8::Value> ConstructorCallback(const v8::Arguments& args) {
+    bool ok = true;
+    v8::Handle<v8::Object> buffer_value;
+    unsigned int length = 0;
+    unsigned int byte_offset = 0;
+
+    v8::Handle<v8::Object> self(args.This());
+
+    // TypedArray(ArrayBuffer buffer, optional unsigned long byteOffset, optional unsigned long length)
+    if (ArrayBuffer::HasInstance(args[0])) {
+      ArrayBuffer* buffer = V8ToNative<ArrayBuffer>(args[0], ok);
+      if (!ok)
+        return v8::Undefined();
+      buffer_value = v8::Handle<v8::Object>::Cast(args[0]);
+      uint32_t buflen = buffer->get_data_length();
+
+      // byteOffset
+      if (args.Length() >= 2) {
+        byte_offset = V8ToUint32(args[1], ok);
+        if (!ok)
+          return v8::Undefined();
+        v8::Handle<v8::Value> err = CheckAlignment(byte_offset, ok);
+        if (!ok)
+          return err;
+      }
+
+      // length
+      if (args.Length() >= 3) {
+        length = V8ToUint32(args[2], ok);
+        if (!ok)
+          return v8::Undefined();
+      }
+      else {
+        if (buflen <= byte_offset)
+          return ThrowRangeError("Byte offset out of range.");
+        // Byte length minus offset must be multiple of element size
+        v8::Handle<v8::Value> err = CheckAlignment(buflen - byte_offset, ok);
+        if (!ok)
+          return err;
+
+        // Adjust length for byte_offset
+        length = (buflen - byte_offset) / sizeof(TNative);
+      }
+
+      if (byte_offset >= buflen || byte_offset + length * sizeof(TNative) > buflen)
+        return ThrowRangeError("Length out of range.");
+
+      void* data = buffer->get_data();
+      self->SetIndexedPropertiesToExternalArrayData
+          (reinterpret_cast<char*>(data) + byte_offset, TArrayType, length);
+    }
+    // TypedArray(TypedArray array)
+    // TypedArray(type[] array)
+    else if (args[0]->IsObject()) {
+      v8::Local<v8::Object> object = v8::Local<v8::Object>::Cast(args[0]);
+      length = V8ToUint32(object->Get(v8::String::New("length")), ok);
+      if (!ok)
+        return v8::Undefined();
+
+      buffer_value = ArrayBuffer::Create(length * sizeof(TNative));
+      if (buffer_value.IsEmpty())
+        return v8::Undefined();
+      ArrayBuffer* buffer = V8ToNative<ArrayBuffer>(buffer_value, ok);
+      if (!ok)
+        return v8::Undefined();
+
+      void* buf = buffer->get_data();
+      self->SetIndexedPropertiesToExternalArrayData
+          (buf, TArrayType, length);
+
+      // Copy array data
+      for (uint32_t i = 0; i < length; i++)
+        self->Set(i, object->Get(i));
+    }
+    // TypedArray(unsigned long length)
+    else {
+      //XXX
+      if (args.Length() >= 1) {
+        length = V8ToUint32(args[0], ok);
+        if (!ok)
+          return v8::Undefined();
+      }
+
+      buffer_value = ArrayBuffer::Create(length * sizeof(TNative));
+      if (buffer_value.IsEmpty())
+        return v8::Undefined();
+      ArrayBuffer* buffer = V8ToNative<ArrayBuffer>(buffer_value, ok);
+      if (!ok)
+        return v8::Undefined();
+
+      self->SetIndexedPropertiesToExternalArrayData
+          (buffer->get_data(), TArrayType, length);
+    }
+
+    V8ObjectBase::SetProperty(self, "buffer", buffer_value);
+    V8ObjectBase::SetProperty(self, "length", Uint32ToV8(length));
+    V8ObjectBase::SetProperty(self, "byteOffset", Uint32ToV8(byte_offset));
+    V8ObjectBase::SetProperty(self, "byteLength", Uint32ToV8(length * sizeof(TNative)));
+
+    return self;
+  }
+
+ private:
+  inline static v8::Handle<v8::Value> CheckAlignment(uint32_t val, bool& ok) {
+    ok = (val & (sizeof(TNative) - 1)) == 0;
+    if (!ok)
+      return ThrowRangeError("Byte offset is not aligned.");
+    return v8::Undefined();
+  }
+
 };
 
 //////
 
 class Int8Array : public TypedArray<Int8Array, v8::kExternalByteArray, int8_t> {
+ public:
   static const char* const ClassName() { return "Int8Array"; }
 };
+
+//////
+
+//XXX DataView
 
 }
 

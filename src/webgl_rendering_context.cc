@@ -20,7 +20,7 @@ namespace v8_webgl {
 unsigned long WebGLRenderingContext::s_context_counter = 0;
 
 #define PROTO_METHOD(name) AddCallback(proto, #name, Callback_##name, signature)
-#define CONSTANT(name, value) SetConstant(#name, value, proto, constructor)
+#define CONSTANT(name, value) AddConstant(#name, Int32ToV8(value), proto, constructor)
 
 #define CHECK_ARGS(num) \
   if (args.Length() < num) \
@@ -1077,13 +1077,6 @@ static v8::Handle<v8::Value> Callback_vertexAttribPointer(const v8::Arguments& a
 static v8::Handle<v8::Value> Callback_viewport(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
 
 //////
-
-inline static void SetConstant(const char* name, int value, v8::Handle<v8::ObjectTemplate> proto, v8::Handle<v8::FunctionTemplate> constructor) {
-  v8::Handle<v8::String> name_handle = v8::String::New(name);
-  v8::Handle<v8::Integer> value_handle = v8::Integer::New(value);
-  constructor->Set(name_handle, value_handle, static_cast<v8::PropertyAttribute>(v8::ReadOnly|v8::DontDelete));
-  proto->Set(name_handle, value_handle, static_cast<v8::PropertyAttribute>(v8::ReadOnly|v8::DontDelete));
-}
 
 void WebGLRenderingContext::ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> constructor) {
   v8::Handle<v8::ObjectTemplate> proto = constructor->PrototypeTemplate();

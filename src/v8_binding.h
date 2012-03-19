@@ -23,6 +23,10 @@ inline v8::Handle<v8::Value> ThrowArgCount() {
   return v8::ThrowException(v8::Exception::TypeError(v8::String::New("Not enough arguments")));
 }
 
+inline v8::Handle<v8::Value> ThrowRangeError(const char* msg) {
+  return v8::ThrowException(v8::Exception::RangeError(v8::String::New(msg)));
+}
+
 inline v8::Handle<v8::Boolean> BooleanToV8(bool value) {
   return value ? v8::True() : v8::False();
 }
@@ -80,6 +84,17 @@ class V8ObjectBase {
                v8::FunctionTemplate::New(callback, v8::Handle<v8::Value>(), signature),
                v8::DontDelete);
   };
+
+  inline static void AddConstant(const char* name, v8::Handle<v8::Value> value, v8::Handle<v8::ObjectTemplate> proto, v8::Handle<v8::FunctionTemplate> constructor) {
+    v8::Handle<v8::String> name_handle = v8::String::New(name);
+    constructor->Set(name_handle, value, static_cast<v8::PropertyAttribute>(v8::ReadOnly|v8::DontDelete));
+    proto->Set(name_handle, value, static_cast<v8::PropertyAttribute>(v8::ReadOnly|v8::DontDelete));
+  };
+
+  inline static void SetProperty(v8::Handle<v8::Object> self, const char* name, v8::Handle<v8::Value> value) {
+    self->Set(v8::String::New(name), value,
+              static_cast<v8::PropertyAttribute>(v8::ReadOnly|v8::DontDelete));
+  }
 
   static v8::Persistent<v8::FunctionTemplate> CreateConstructorTemplate(const char* class_name, v8::InvocationCallback callback);
 
@@ -176,6 +191,10 @@ class V8Object : public V8ObjectBase {
       return v8::ThrowException(v8::Exception::TypeError(v8::String::New("Illegal constructor")));
 
     return args.This();
+  }
+
+  static v8::Handle<v8::FunctionTemplate> GetTemplate() {
+    return s_constructor_template;
   }
 
  private:
