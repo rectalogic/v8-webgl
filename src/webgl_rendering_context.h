@@ -111,7 +111,6 @@ class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
   static unsigned long s_context_counter;
 
   friend class Canvas;
-  friend class V8Object<WebGLRenderingContext>;
 };
 
 }

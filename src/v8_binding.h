@@ -171,7 +171,7 @@ class V8Object : public V8ObjectBase {
 
  private:
   static void WeakCallback(v8::Persistent<v8::Value> value, void* data) {
-    T* object = static_cast<T*>(data);
+    V8Object<T>* object = static_cast<V8Object<T>*>(data);
     assert(value == object->instance_);
     delete object;
   }

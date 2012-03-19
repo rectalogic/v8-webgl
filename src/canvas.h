@@ -30,8 +30,6 @@ class Canvas : public V8Object<Canvas> {
   WebGLRenderingContext* rendering_context_;
   int width_;
   int height_;
-
-  friend class V8Object<Canvas>;
 };
 
 }
