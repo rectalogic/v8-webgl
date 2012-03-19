@@ -52,11 +52,15 @@ int main(int argc, char* argv[])
 
     v8::Handle<v8::String> source =
         v8::String::New
-        ("var a = new ArrayBuffer(3);"
+        ("var a = new ArrayBuffer(20);"
          "console.log('ArrayBuffer=' + a + ' el=' + a[1]);"
          "var ia = new Int8Array(a); ia[1] = 7;"
          "console.log('a[1]=' + a[1]);"
          "console.log('ia[1]=' + ia[1]);"
+         "var i32a = new Int32Array(10);"
+         "i32a[4] = 50;"
+         "var ui32a = new Uint32Array(i32a.buffer, 16, 1);"
+         "console.log('ui32a[0]=' + ui32a[0]);"
          "var canvas = new Canvas();"
          "canvas.width = canvas.height = 200;"
          "var gl = canvas.getContext();"

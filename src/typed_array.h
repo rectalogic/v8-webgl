@@ -127,7 +127,6 @@ class TypedArray : public V8Object<T> {
     }
     // TypedArray(unsigned long length)
     else {
-      //XXX
       if (args.Length() >= 1) {
         length = V8ToUint32(args[0], ok);
         if (!ok)
@@ -168,6 +167,46 @@ class TypedArray : public V8Object<T> {
 class Int8Array : public TypedArray<Int8Array, v8::kExternalByteArray, int8_t> {
  public:
   static const char* const ClassName() { return "Int8Array"; }
+};
+
+class Uint8Array : public TypedArray<Uint8Array, v8::kExternalUnsignedByteArray, uint8_t> {
+ public:
+  static const char* const ClassName() { return "Uint8Array"; }
+};
+
+class Uint8ClampedArray : public TypedArray<Uint8ClampedArray, v8::kExternalPixelArray, uint8_t> {
+ public:
+  static const char* const ClassName() { return "Uint8ClampedArray"; }
+};
+
+class Int16Array : public TypedArray<Int16Array, v8::kExternalShortArray, int16_t> {
+ public:
+  static const char* const ClassName() { return "Int16Array"; }
+};
+
+class Uint16Array : public TypedArray<Uint16Array, v8::kExternalUnsignedShortArray, uint16_t> {
+ public:
+  static const char* const ClassName() { return "Uint16Array"; }
+};
+
+class Int32Array : public TypedArray<Int32Array, v8::kExternalIntArray, int32_t> {
+ public:
+  static const char* const ClassName() { return "Int32Array"; }
+};
+
+class Uint32Array : public TypedArray<Uint32Array, v8::kExternalUnsignedIntArray, uint32_t> {
+ public:
+  static const char* const ClassName() { return "Uint32Array"; }
+};
+
+class Float32Array : public TypedArray<Float32Array, v8::kExternalFloatArray, float> {
+ public:
+  static const char* const ClassName() { return "Float32Array"; }
+};
+
+class Float64Array : public TypedArray<Float64Array, v8::kExternalDoubleArray, double> {
+ public:
+  static const char* const ClassName() { return "Float64Array"; }
 };
 
 //////
