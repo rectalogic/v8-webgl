@@ -68,6 +68,7 @@ T* V8ToNative(v8::Handle<v8::Value> value, bool& ok) {
 
 class V8ObjectBase {
  protected:
+  V8ObjectBase() {}
   virtual ~V8ObjectBase() {}
 
   inline static void AddCallback(v8::Handle<v8::ObjectTemplate> proto, const char* name, v8::InvocationCallback callback, v8::Local<v8::Signature> signature) {
@@ -77,6 +78,10 @@ class V8ObjectBase {
   };
 
   static v8::Persistent<v8::FunctionTemplate> CreateConstructorTemplate(const char* class_name, v8::InvocationCallback callback);
+
+ private:
+  V8ObjectBase(const V8ObjectBase&);
+  V8ObjectBase& operator = (const V8ObjectBase&);
 };
 
 //////
