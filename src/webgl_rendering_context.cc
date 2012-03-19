@@ -59,39 +59,95 @@ static inline v8::Handle<v8::Value> ThrowInvalidContext() {
   return v8::ThrowException(v8::Exception::TypeError(v8::String::New("Object not created with this WebGLRenderingContext")));
 }
 
-// Only Canvas creates us - so make ourself not weak
 WebGLRenderingContext::WebGLRenderingContext(int width, int height)
-    : V8Object<WebGLRenderingContext>(v8::Local<v8::Object>(), false)
+    : V8Object<WebGLRenderingContext>()
     , graphic_context_(GetFactory()->CreateGraphicContext(width, height))
     , context_id_(s_context_counter++) {
 }
 
 WebGLRenderingContext::~WebGLRenderingContext() {
+  DeleteMapObjects(buffer_map_);
+  DeleteMapObjects(framebuffer_map_);
+  DeleteMapObjects(program_map_);
+  DeleteMapObjects(renderbuffer_map_);
+  DeleteMapObjects(shader_map_);
+  DeleteMapObjects(texture_map_);
+
   delete graphic_context_;
 }
+
 WebGLActiveInfo* WebGLRenderingContext::CreateActiveInfo() {
   return new WebGLActiveInfo(this);
 }
+
 WebGLBuffer* WebGLRenderingContext::CreateBuffer(uint32_t buffer_id) {
-  return new WebGLBuffer(this, buffer_id);
+  WebGLBuffer* buffer = new WebGLBuffer(this, buffer_id);
+  buffer_map_[buffer_id] = buffer;
+  return buffer;
 }
+
 WebGLFramebuffer* WebGLRenderingContext::CreateFramebuffer(uint32_t framebuffer_id) {
-  return new WebGLFramebuffer(this, framebuffer_id);
+  WebGLFramebuffer* framebuffer = new WebGLFramebuffer(this, framebuffer_id);
+  framebuffer_map_[framebuffer_id] = framebuffer;
+  return framebuffer;
 }
+
 WebGLProgram* WebGLRenderingContext::CreateProgram(uint32_t program_id) {
-  return new WebGLProgram(this, program_id);
+  WebGLProgram* program = new WebGLProgram(this, program_id);
+  program_map_[program_id] = program;
+  return program;
 }
+
 WebGLRenderbuffer* WebGLRenderingContext::CreateRenderbuffer(uint32_t renderbuffer_id) {
-  return new WebGLRenderbuffer(this, renderbuffer_id);
+  WebGLRenderbuffer* renderbuffer = new WebGLRenderbuffer(this, renderbuffer_id);
+  renderbuffer_map_[renderbuffer_id] = renderbuffer;
+  return renderbuffer;
 }
+
 WebGLShader* WebGLRenderingContext::CreateShader(uint32_t shader_id) {
-  return new WebGLShader(this, shader_id);
+  WebGLShader* shader = new WebGLShader(this, shader_id);
+  shader_map_[shader_id] = shader;
+  return shader;
 }
+
 WebGLTexture* WebGLRenderingContext::CreateTexture(uint32_t texture_id) {
-  return new WebGLTexture(this, texture_id);
+  WebGLTexture* texture = new WebGLTexture(this, texture_id);
+  texture_map_[texture_id] = texture;
+  return texture;
 }
+
 WebGLUniformLocation* WebGLRenderingContext::CreateUniformLocation() {
   return new WebGLUniformLocation(this);
+}
+
+void WebGLRenderingContext::DeleteBuffer(WebGLBuffer* buffer) {
+  buffer_map_.erase(WEBGL_ID(buffer));
+  delete buffer;
+}
+
+void WebGLRenderingContext::DeleteFramebuffer(WebGLFramebuffer* framebuffer) {
+  framebuffer_map_.erase(WEBGL_ID(framebuffer));
+  delete framebuffer;
+}
+
+void WebGLRenderingContext::DeleteProgram(WebGLProgram* program) {
+  program_map_.erase(WEBGL_ID(program));
+  delete program;
+}
+
+void WebGLRenderingContext::DeleteRenderbuffer(WebGLRenderbuffer* renderbuffer) {
+  renderbuffer_map_.erase(WEBGL_ID(renderbuffer));
+  delete renderbuffer;
+}
+
+void WebGLRenderingContext::DeleteShader(WebGLShader* shader) {
+  shader_map_.erase(WEBGL_ID(shader));
+  delete shader;
+}
+
+void WebGLRenderingContext::DeleteTexture(WebGLTexture* texture) {
+  texture_map_.erase(WEBGL_ID(texture));
+  delete texture;
 }
 
 //////
@@ -447,6 +503,7 @@ static v8::Handle<v8::Value> Callback_deleteBuffer(const v8::Arguments& args) {
   VALIDATE_CONTEXT(buffer);
   GLuint buffer_id = WEBGL_ID(buffer);
   glDeleteBuffers(1, &buffer_id);
+  context->DeleteBuffer(buffer);
   return v8::Undefined();
 }
 
@@ -459,6 +516,7 @@ static v8::Handle<v8::Value> Callback_deleteFramebuffer(const v8::Arguments& arg
   GLuint framebuffer_id = WEBGL_ID(framebuffer);
   //XXX glDeleteFramebuffersEXT etc.
   glDeleteFramebuffers(1, &framebuffer_id);
+  context->DeleteFramebuffer(framebuffer);
   return v8::Undefined();
 }
 
@@ -470,6 +528,7 @@ static v8::Handle<v8::Value> Callback_deleteProgram(const v8::Arguments& args) {
   VALIDATE_CONTEXT(program);
   GLuint program_id = WEBGL_ID(program);
   glDeleteProgram(program_id);
+  context->DeleteProgram(program);
   return v8::Undefined();
 }
 
@@ -482,6 +541,7 @@ static v8::Handle<v8::Value> Callback_deleteRenderbuffer(const v8::Arguments& ar
   GLuint renderbuffer_id = WEBGL_ID(renderbuffer);
   //XXX glDeleteRenderbuffersEXT etc.
   glDeleteRenderbuffers(1, &renderbuffer_id);
+  context->DeleteRenderbuffer(renderbuffer);
   return v8::Undefined();
 }
 
@@ -493,6 +553,7 @@ static v8::Handle<v8::Value> Callback_deleteShader(const v8::Arguments& args) {
   VALIDATE_CONTEXT(shader);
   GLuint shader_id = WEBGL_ID(shader);
   glDeleteShader(shader_id);
+  context->DeleteShader(shader);
   return v8::Undefined();
 }
 
@@ -504,6 +565,7 @@ static v8::Handle<v8::Value> Callback_deleteTexture(const v8::Arguments& args) {
   VALIDATE_CONTEXT(texture);
   GLuint texture_id = WEBGL_ID(texture);
   glDeleteTextures(1, &texture_id);
+  context->DeleteTexture(texture);
   return v8::Undefined();
 }
 
