@@ -2,12 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(__APPLE__)
-#include <OpenGL/gl.h>
-#else
-#include <GL/gl.h>
-#endif
-
 #include "v8_webgl_internal.h"
 #include "v8_binding.h"
 #include "webgl_active_info.h"
@@ -80,37 +74,37 @@ WebGLActiveInfo* WebGLRenderingContext::CreateActiveInfo() {
   return new WebGLActiveInfo(this);
 }
 
-WebGLBuffer* WebGLRenderingContext::CreateBuffer(uint32_t buffer_id) {
+WebGLBuffer* WebGLRenderingContext::CreateBuffer(GLuint buffer_id) {
   WebGLBuffer* buffer = new WebGLBuffer(this, buffer_id);
   buffer_map_[buffer_id] = buffer;
   return buffer;
 }
 
-WebGLFramebuffer* WebGLRenderingContext::CreateFramebuffer(uint32_t framebuffer_id) {
+WebGLFramebuffer* WebGLRenderingContext::CreateFramebuffer(GLuint framebuffer_id) {
   WebGLFramebuffer* framebuffer = new WebGLFramebuffer(this, framebuffer_id);
   framebuffer_map_[framebuffer_id] = framebuffer;
   return framebuffer;
 }
 
-WebGLProgram* WebGLRenderingContext::CreateProgram(uint32_t program_id) {
+WebGLProgram* WebGLRenderingContext::CreateProgram(GLuint program_id) {
   WebGLProgram* program = new WebGLProgram(this, program_id);
   program_map_[program_id] = program;
   return program;
 }
 
-WebGLRenderbuffer* WebGLRenderingContext::CreateRenderbuffer(uint32_t renderbuffer_id) {
+WebGLRenderbuffer* WebGLRenderingContext::CreateRenderbuffer(GLuint renderbuffer_id) {
   WebGLRenderbuffer* renderbuffer = new WebGLRenderbuffer(this, renderbuffer_id);
   renderbuffer_map_[renderbuffer_id] = renderbuffer;
   return renderbuffer;
 }
 
-WebGLShader* WebGLRenderingContext::CreateShader(uint32_t shader_id) {
+WebGLShader* WebGLRenderingContext::CreateShader(GLuint shader_id) {
   WebGLShader* shader = new WebGLShader(this, shader_id);
   shader_map_[shader_id] = shader;
   return shader;
 }
 
-WebGLTexture* WebGLRenderingContext::CreateTexture(uint32_t texture_id) {
+WebGLTexture* WebGLRenderingContext::CreateTexture(GLuint texture_id) {
   WebGLTexture* texture = new WebGLTexture(this, texture_id);
   texture_map_[texture_id] = texture;
   return texture;

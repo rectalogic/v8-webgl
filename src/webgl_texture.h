@@ -18,7 +18,7 @@ class WebGLTexture : public V8Object<WebGLTexture> {
   WebGLObject* get_webgl_object() { return &webgl_object_; }
 
  protected:
-  WebGLTexture(WebGLRenderingContext* context, uint32_t texture_id)
+  WebGLTexture(WebGLRenderingContext* context, GLuint texture_id)
       : V8Object<WebGLTexture>()
       , webgl_object_(context, texture_id) {}
 

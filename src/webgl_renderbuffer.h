@@ -18,7 +18,7 @@ class WebGLRenderbuffer : public V8Object<WebGLRenderbuffer> {
   WebGLObject* get_webgl_object() { return &webgl_object_; }
 
  protected:
-  WebGLRenderbuffer(WebGLRenderingContext* context, uint32_t renderbuffer_id)
+  WebGLRenderbuffer(WebGLRenderingContext* context, GLuint renderbuffer_id)
       : V8Object<WebGLRenderbuffer>()
       , webgl_object_(context, renderbuffer_id) {}
 

@@ -18,7 +18,7 @@ class WebGLBuffer : public V8Object<WebGLBuffer> {
   WebGLObject* get_webgl_object() { return &webgl_object_; }
 
  protected:
-  WebGLBuffer(WebGLRenderingContext* context, uint32_t buffer_id)
+  WebGLBuffer(WebGLRenderingContext* context, GLuint buffer_id)
       : V8Object<WebGLBuffer>()
       , webgl_object_(context, buffer_id) {}
 

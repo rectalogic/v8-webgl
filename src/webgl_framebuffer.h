@@ -18,7 +18,7 @@ class WebGLFramebuffer : public V8Object<WebGLFramebuffer> {
   WebGLObject* get_webgl_object() { return &webgl_object_; }
 
  protected:
-  WebGLFramebuffer(WebGLRenderingContext* context, uint32_t framebuffer_id)
+  WebGLFramebuffer(WebGLRenderingContext* context, GLuint framebuffer_id)
       : V8Object<WebGLFramebuffer>()
       , webgl_object_(context, framebuffer_id) {}
 

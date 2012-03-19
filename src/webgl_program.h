@@ -18,7 +18,7 @@ class WebGLProgram : public V8Object<WebGLProgram> {
   WebGLObject* get_webgl_object() { return &webgl_object_; }
 
  protected:
-  WebGLProgram(WebGLRenderingContext* context, uint32_t program_id)
+  WebGLProgram(WebGLRenderingContext* context, GLuint program_id)
       : V8Object<WebGLProgram>()
       , webgl_object_(context, program_id) {}
 
