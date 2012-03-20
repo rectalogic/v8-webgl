@@ -18,7 +18,7 @@
 
 namespace v8_webgl {
 
-static Factory* s_factory = 0;
+static Factory* s_factory = NULL;
 static v8::Persistent<v8::ObjectTemplate> s_global;
 
 v8::Persistent<v8::ObjectTemplate> Initialize(Factory* factory) {
@@ -65,7 +65,7 @@ void Uninitialize() {
   s_global.Clear();
 
   delete s_factory;
-  s_factory = 0;
+  s_factory = NULL;
 
   Console::Uninitialize();
   Canvas::Uninitialize();

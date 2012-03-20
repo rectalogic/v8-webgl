@@ -28,7 +28,7 @@ v8::Handle<v8::Object> ArrayBuffer::Create(uint32_t length) {
 // ArrayBuffer(unsigned long length)
 v8::Handle<v8::Value> ArrayBuffer::ConstructorCallback(const v8::Arguments& args) {
   uint32_t length = 0;
-  void* data = 0;
+  void* data = NULL;
   if (args.Length() >= 1) {
     bool ok = true;
     length = V8ToUint32(args[0], ok);
