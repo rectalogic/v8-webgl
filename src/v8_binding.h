@@ -178,6 +178,10 @@ class V8Object : public V8ObjectBase {
     }
   }
 
+  static v8::Handle<v8::Object> Create(int argc = 0, v8::Handle<v8::Value> argv[] = NULL) {
+    return s_constructor_template->GetFunction()->NewInstance(argc, argv);
+  }
+
   // Subclasses should reimplement
   static void ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> /* constructor */) {}
 
@@ -191,10 +195,6 @@ class V8Object : public V8ObjectBase {
       return v8::ThrowException(v8::Exception::TypeError(v8::String::New("Illegal constructor")));
 
     return args.This();
-  }
-
-  static v8::Handle<v8::FunctionTemplate> GetTemplate() {
-    return s_constructor_template;
   }
 
  private:

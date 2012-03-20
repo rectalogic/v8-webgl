@@ -22,7 +22,7 @@ ArrayBuffer::~ArrayBuffer() {
 
 v8::Handle<v8::Object> ArrayBuffer::Create(uint32_t length) {
   v8::Handle<v8::Value> argv[1] = { Uint32ToV8(length) };
-  return GetTemplate()->GetFunction()->NewInstance(1, argv);
+  return V8Object<ArrayBuffer>::Create(1, argv);
 }
 
 // ArrayBuffer(unsigned long length)
