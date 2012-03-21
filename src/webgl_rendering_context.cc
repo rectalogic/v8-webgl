@@ -75,7 +75,7 @@ static inline v8::Handle<v8::Value> ThrowInvalidContext() {
   return v8::ThrowException(v8::Exception::TypeError(v8::String::New("Object not created with this WebGLRenderingContext")));
 }
 
-static inline void Log(Logger::Level level, std::string& msg) {
+static inline void Log(Logger::Level level, std::string msg) {
   Logger* logger = GetFactory()->GetLogger();
   if (logger)
     logger->Log(level, msg);
@@ -1000,15 +1000,24 @@ static v8::Handle<v8::Value> Callback_getParameter(const v8::Arguments& args) {
     default: {
       std::stringstream ss;
       ss << "getParameter: Unrecognized parameter name: " << pname;
-      std::string msg(ss.str());
-      Log(Logger::kWarn, msg);
+      Log(Logger::kWarn, ss.str());
       return v8::Undefined();
     }
   }
 }
 
 // any getBufferParameter(GLenum target, GLenum pname);
-static v8::Handle<v8::Value> Callback_getBufferParameter(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+static v8::Handle<v8::Value> Callback_getBufferParameter(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(2);
+  GLenum target = CONVERT_ARG(0, V8ToUint32);
+  GLenum pname = CONVERT_ARG(1, V8ToUint32);
+  GLint value = 0;
+  glGetBufferParameteriv(target, pname, &value);
+  if (pname == GL_BUFFER_SIZE)
+    return TypeToV8<int32_t>(value);
+  return TypeToV8<uint32_t>(static_cast<uint32_t>(value));
+}
 
 // GLenum getError();
 static v8::Handle<v8::Value> Callback_getError(const v8::Arguments& args) {
@@ -1025,11 +1034,35 @@ static v8::Handle<v8::Value> Callback_getFramebufferAttachmentParameter(const v8
   GLenum target = CONVERT_ARG(0, V8ToUint32);
   GLenum attachment = CONVERT_ARG(1, V8ToUint32);
   GLenum pname = CONVERT_ARG(2, V8ToUint32);
-  //XXX this is wrong - need to check pname and return correct datatype - also some parameters e.g. GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME need to return an object, WebGLTexture* - so we need to keep track of attached objects to the framebuffer - can context keep a map of IDs to persistent v8 instances for each WebGLObject type we care about - and maintain this list when creating/deleting
   GLint value = 0;
   //XXX glGetFramebufferAttachmentParameterivEXT etc.
   glGetFramebufferAttachmentParameteriv(target, attachment, pname, &value);
-  return TypeToV8<int32_t>(value);
+
+  switch (pname) {
+    case GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME: {
+      GLint type = 0;
+      glGetFramebufferAttachmentParameteriv(target, attachment, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE, &type);
+      switch (type) {
+        case GL_RENDERBUFFER: {
+          WebGLRenderbuffer* renderbuffer = context->IdToRenderbuffer(value);
+          return V8_OR_NULL(renderbuffer);
+        }
+        case GL_TEXTURE: {
+          WebGLTexture* texture = context->IdToTexture(value);
+          return V8_OR_NULL(texture);
+        }
+        default:
+          return v8::Null();
+      }
+    }
+    case GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
+      return TypeToV8<uint32_t>(value);
+    case GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
+    case GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
+      return TypeToV8<int32_t>(value);
+    default:
+      return v8::Null();
+  }
 }
 
 // any getProgramParameter(WebGLProgram program, GLenum pname);
