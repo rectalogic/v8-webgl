@@ -4,6 +4,7 @@
 
 #include "v8_webgl_internal.h"
 #include "v8_binding.h"
+#include "typed_array.h"
 #include "webgl_active_info.h"
 #include "webgl_buffer.h"
 #include "webgl_framebuffer.h"
@@ -14,13 +15,31 @@
 #include "webgl_texture.h"
 #include "webgl_uniform_location.h"
 
+#include <sstream>
 
 namespace v8_webgl {
 
 unsigned long WebGLRenderingContext::s_context_counter = 0;
 
+// Emulate GLES2 constants
+#ifndef GL_MAX_FRAGMENT_UNIFORM_VECTORS
+#define GL_MAX_FRAGMENT_UNIFORM_VECTORS 0x8DFD
+#endif
+#ifndef GL_MAX_VERTEX_UNIFORM_VECTORS
+#define GL_MAX_VERTEX_UNIFORM_VECTORS 0x8DFB
+#endif
+#ifndef GL_MAX_VARYING_VECTORS
+#define GL_MAX_VARYING_VECTORS 0x8DFC
+#endif
+
+// WebGL specific
+#define GL_UNPACK_FLIP_Y_WEBGL 0x9240
+#define GL_UNPACK_PREMULTIPLY_ALPHA_WEBGL 0x9241
+#define GL_UNPACK_COLORSPACE_CONVERSION_WEBGL 0x9243
+
+
 #define PROTO_METHOD(name) AddCallback(proto, #name, Callback_##name, signature)
-#define CONSTANT(name, value) AddConstant(#name, Int32ToV8(value), proto, constructor)
+#define CONSTANT(name, value) AddConstant(#name, TypeToV8<int32_t>(value), proto, constructor)
 
 #define CHECK_ARGS(num) \
   if (args.Length() < num) \
@@ -38,6 +57,9 @@ unsigned long WebGLRenderingContext::s_context_counter = 0;
   if (!object) \
     return v8::Undefined();
 
+#define V8_OR_NULL(object) \
+  object ? static_cast<v8::Handle<v8::Value> >(object->ToV8()) : static_cast<v8::Handle<v8::Value> >(v8::Null())
+
 #define WEBGL_ID(object) \
   object ? object->get_webgl_object()->get_webgl_id() : 0
 
@@ -51,6 +73,12 @@ unsigned long WebGLRenderingContext::s_context_counter = 0;
 
 static inline v8::Handle<v8::Value> ThrowInvalidContext() {
   return v8::ThrowException(v8::Exception::TypeError(v8::String::New("Object not created with this WebGLRenderingContext")));
+}
+
+static inline void Log(Logger::Level level, std::string& msg) {
+  Logger* logger = GetFactory()->GetLogger();
+  if (logger)
+    logger->Log(level, msg);
 }
 
 WebGLRenderingContext::WebGLRenderingContext(int width, int height)
@@ -156,7 +184,7 @@ static v8::Handle<v8::Value> Callback_getContextAttributes(const v8::Arguments& 
 // boolean isContextLost();
 static v8::Handle<v8::Value> Callback_isContextLost(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
-  return BooleanToV8(false);
+  return TypeToV8<bool>(false);
 }
 
 // DOMString[ ] getSupportedExtensions();
@@ -322,7 +350,7 @@ static v8::Handle<v8::Value> Callback_checkFramebufferStatus(const v8::Arguments
   CALLBACK_PREAMBLE();
   CHECK_ARGS(1);
   GLenum target = CONVERT_ARG(0, V8ToUint32);
-  return Uint32ToV8(glCheckFramebufferStatus(target));
+  return TypeToV8<uint32_t>(glCheckFramebufferStatus(target));
 }
 
 // void clear(GLbitfield mask);
@@ -753,7 +781,7 @@ static v8::Handle<v8::Value> Callback_getAttribLocation(const v8::Arguments& arg
   GLuint program_id = WEBGL_ID(program);
   std::string name = CONVERT_ARG(1, V8ToString);
   GLint location = glGetAttribLocation(program_id, name.c_str());
-  return Int32ToV8(location);
+  return TypeToV8<int32_t>(location);
 }
 
 // any getParameter(GLenum pname);
@@ -761,8 +789,222 @@ static v8::Handle<v8::Value> Callback_getParameter(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(1);
   GLenum pname = CONVERT_ARG(0, V8ToUint32);
-  //XXX need big switch statement for pname, each param has a different datatype (int, float, array etc.) and will need its own gl call to retrieve
-  return v8::Undefined(); /*XXX finish*/
+  switch (pname) {
+    case GL_ACTIVE_TEXTURE:
+    case GL_BLEND_DST_ALPHA:
+    case GL_BLEND_DST_RGB:
+    case GL_BLEND_EQUATION_ALPHA:
+    case GL_BLEND_EQUATION_RGB:
+    case GL_BLEND_SRC_ALPHA:
+    case GL_BLEND_SRC_RGB:
+    case GL_CULL_FACE_MODE:
+    case GL_DEPTH_FUNC:
+    case GL_FRONT_FACE:
+    case GL_GENERATE_MIPMAP_HINT:
+    case GL_STENCIL_BACK_FAIL:
+    case GL_STENCIL_BACK_FUNC:
+    case GL_STENCIL_BACK_PASS_DEPTH_FAIL:
+    case GL_STENCIL_BACK_PASS_DEPTH_PASS:
+    case GL_STENCIL_BACK_VALUE_MASK:
+    case GL_STENCIL_BACK_WRITEMASK:
+    case GL_STENCIL_FAIL:
+    case GL_STENCIL_FUNC:
+    case GL_STENCIL_PASS_DEPTH_FAIL:
+    case GL_STENCIL_PASS_DEPTH_PASS:
+    case GL_STENCIL_VALUE_MASK:
+    case GL_STENCIL_WRITEMASK: {
+      GLint value = 0;
+      glGetIntegerv(pname, &value);
+      return TypeToV8<uint32_t>(static_cast<uint32_t>(value));
+    }
+
+    case GL_ALIASED_LINE_WIDTH_RANGE:
+    case GL_ALIASED_POINT_SIZE_RANGE:
+    case GL_DEPTH_RANGE: {
+      GLfloat value[2] = {0};
+      glGetFloatv(pname, value);
+      return Float32Array::Create(value, 2);
+    }
+
+    case GL_BLEND_COLOR:
+    case GL_COLOR_CLEAR_VALUE: {
+      GLfloat value[4] = {0};
+      glGetFloatv(pname, value);
+      return Float32Array::Create(value, 4);
+    }
+
+    case GL_MAX_VIEWPORT_DIMS: {
+      GLint value[2] = {0};
+      glGetIntegerv(pname, value);
+      return Int32Array::Create(value, 2);
+    }
+
+    case GL_SCISSOR_BOX:
+    case GL_VIEWPORT: {
+      GLint value[4] = {0};
+      glGetIntegerv(pname, value);
+      return Int32Array::Create(value, 4);
+    }
+
+    // Emulate GLES2 queries for desktop GL
+
+    case GL_MAX_FRAGMENT_UNIFORM_VECTORS: {
+      GLint value = 0;
+      glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &value);
+      return TypeToV8<int32_t>(value / 4);
+    }
+    case GL_MAX_VERTEX_UNIFORM_VECTORS: {
+      GLint value = 0;
+      glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &value);
+      return TypeToV8<int32_t>(value / 4);
+    }
+    case GL_MAX_VARYING_VECTORS: {
+      GLint value = 0;
+      glGetIntegerv(GL_MAX_VARYING_FLOATS, &value);
+      return TypeToV8<int32_t>(value / 4);
+    }
+
+    case GL_ALPHA_BITS:
+    case GL_BLUE_BITS:
+    case GL_DEPTH_BITS:
+    case GL_GREEN_BITS:
+    case GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS:
+    case GL_MAX_CUBE_MAP_TEXTURE_SIZE:
+    case GL_MAX_RENDERBUFFER_SIZE:
+    case GL_MAX_TEXTURE_IMAGE_UNITS:
+    case GL_MAX_TEXTURE_SIZE:
+    case GL_MAX_VERTEX_ATTRIBS:
+    case GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS:
+#if 0
+    case GL_NUM_SHADER_BINARY_FORMATS:
+      //XXX not sure about this
+#endif
+    case GL_PACK_ALIGNMENT:
+    case GL_RED_BITS:
+    case GL_SAMPLE_BUFFERS:
+    case GL_SAMPLES:
+    case GL_STENCIL_BACK_REF:
+    case GL_STENCIL_BITS:
+    case GL_STENCIL_CLEAR_VALUE:
+    case GL_STENCIL_REF:
+    case GL_SUBPIXEL_BITS:
+    case GL_UNPACK_ALIGNMENT: {
+      GLint value = 0;
+      glGetIntegerv(pname, &value);
+      return TypeToV8<int32_t>(value);
+    }
+
+    case GL_COLOR_WRITEMASK: {
+      GLboolean value[4] = {0};
+      glGetBooleanv(pname, value);
+      bool bool_value[4];
+      for (int i = 0; i < 4; i++)
+        bool_value[i] = static_cast<bool>(value[i]);
+      return ArrayToV8<bool>(bool_value, 4);
+    }
+
+    case GL_BLEND:
+    case GL_CULL_FACE:
+    case GL_DEPTH_TEST:
+    case GL_DEPTH_WRITEMASK:
+    case GL_DITHER:
+    case GL_POLYGON_OFFSET_FILL:
+    case GL_SAMPLE_COVERAGE_INVERT:
+    case GL_SCISSOR_TEST:
+    case GL_STENCIL_TEST: {
+      GLboolean value = 0;
+      glGetBooleanv(pname, &value);
+      return TypeToV8<bool>(static_cast<bool>(value));
+    }
+
+    case GL_DEPTH_CLEAR_VALUE:
+    case GL_LINE_WIDTH:
+    case GL_POLYGON_OFFSET_FACTOR:
+    case GL_POLYGON_OFFSET_UNITS:
+    case GL_SAMPLE_COVERAGE_VALUE: {
+      GLfloat value = 0;
+      glGetFloatv(pname, &value);
+      return TypeToV8<double>(value);
+    }
+
+    case GL_ARRAY_BUFFER_BINDING:
+    case GL_ELEMENT_ARRAY_BUFFER_BINDING: {
+      GLint buffer_id = 0;
+      glGetIntegerv(pname, &buffer_id);
+      WebGLBuffer* buffer = context->IdToBuffer(buffer_id);
+      return V8_OR_NULL(buffer);
+    }
+
+    case GL_COMPRESSED_TEXTURE_FORMATS:
+      // XXX needed for WEBGL_compressed_texture_s3tc extension
+      return Uint32Array::Create(0, NULL);
+
+    case GL_CURRENT_PROGRAM: {
+      GLint program_id = 0;
+      glGetIntegerv(pname, &program_id);
+      WebGLProgram* program = context->IdToProgram(program_id);
+      return V8_OR_NULL(program);
+    }
+
+    case GL_FRAMEBUFFER_BINDING:
+    case GL_RENDERBUFFER_BINDING: {
+      GLint framebuffer_id = 0;
+      glGetIntegerv(pname, &framebuffer_id);
+      WebGLFramebuffer* framebuffer = context->IdToFramebuffer(framebuffer_id);
+      return V8_OR_NULL(framebuffer);
+    }
+
+    case GL_RENDERER:
+      return TypeToV8<const char*>("v8-webgl");
+
+    case GL_SHADING_LANGUAGE_VERSION: {
+      std::string version = std::string("WebGL GLSL ES 1.0 (") + std::string(reinterpret_cast<const char*>(glGetString(pname))) + std::string(")");
+      return TypeToV8<const char*>(version.c_str());
+    }
+
+    case GL_TEXTURE_BINDING_2D:
+    case GL_TEXTURE_BINDING_CUBE_MAP: {
+      GLint texture_id = 0;
+      glGetIntegerv(pname, &texture_id);
+      WebGLTexture* texture = context->IdToTexture(texture_id);
+      return V8_OR_NULL(texture);
+    }
+
+#if 0
+    case GL_UNPACK_FLIP_Y_WEBGL:
+    case GL_UNPACK_PREMULTIPLY_ALPHA_WEBGL:
+    case GL_UNPACK_COLORSPACE_CONVERSION_WEBGL:
+      //XXX these are WebGL specific - need to track and store them in our context
+#endif
+
+    case GL_VENDOR:
+      return TypeToV8<const char*>("rectalogic");
+
+    case GL_VERSION: {
+      std::string version = std::string("WebGL 1.0 (") + std::string(reinterpret_cast<const char*>(glGetString(pname))) + std::string(")");
+      return TypeToV8<const char*>(version.c_str());
+    }
+
+#if 0
+    case GL_FRAGMENT_SHADER_DERIVATIVE_HINT_OES:
+      //XXX used with OES_standard_derivatives extension
+
+    case GL_UNMASKED_RENDERER_WEBGL:
+    case GL_UNMASKED_VENDOR_WEBGL:
+      //XXX used with WEBGL_debug_renderer_info extension
+
+    case GL_VERTEX_ARRAY_BINDING_OES:
+      //XXX used with OES_vertex_array_object extension
+#endif
+
+    default: {
+      std::stringstream ss;
+      ss << "getParameter: Unrecognized parameter name: " << pname;
+      std::string msg(ss.str());
+      Log(Logger::kWarn, msg);
+      return v8::Undefined();
+    }
+  }
 }
 
 // any getBufferParameter(GLenum target, GLenum pname);
@@ -772,7 +1014,7 @@ static v8::Handle<v8::Value> Callback_getBufferParameter(const v8::Arguments& ar
 static v8::Handle<v8::Value> Callback_getError(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   GLenum error = glGetError();
-  return Uint32ToV8(error);
+  return TypeToV8<uint32_t>(error);
 }
 
 // any getFramebufferAttachmentParameter(GLenum target, GLenum attachment, 
@@ -787,7 +1029,7 @@ static v8::Handle<v8::Value> Callback_getFramebufferAttachmentParameter(const v8
   GLint value = 0;
   //XXX glGetFramebufferAttachmentParameterivEXT etc.
   glGetFramebufferAttachmentParameteriv(target, attachment, pname, &value);
-  return Int32ToV8(value);
+  return TypeToV8<int32_t>(value);
 }
 
 // any getProgramParameter(WebGLProgram program, GLenum pname);
@@ -806,11 +1048,11 @@ static v8::Handle<v8::Value> Callback_getProgramParameter(const v8::Arguments& a
     case GL_DELETE_STATUS:
     case GL_VALIDATE_STATUS:
     case GL_LINK_STATUS:
-      return BooleanToV8(static_cast<bool>(value));
+      return TypeToV8<bool>(static_cast<bool>(value));
     case GL_ATTACHED_SHADERS:
     case GL_ACTIVE_ATTRIBUTES:
     case GL_ACTIVE_UNIFORMS:
-      return Int32ToV8(value);
+      return TypeToV8<int32_t>(value);
   }
   return v8::Undefined();
 }

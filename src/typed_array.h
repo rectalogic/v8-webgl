@@ -38,12 +38,24 @@ class ArrayBuffer : public V8Object<ArrayBuffer> {
 template<class T, v8::ExternalArrayType TArrayType, typename TNative>
 class TypedArray : public V8Object<T> {
  public:
+  static v8::Handle<v8::Object> Create(TNative* values, uint32_t length) {
+    v8::Handle<v8::Value> argv[1] = { TypeToV8<uint32_t>(length) };
+    v8::Handle<v8::Object> array = V8Object<T>::Create(1, argv);
+    if (array.IsEmpty())
+      return array;
+    if (length > 0) {
+      void* data = array->GetIndexedPropertiesExternalArrayData();
+      memcpy(data, values, length * sizeof(TNative));
+    }
+    return array;
+  }
+
   static void ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> constructor) {
     v8::Handle<v8::ObjectTemplate> proto = constructor->PrototypeTemplate();
     v8::Handle<v8::ObjectTemplate> instance = constructor->InstanceTemplate();
     v8::Local<v8::Signature> signature = v8::Signature::New(constructor);
 
-    V8ObjectBase::AddConstant("BYTES_PER_ELEMENT", Uint32ToV8(sizeof(TNative)), proto, constructor);
+    V8ObjectBase::AddConstant("BYTES_PER_ELEMENT", TypeToV8<uint32_t>(sizeof(TNative)), proto, constructor);
     //XXX need subarray and set() with array arg
   }
 
@@ -145,9 +157,9 @@ class TypedArray : public V8Object<T> {
     }
 
     V8ObjectBase::SetProperty(self, "buffer", buffer_value);
-    V8ObjectBase::SetProperty(self, "length", Uint32ToV8(length));
-    V8ObjectBase::SetProperty(self, "byteOffset", Uint32ToV8(byte_offset));
-    V8ObjectBase::SetProperty(self, "byteLength", Uint32ToV8(length * sizeof(TNative)));
+    V8ObjectBase::SetProperty(self, "length", TypeToV8<uint32_t>(length));
+    V8ObjectBase::SetProperty(self, "byteOffset", TypeToV8<uint32_t>(byte_offset));
+    V8ObjectBase::SetProperty(self, "byteLength", TypeToV8<uint32_t>(length * sizeof(TNative)));
 
     return self;
   }

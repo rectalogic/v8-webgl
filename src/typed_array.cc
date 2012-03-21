@@ -21,7 +21,7 @@ ArrayBuffer::~ArrayBuffer() {
 }
 
 v8::Handle<v8::Object> ArrayBuffer::Create(uint32_t length) {
-  v8::Handle<v8::Value> argv[1] = { Uint32ToV8(length) };
+  v8::Handle<v8::Value> argv[1] = { TypeToV8<uint32_t>(length) };
   return V8Object<ArrayBuffer>::Create(1, argv);
 }
 
@@ -42,7 +42,7 @@ v8::Handle<v8::Value> ArrayBuffer::ConstructorCallback(const v8::Arguments& args
 
   v8::Handle<v8::Object> self(args.This());
 
-  SetProperty(self, "byteLength", Uint32ToV8(length));
+  SetProperty(self, "byteLength", TypeToV8<uint32_t>(length));
 
   //XXX need ArrayBuffer slice(long begin, optional long end)
 

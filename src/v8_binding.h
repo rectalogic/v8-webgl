@@ -27,15 +27,36 @@ inline v8::Handle<v8::Value> ThrowRangeError(const char* msg) {
   return v8::ThrowException(v8::Exception::RangeError(v8::String::New(msg)));
 }
 
-inline v8::Handle<v8::Boolean> BooleanToV8(bool value) {
+template<typename T>
+v8::Handle<v8::Value> TypeToV8(T value);
+
+template<>
+inline v8::Handle<v8::Value> TypeToV8<bool>(bool value) {
   return value ? v8::True() : v8::False();
 }
-
-inline v8::Handle<v8::Integer> Int32ToV8(int32_t value) {
+template<>
+inline v8::Handle<v8::Value> TypeToV8<int32_t>(int32_t value) {
   return v8::Integer::New(value);
 }
-inline v8::Handle<v8::Integer> Uint32ToV8(uint32_t value) {
+template<>
+inline v8::Handle<v8::Value> TypeToV8<uint32_t>(uint32_t value) {
   return v8::Integer::NewFromUnsigned(value);
+}
+template<>
+inline v8::Handle<v8::Value> TypeToV8<double>(double value) {
+  return v8::Number::New(value);
+}
+template<>
+inline v8::Handle<v8::Value> TypeToV8<const char*>(const char* value) {
+  return v8::String::New(value);
+}
+
+template<typename T>
+v8::Handle<v8::Array> ArrayToV8(T* values, uint32_t length) {
+  v8::Local<v8::Array> array = v8::Array::New(length);
+  for (uint32_t i = 0; i < length; i++)
+    array->Set(TypeToV8<uint32_t>(i), TypeToV8<T>(values[i]));
+  return array;
 }
 
 std::string V8ToString(v8::Handle<v8::Value> value, bool& ok);
