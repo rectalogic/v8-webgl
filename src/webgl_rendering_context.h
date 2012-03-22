@@ -40,6 +40,40 @@ class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
     graphic_context_->Resize(width, height);
   }
 
+  unsigned long get_context_id() { return context_id_; }
+
+ protected:
+  WebGLRenderingContext(int width, int height);
+  ~WebGLRenderingContext();
+
+ private:
+  GraphicContext* graphic_context_;
+  unsigned long context_id_;
+  GLenum gl_error_;
+
+  std::map<GLuint, WebGLBuffer*> buffer_map_;
+  std::map<GLuint, WebGLFramebuffer*> framebuffer_map_;
+  std::map<GLuint, WebGLProgram*> program_map_;
+  std::map<GLuint, WebGLRenderbuffer*> renderbuffer_map_;
+  std::map<GLuint, WebGLShader*> shader_map_;
+  std::map<GLuint, WebGLTexture*> texture_map_;
+
+  template<class T>
+  void DeleteMapObjects(std::map<GLuint, T*>& map) {
+    typename std::map<GLuint, T*>::iterator it;
+    for (it = map.begin(); it != map.end(); it++)
+      delete it->second;
+  }
+
+  template<class T>
+  T* IdToObject(std::map<GLuint, T*>& map, GLuint id) {
+    typename std::map<GLuint, T*>::iterator it;
+    it = map.find(id);
+    if (it == map.end())
+      return 0;
+    return it->second;
+  }
+
   WebGLActiveInfo* CreateActiveInfo();
   WebGLBuffer* CreateBuffer(GLuint buffer_id);
   WebGLFramebuffer* CreateFramebuffer(GLuint framebuffer_id);
@@ -75,42 +109,156 @@ class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
     return IdToObject(texture_map_, texture_id);
   }
 
-  unsigned long get_context_id() { return context_id_; }
+  void set_gl_error(GLenum error);
+  GLenum get_gl_error();
 
- protected:
-  WebGLRenderingContext(int width, int height);
-  ~WebGLRenderingContext();
-
- private:
-  GraphicContext* graphic_context_;
-  unsigned long context_id_;
-
-  std::map<GLuint, WebGLBuffer*> buffer_map_;
-  std::map<GLuint, WebGLFramebuffer*> framebuffer_map_;
-  std::map<GLuint, WebGLProgram*> program_map_;
-  std::map<GLuint, WebGLRenderbuffer*> renderbuffer_map_;
-  std::map<GLuint, WebGLShader*> shader_map_;
-  std::map<GLuint, WebGLTexture*> texture_map_;
-
-  template<class T>
-  void DeleteMapObjects(std::map<GLuint, T*>& map) {
-    typename std::map<GLuint, T*>::iterator it;
-    for (it = map.begin(); it != map.end(); it++)
-      delete it->second;
-  }
-
-  template<class T>
-  T* IdToObject(std::map<GLuint, T*>& map, GLuint id) {
-    typename std::map<GLuint, T*>::iterator it;
-    it = map.find(id);
-    if (it == map.end())
-      return 0;
-    return it->second;
-  }
+  bool ValidateBlendEquation(const char* function, GLenum mode);
+  bool ValidateBlendFuncFactors(const char* function, GLenum src, GLenum dst);
+  bool ValidateTexFuncParameters(const char* function, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type);
+  bool ValidateCapability(const char* function, GLenum cap);
+  bool ValidateDrawMode(const char* function, GLenum mode);
+  bool ValidateFramebufferFuncParameters(const char* function, GLenum target, GLenum attachment);
+  bool ValidateStencilFunc(const char* function, GLenum func);
 
   static unsigned long s_context_counter;
 
   friend class Canvas;
+
+#define CALLBACK(name) static v8::Handle<v8::Value> Callback_##name(const v8::Arguments& args)
+  CALLBACK(getContextAttributes);
+  CALLBACK(isContextLost);
+  CALLBACK(getSupportedExtensions);
+  CALLBACK(getExtension);
+  CALLBACK(activeTexture);
+  CALLBACK(attachShader);
+  CALLBACK(bindAttribLocation);
+  CALLBACK(bindBuffer);
+  CALLBACK(bindFramebuffer);
+  CALLBACK(bindRenderbuffer);
+  CALLBACK(bindTexture);
+  CALLBACK(blendColor);
+  CALLBACK(blendEquation);
+  CALLBACK(blendEquationSeparate);
+  CALLBACK(blendFunc);
+  CALLBACK(blendFuncSeparate);
+  CALLBACK(bufferData);
+  CALLBACK(bufferSubData);
+  CALLBACK(checkFramebufferStatus);
+  CALLBACK(clear);
+  CALLBACK(clearColor);
+  CALLBACK(clearDepth);
+  CALLBACK(clearStencil);
+  CALLBACK(colorMask);
+  CALLBACK(compileShader);
+  CALLBACK(copyTexImage2D);
+  CALLBACK(copyTexSubImage2D);
+  CALLBACK(createBuffer);
+  CALLBACK(createFramebuffer);
+  CALLBACK(createProgram);
+  CALLBACK(createRenderbuffer);
+  CALLBACK(createShader);
+  CALLBACK(createTexture);
+  CALLBACK(cullFace);
+  CALLBACK(deleteBuffer);
+  CALLBACK(deleteFramebuffer);
+  CALLBACK(deleteProgram);
+  CALLBACK(deleteRenderbuffer);
+  CALLBACK(deleteShader);
+  CALLBACK(deleteTexture);
+  CALLBACK(depthFunc);
+  CALLBACK(depthMask);
+  CALLBACK(depthRange);
+  CALLBACK(detachShader);
+  CALLBACK(disable);
+  CALLBACK(disableVertexAttribArray);
+  CALLBACK(drawArrays);
+  CALLBACK(drawElements);
+  CALLBACK(enable);
+  CALLBACK(enableVertexAttribArray);
+  CALLBACK(finish);
+  CALLBACK(flush);
+  CALLBACK(framebufferRenderbuffer);
+  CALLBACK(framebufferTexture2D);
+  CALLBACK(frontFace);
+  CALLBACK(generateMipmap);
+  CALLBACK(getActiveAttrib);
+  CALLBACK(getActiveUniform);
+  CALLBACK(getAttachedShaders);
+  CALLBACK(getAttribLocation);
+  CALLBACK(getParameter);
+  CALLBACK(getBufferParameter);
+  CALLBACK(getError);
+  CALLBACK(getFramebufferAttachmentParameter);
+  CALLBACK(getProgramParameter);
+  CALLBACK(getProgramInfoLog);
+  CALLBACK(getRenderbufferParameter);
+  CALLBACK(getShaderParameter);
+  CALLBACK(getShaderInfoLog);
+  CALLBACK(getShaderSource);
+  CALLBACK(getTexParameter);
+  CALLBACK(getUniform);
+  CALLBACK(getUniformLocation);
+  CALLBACK(getVertexAttrib);
+  CALLBACK(getVertexAttribOffset);
+  CALLBACK(hint);
+  CALLBACK(isBuffer);
+  CALLBACK(isEnabled);
+  CALLBACK(isFramebuffer);
+  CALLBACK(isProgram);
+  CALLBACK(isRenderbuffer);
+  CALLBACK(isShader);
+  CALLBACK(isTexture);
+  CALLBACK(lineWidth);
+  CALLBACK(linkProgram);
+  CALLBACK(pixelStorei);
+  CALLBACK(polygonOffset);
+  CALLBACK(readPixels);
+  CALLBACK(renderbufferStorage);
+  CALLBACK(sampleCoverage);
+  CALLBACK(scissor);
+  CALLBACK(shaderSource);
+  CALLBACK(stencilFunc);
+  CALLBACK(stencilFuncSeparate);
+  CALLBACK(stencilMask);
+  CALLBACK(stencilMaskSeparate);
+  CALLBACK(stencilOp);
+  CALLBACK(stencilOpSeparate);
+  CALLBACK(texImage2D);
+  CALLBACK(texParameterf);
+  CALLBACK(texParameteri);
+  CALLBACK(texSubImage2D);
+  CALLBACK(uniform1f);
+  CALLBACK(uniform1fv);
+  CALLBACK(uniform1i);
+  CALLBACK(uniform1iv);
+  CALLBACK(uniform2f);
+  CALLBACK(uniform2fv);
+  CALLBACK(uniform2i);
+  CALLBACK(uniform2iv);
+  CALLBACK(uniform3f);
+  CALLBACK(uniform3fv);
+  CALLBACK(uniform3i);
+  CALLBACK(uniform3iv);
+  CALLBACK(uniform4f);
+  CALLBACK(uniform4fv);
+  CALLBACK(uniform4i);
+  CALLBACK(uniform4iv);
+  CALLBACK(uniformMatrix2fv);
+  CALLBACK(uniformMatrix3fv);
+  CALLBACK(uniformMatrix4fv);
+  CALLBACK(useProgram);
+  CALLBACK(validateProgram);
+  CALLBACK(vertexAttrib1f);
+  CALLBACK(vertexAttrib1fv);
+  CALLBACK(vertexAttrib2f);
+  CALLBACK(vertexAttrib2fv);
+  CALLBACK(vertexAttrib3f);
+  CALLBACK(vertexAttrib3fv);
+  CALLBACK(vertexAttrib4f);
+  CALLBACK(vertexAttrib4fv);
+  CALLBACK(vertexAttribPointer);
+  CALLBACK(viewport);
+#undef CALLBACK
 };
 
 }
