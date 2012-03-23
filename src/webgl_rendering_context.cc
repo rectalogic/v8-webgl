@@ -1736,7 +1736,45 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getUniformLocation(const v
 }
 
 // any getVertexAttrib(GLuint index, GLenum pname);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_getVertexAttrib(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_getVertexAttrib(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(2);
+  GLuint index = CONVERT_ARG(0, V8ToUint32);
+  GLenum pname = CONVERT_ARG(1, V8ToUint32);
+  switch (pname) {
+    case GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING: {
+      GLint value = 0;
+      glGetVertexAttribiv(index, pname, &value);
+      WebGLBuffer* buffer = context->IdToBuffer(value);
+      return V8_OR_NULL(buffer);
+    }
+    case GL_VERTEX_ATTRIB_ARRAY_ENABLED:
+    case GL_VERTEX_ATTRIB_ARRAY_NORMALIZED: {
+      GLint value = 0;
+      glGetVertexAttribiv(index, pname, &value);
+      return TypeToV8<bool>(static_cast<bool>(value));
+    }
+    case GL_VERTEX_ATTRIB_ARRAY_SIZE:
+    case GL_VERTEX_ATTRIB_ARRAY_STRIDE: {
+      GLint value = 0;
+      glGetVertexAttribiv(index, pname, &value);
+      return TypeToV8<int32_t>(value);
+    }
+    case GL_VERTEX_ATTRIB_ARRAY_TYPE: {
+      GLint value = 0;
+      glGetVertexAttribiv(index, pname, &value);
+      return TypeToV8<uint32_t>(static_cast<uint32_t>(value));
+    }
+    case GL_CURRENT_VERTEX_ATTRIB: {
+      GLfloat value[4] = {0};
+      glGetVertexAttribfv(index, pname, value);
+      return Float32Array::Create(value, 4);
+    }
+    default:
+      context->set_gl_error(GL_INVALID_ENUM);
+      return v8::Null();
+  }
+}
 
 // GLsizeiptr getVertexAttribOffset(GLuint index, GLenum pname);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_getVertexAttribOffset(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
