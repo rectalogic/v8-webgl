@@ -14,15 +14,15 @@ class WebGLUniformLocation : public V8Object<WebGLUniformLocation> {
  public:
   static const char* const ClassName() { return "WebGLUniformLocation"; }
 
-  bool ValidateContext(WebGLRenderingContext* context) { return context->get_context_id() == context_id_; }
+  WebGLObject<GLint>* get_webgl_object() { return &webgl_object_; }
 
  protected:
-  WebGLUniformLocation(WebGLRenderingContext* context)
-      : V8Object<WebGLUniformLocation>()
-      , context_id_(context->get_context_id()) {}
+  WebGLUniformLocation(WebGLRenderingContext* context, GLint location_id)
+      : V8Object<WebGLUniformLocation>(true)
+      , webgl_object_(context, location_id) {}
 
  private:
-  unsigned long context_id_;
+  WebGLObject<GLint> webgl_object_;
 
   friend class WebGLRenderingContext;
 };

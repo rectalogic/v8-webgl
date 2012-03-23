@@ -165,8 +165,8 @@ WebGLTexture* WebGLRenderingContext::CreateTexture(GLuint texture_id) {
   return texture;
 }
 
-WebGLUniformLocation* WebGLRenderingContext::CreateUniformLocation() {
-  return new WebGLUniformLocation(this);
+WebGLUniformLocation* WebGLRenderingContext::CreateUniformLocation(GLint location_id) {
+  return new WebGLUniformLocation(this, location_id);
 }
 
 void WebGLRenderingContext::DeleteBuffer(WebGLBuffer* buffer) {
@@ -1559,7 +1559,18 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getTexParameter(const v8::
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_getUniform(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
 
 // WebGLUniformLocation getUniformLocation(WebGLProgram program, DOMString name);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_getUniformLocation(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_getUniformLocation(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(2);
+  WebGLProgram* program = CONVERT_ARG(0, V8ToNative<WebGLProgram>);
+  REQUIRE_OBJECT(program);
+  VALIDATE_CONTEXT(program);
+  GLuint program_id = WEBGL_ID(program);
+  std::string name = CONVERT_ARG(1, V8ToString);
+  GLint location_id = glGetUniformLocation(program_id, name.c_str());
+  WebGLUniformLocation* location = context->CreateUniformLocation(location_id);
+  return location->ToV8();
+}
 
 // any getVertexAttrib(GLuint index, GLenum pname);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_getVertexAttrib(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
