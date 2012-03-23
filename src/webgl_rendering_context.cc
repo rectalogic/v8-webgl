@@ -1880,21 +1880,77 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isTexture(const v8::Argume
 }
 
 // void lineWidth(GLfloat width);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_lineWidth(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_lineWidth(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  GLfloat width = CONVERT_ARG(0, V8ToFloat);
+  glLineWidth(width);
+  return v8::Undefined();
+}
 
 // void linkProgram(WebGLProgram program);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_linkProgram(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_linkProgram(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  WebGLProgram* program = CONVERT_ARG(0, V8ToNative<WebGLProgram>);
+  REQUIRE_OBJECT(program);
+  VALIDATE_CONTEXT(program);
+  GLuint program_id = WEBGL_ID(program);
+  glLinkProgram(program_id);
+  return v8::Undefined();
+}
 
 //XXX this needs to deal with custom WebGL attrs like UNPACK_FLIP_Y_WEBGL
 // void pixelStorei(GLenum pname, GLint param);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_pixelStorei(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
 
 // void polygonOffset(GLfloat factor, GLfloat units);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_polygonOffset(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_polygonOffset(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(2);
+  GLfloat factor = CONVERT_ARG(0, V8ToFloat);
+  GLfloat units = CONVERT_ARG(1, V8ToFloat);
+  glPolygonOffset(factor, units);
+  return v8::Undefined();
+}
 
 // void readPixels(GLint x, GLint y, GLsizei width, GLsizei height, 
 //                 GLenum format, GLenum type, ArrayBufferView pixels);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_readPixels(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_readPixels(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(7);
+  GLint x = CONVERT_ARG(0, V8ToInt32);
+  GLint y = CONVERT_ARG(1, V8ToInt32);
+  GLsizei width = CONVERT_ARG(2, V8ToInt32);
+  GLsizei height = CONVERT_ARG(3, V8ToInt32);
+  GLenum format = CONVERT_ARG(4, V8ToUint32);
+  GLenum type = CONVERT_ARG(5, V8ToUint32);
+  if (format != GL_RGBA || type != GL_UNSIGNED_BYTE) {
+    context->set_gl_error(GL_INVALID_OPERATION);
+    return v8::Undefined();
+  }
+  Uint8Array* array = CONVERT_ARG(6, V8ToNative<Uint8Array>);
+  REQUIRE_OBJECT(array);
+
+  GLint alignment = 4;
+  glGetIntegerv(GL_PACK_ALIGNMENT, &alignment);
+  // GL_RGBA is 4 bytes per pixel
+  uint32_t row_bytes = width * 4;
+  if (row_bytes % alignment != 0)
+    row_bytes = row_bytes + (alignment - (row_bytes % alignment));
+
+  uint32_t length_required = row_bytes * height;
+  uint32_t length = array->GetArrayLength();
+  if (length < length_required) {
+    context->set_gl_error(GL_INVALID_OPERATION);
+    return v8::Undefined();
+  }
+
+  void* data = array->GetArrayData();
+  glReadPixels(x, y, width, height, format, type, data);
+
+  return v8::Undefined();
+}
 
 // void renderbufferStorage(GLenum target, GLenum internalformat, 
 //                          GLsizei width, GLsizei height);
