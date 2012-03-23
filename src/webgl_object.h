@@ -9,18 +9,19 @@
 
 namespace v8_webgl {
 
+template<typename T>
 class WebGLObject {
  public:
-  WebGLObject(WebGLRenderingContext* context, GLuint webgl_id)
+  WebGLObject(WebGLRenderingContext* context, T webgl_id)
       : context_id_(context->get_context_id())
       , webgl_id_(webgl_id) {}
 
   bool ValidateContext(WebGLRenderingContext* context) { return context->get_context_id() == context_id_; }
-  GLuint get_webgl_id() { return webgl_id_; }
+  T get_webgl_id() { return webgl_id_; }
 
  private:
   unsigned long context_id_;
-  GLuint webgl_id_;
+  T webgl_id_;
 };
 
 }

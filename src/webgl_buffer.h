@@ -15,7 +15,7 @@ class WebGLBuffer : public V8Object<WebGLBuffer> {
  public:
   static const char* const ClassName() { return "WebGLBuffer"; }
 
-  WebGLObject* get_webgl_object() { return &webgl_object_; }
+  WebGLObject<GLuint>* get_webgl_object() { return &webgl_object_; }
 
  protected:
   WebGLBuffer(WebGLRenderingContext* context, GLuint buffer_id)
@@ -23,7 +23,7 @@ class WebGLBuffer : public V8Object<WebGLBuffer> {
       , webgl_object_(context, buffer_id) {}
 
  private:
-  WebGLObject webgl_object_;
+  WebGLObject<GLuint> webgl_object_;
 
   friend class WebGLRenderingContext;
 };

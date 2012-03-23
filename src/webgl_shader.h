@@ -15,7 +15,7 @@ class WebGLShader : public V8Object<WebGLShader> {
  public:
   static const char* const ClassName() { return "WebGLShader"; }
 
-  WebGLObject* get_webgl_object() { return &webgl_object_; }
+  WebGLObject<GLuint>* get_webgl_object() { return &webgl_object_; }
 
  protected:
   WebGLShader(WebGLRenderingContext* context, GLuint shader_id)
@@ -23,7 +23,7 @@ class WebGLShader : public V8Object<WebGLShader> {
       , webgl_object_(context, shader_id) {}
 
  private:
-  WebGLObject webgl_object_;
+  WebGLObject<GLuint> webgl_object_;
 
   friend class WebGLRenderingContext;
 };

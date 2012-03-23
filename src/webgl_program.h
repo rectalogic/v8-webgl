@@ -15,7 +15,7 @@ class WebGLProgram : public V8Object<WebGLProgram> {
  public:
   static const char* const ClassName() { return "WebGLProgram"; }
 
-  WebGLObject* get_webgl_object() { return &webgl_object_; }
+  WebGLObject<GLuint>* get_webgl_object() { return &webgl_object_; }
 
  protected:
   WebGLProgram(WebGLRenderingContext* context, GLuint program_id)
@@ -23,7 +23,7 @@ class WebGLProgram : public V8Object<WebGLProgram> {
       , webgl_object_(context, program_id) {}
 
  private:
-  WebGLObject webgl_object_;
+  WebGLObject<GLuint> webgl_object_;
 
   friend class WebGLRenderingContext;
 };

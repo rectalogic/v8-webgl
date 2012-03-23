@@ -15,7 +15,7 @@ class WebGLTexture : public V8Object<WebGLTexture> {
  public:
   static const char* const ClassName() { return "WebGLTexture"; }
 
-  WebGLObject* get_webgl_object() { return &webgl_object_; }
+  WebGLObject<GLuint>* get_webgl_object() { return &webgl_object_; }
 
  protected:
   WebGLTexture(WebGLRenderingContext* context, GLuint texture_id)
@@ -23,7 +23,7 @@ class WebGLTexture : public V8Object<WebGLTexture> {
       , webgl_object_(context, texture_id) {}
 
  private:
-  WebGLObject webgl_object_;
+  WebGLObject<GLuint> webgl_object_;
 
   friend class WebGLRenderingContext;
 };
