@@ -30,6 +30,10 @@ class Canvas : public V8Object<Canvas> {
   WebGLRenderingContext* rendering_context_;
   int width_;
   int height_;
+
+#define CALLBACK(name) static v8::Handle<v8::Value> Callback_##name(const v8::Arguments& args)
+  CALLBACK(getContext);
+#undef CALLBACK
 };
 
 }

@@ -50,7 +50,7 @@ void Canvas::set_height(int height) {
 }
 
 // WebGLRenderingContext getContext(DOMString type, hash);
-static v8::Handle<v8::Value> Callback_getContext(const v8::Arguments& args) {
+v8::Handle<v8::Value> Canvas::Callback_getContext(const v8::Arguments& args) {
   Canvas* canvas = Canvas::ToNative(args.Holder());
   if (!canvas)
     return ThrowObjectDisposed();
