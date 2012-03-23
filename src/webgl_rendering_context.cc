@@ -238,6 +238,24 @@ bool WebGLRenderingContext::ValidateBlendFuncFactors(const char* function, GLenu
   return true;
 }
 
+bool WebGLRenderingContext::ValidateTextureBinding(const char* function, GLenum target) {
+  switch (target) {
+    case GL_TEXTURE_2D:
+    case GL_TEXTURE_CUBE_MAP_POSITIVE_X:
+    case GL_TEXTURE_CUBE_MAP_NEGATIVE_X:
+    case GL_TEXTURE_CUBE_MAP_POSITIVE_Y:
+    case GL_TEXTURE_CUBE_MAP_NEGATIVE_Y:
+    case GL_TEXTURE_CUBE_MAP_POSITIVE_Z:
+    case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z:
+      break;
+    default:
+      Log(Logger::kWarn, std::string(function) + ": invalid target.");
+      set_gl_error(GL_INVALID_ENUM);
+      return false;
+  }
+  return true;
+}
+
 bool WebGLRenderingContext::ValidateTexFuncParameters(const char* function, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type) {
   switch (format) {
     case GL_ALPHA:
@@ -304,20 +322,8 @@ bool WebGLRenderingContext::ValidateTexFuncParameters(const char* function, GLen
     return false;
   }
 
-  switch (target) {
-    case GL_TEXTURE_2D:
-    case GL_TEXTURE_CUBE_MAP_POSITIVE_X:
-    case GL_TEXTURE_CUBE_MAP_NEGATIVE_X:
-    case GL_TEXTURE_CUBE_MAP_POSITIVE_Y:
-    case GL_TEXTURE_CUBE_MAP_NEGATIVE_Y:
-    case GL_TEXTURE_CUBE_MAP_POSITIVE_Z:
-    case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z:
-      break;
-    default:
-      Log(Logger::kWarn, std::string(function) + ": invalid target.");
-      set_gl_error(GL_INVALID_ENUM);
-      return false;
-  }
+  if (!ValidateTextureBinding(function, target))
+    return false;
 
   if (format != internalformat) {
     Log(Logger::kWarn, std::string(function) + ": invalid format.");
@@ -633,6 +639,10 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_blendFuncSeparate(const v8
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_bufferData(const v8::Arguments& args) {
   CALLBACK_PREAMBLE();
   CHECK_ARGS(3);
+  if (args[1]->IsNull()) {
+    context->set_gl_error(GL_INVALID_VALUE);
+    return v8::Undefined();
+  }
   GLenum target = CONVERT_ARG(0, V8ToUint32);
   void* data = NULL;
   GLsizeiptr size = 0;
@@ -653,7 +663,24 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bufferData(const v8::Argum
 
 // void bufferSubData(GLenum target, GLintptr offset, ArrayBufferView data);
 // void bufferSubData(GLenum target, GLintptr offset, ArrayBuffer data);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_bufferSubData(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_bufferSubData(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(3);
+  GLenum target = CONVERT_ARG(0, V8ToUint32);
+  if (!context->ValidateBufferDataParameters("bufferSubData", target, GL_STATIC_DRAW))
+    return v8::Undefined();
+  GLintptr offset = CONVERT_ARG(1, V8ToInt32);
+  void* data = NULL;
+  GLsizeiptr size = 0;
+  uint32_t length = 0;
+  if (TypedArrayToData(args[2], data, length, ok))
+    size = length;
+  else
+    return v8::Undefined();
+
+  glBufferSubData(target, offset, size, data);
+  return v8::Undefined();
+}
 
 // GLenum checkFramebufferStatus(GLenum target);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_checkFramebufferStatus(const v8::Arguments& args) {
@@ -1506,7 +1533,27 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getShaderInfoLog(const v8:
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_getShaderSource(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
 
 // any getTexParameter(GLenum target, GLenum pname);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_getTexParameter(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_getTexParameter(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(2);
+  GLenum target = CONVERT_ARG(0, V8ToUint32);
+  if (!context->ValidateTextureBinding("getTextParameter", target))
+    return v8::Null();
+  GLenum pname = CONVERT_ARG(1, V8ToUint32);
+  switch (pname) {
+    case GL_TEXTURE_MAG_FILTER:
+    case GL_TEXTURE_MIN_FILTER:
+    case GL_TEXTURE_WRAP_S:
+    case GL_TEXTURE_WRAP_T:
+      break;
+    default:
+      context->set_gl_error(GL_INVALID_ENUM);
+      return v8::Null();
+  }
+  GLint value = 0;
+  glGetTexParameteriv(target, pname, &value);
+  return TypeToV8<uint32_t>(static_cast<uint32_t>(value));
+}
 
 // any getUniform(WebGLProgram program, WebGLUniformLocation location);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_getUniform(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }

@@ -114,6 +114,7 @@ class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
 
   bool ValidateBlendEquation(const char* function, GLenum mode);
   bool ValidateBlendFuncFactors(const char* function, GLenum src, GLenum dst);
+  bool ValidateTextureBinding(const char* function, GLenum target);
   bool ValidateTexFuncParameters(const char* function, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type);
   bool ValidateCapability(const char* function, GLenum cap);
   bool ValidateDrawMode(const char* function, GLenum mode);
