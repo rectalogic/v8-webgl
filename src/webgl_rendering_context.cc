@@ -79,6 +79,28 @@ static inline v8::Handle<v8::Value> ThrowInvalidContext() {
   return v8::ThrowException(v8::Exception::TypeError(v8::String::New("Object not created with this WebGLRenderingContext")));
 }
 
+static bool TypedArrayToData(v8::Handle<v8::Value> value, void*& data, uint32_t& length, bool& ok) {
+  ok = true;
+  if (ArrayBufferView::HasInstance(value) || ArrayBuffer::HasInstance(value)) {
+    v8::Handle<v8::Object> object = value->ToObject();
+    ArrayDataInterface* array_data = dynamic_cast<ArrayDataInterface*>(V8ObjectBase::ToNative(object));
+    if (!array_data) {
+      ThrowObjectDisposed();
+      length = 0;
+      data = NULL;
+      ok = false;
+      return false;
+    }
+
+    length = array_data->GetArrayLength();
+    data = array_data->GetArrayData();
+    return true;
+  }
+  length = 0;
+  data = NULL;
+  return false;
+}
+
 static inline void Log(Logger::Level level, std::string msg) {
   Logger* logger = GetFactory()->GetLogger();
   if (logger)
@@ -384,6 +406,29 @@ bool WebGLRenderingContext::ValidateStencilFunc(const char* function, GLenum fun
   }
 }
 
+bool WebGLRenderingContext::ValidateBufferDataParameters(const char* function, GLenum target, GLenum usage) {
+  switch (target) {
+    case GL_ELEMENT_ARRAY_BUFFER:
+    case GL_ARRAY_BUFFER:
+      break;
+    default:
+      Log(Logger::kWarn, std::string(function) + ": invalid target.");
+      set_gl_error(GL_INVALID_ENUM);
+      return false;
+  }
+  switch (usage) {
+    case GL_STREAM_DRAW:
+    case GL_STATIC_DRAW:
+    case GL_DYNAMIC_DRAW:
+      break;
+    default:
+      Log(Logger::kWarn, std::string(function) + ": invalid usage.");
+      set_gl_error(GL_INVALID_ENUM);
+      return false;
+  }
+  return true;
+}
+
 //////
 
 // WebGLContextAttributes getContextAttributes();
@@ -585,7 +630,26 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_blendFuncSeparate(const v8
 // void bufferData(GLenum target, GLsizeiptr size, GLenum usage);
 // void bufferData(GLenum target, ArrayBufferView data, GLenum usage);
 // void bufferData(GLenum target, ArrayBuffer data, GLenum usage);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_bufferData(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_bufferData(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(3);
+  GLenum target = CONVERT_ARG(0, V8ToUint32);
+  void* data = NULL;
+  GLsizeiptr size = 0;
+  uint32_t length = 0;
+  if (TypedArrayToData(args[1], data, length, ok))
+    size = length;
+  else {
+    if (!ok)
+      return v8::Undefined();
+    size = CONVERT_ARG(1, V8ToInt32);
+  }
+  GLenum usage = CONVERT_ARG(2, V8ToUint32);
+  if (!context->ValidateBufferDataParameters("bufferData", target, usage))
+    return v8::Undefined();
+  glBufferData(target, size, data, usage);
+  return v8::Undefined();
+}
 
 // void bufferSubData(GLenum target, GLintptr offset, ArrayBufferView data);
 // void bufferSubData(GLenum target, GLintptr offset, ArrayBuffer data);

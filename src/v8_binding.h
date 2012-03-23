@@ -96,9 +96,14 @@ T* V8ToNative(v8::Handle<v8::Value> value, bool& ok) {
 //////
 
 class V8ObjectBase {
+ public:
+  inline static V8ObjectBase* ToNative(v8::Handle<v8::Object> value) {
+    return static_cast<V8ObjectBase*>(value->GetPointerFromInternalField(0));
+  }
+
  protected:
   V8ObjectBase() {}
-  virtual ~V8ObjectBase() {}
+  virtual ~V8ObjectBase();
 
   inline static void AddCallback(v8::Handle<v8::ObjectTemplate> proto, const char* name, v8::InvocationCallback callback, v8::Local<v8::Signature> signature) {
     proto->Set(v8::String::New(name),
@@ -119,9 +124,19 @@ class V8ObjectBase {
 
   static v8::Persistent<v8::FunctionTemplate> CreateConstructorTemplate(const char* class_name, v8::InvocationCallback callback);
 
+  inline v8::Handle<v8::Object> ToV8() {
+    return instance_;
+  }
+
+  void SetInstance(v8::Handle<v8::Object> instance, bool weak = false);
+
  private:
   V8ObjectBase(const V8ObjectBase&);
   V8ObjectBase& operator = (const V8ObjectBase&);
+
+  v8::Persistent<v8::Object> instance_;
+
+  static void WeakCallback(v8::Persistent<v8::Value> value, void* data);
 };
 
 //////
@@ -160,15 +175,15 @@ class V8Object : public V8ObjectBase {
   }
 
   inline static T* ToNative(v8::Handle<v8::Object> value) {
-    return static_cast<T*>(value->GetPointerFromInternalField(0));
+    return static_cast<T*>(V8ObjectBase::ToNative(value));
   }
 
   inline static bool HasInstance(v8::Handle<v8::Value> value){
     return s_constructor_template->HasInstance(value);
   }
 
-  inline v8::Handle<v8::Object> ToV8() {
-    return instance_;
+  inline static void Reparent(v8::Handle<v8::FunctionTemplate> child) {
+    child->Inherit(s_constructor_template);
   }
 
  protected:
@@ -176,27 +191,9 @@ class V8Object : public V8ObjectBase {
     // If no instance, construct a new one
     if (instance.IsEmpty()) {
       ConstructorMode<T> mode;
-      instance = s_constructor_template->GetFunction()->NewInstance();
+      instance = Create();
     }
-
-    instance_ = v8::Persistent<v8::Object>::New(instance);
-    instance_->SetPointerInInternalField(0, this);
-
-    if (weak) {
-      // Since we aren't using object grouping API, mark independent
-      // so our weak callback is called earlier.
-      instance_.MarkIndependent();
-      instance_.MakeWeak(this, WeakCallback);
-    }
-  }
-
-  ~V8Object() {
-    if (!instance_.IsEmpty()) {
-      instance_.ClearWeak();
-      instance_->SetPointerInInternalField(0, 0);
-      instance_.Dispose();
-      instance_.Clear();
-    }
+    SetInstance(instance, weak);
   }
 
   static v8::Handle<v8::Object> Create(int argc = 0, v8::Handle<v8::Value> argv[] = NULL) {
@@ -219,14 +216,7 @@ class V8Object : public V8ObjectBase {
   }
 
  private:
-  static void WeakCallback(v8::Persistent<v8::Value> value, void* data) {
-    V8Object<T>* object = static_cast<V8Object<T>*>(data);
-    assert(value == object->instance_);
-    delete object;
-  }
-
   static v8::Persistent<v8::FunctionTemplate> s_constructor_template;
-  v8::Persistent<v8::Object> instance_;
 };
 
 template<class T>

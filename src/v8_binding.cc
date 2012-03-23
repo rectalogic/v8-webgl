@@ -6,6 +6,32 @@
 
 namespace v8_webgl {
 
+V8ObjectBase::~V8ObjectBase() {
+  if (!instance_.IsEmpty()) {
+    instance_.ClearWeak();
+    instance_->SetPointerInInternalField(0, 0);
+    instance_.Dispose();
+    instance_.Clear();
+  }
+}
+
+void V8ObjectBase::SetInstance(v8::Handle<v8::Object> instance, bool weak) {
+  instance_ = v8::Persistent<v8::Object>::New(instance);
+  instance_->SetPointerInInternalField(0, this);
+  if (weak) {
+    // Since we aren't using object grouping API, mark independent
+    // so our weak callback is called earlier.
+    instance_.MarkIndependent();
+    instance_.MakeWeak(this, WeakCallback);
+  }
+}
+
+void V8ObjectBase::WeakCallback(v8::Persistent<v8::Value> value, void* data) {
+  V8ObjectBase* object = static_cast<V8ObjectBase*>(data);
+  assert(value == object->instance_);
+  delete object;
+}
+
 v8::Persistent<v8::FunctionTemplate> V8ObjectBase::CreateConstructorTemplate(const char* class_name, v8::InvocationCallback callback) {
   v8::Local<v8::FunctionTemplate> result = v8::FunctionTemplate::New(callback);
   v8::Persistent<v8::FunctionTemplate> constructor = v8::Persistent<v8::FunctionTemplate>::New(result);

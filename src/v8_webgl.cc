@@ -45,6 +45,7 @@ v8::Persistent<v8::ObjectTemplate> Initialize(Factory* factory) {
 
   // Typed Array
   ArrayBuffer::Initialize(s_global);
+  ArrayBufferView::Initialize(s_global);
   Int8Array::Initialize(s_global);
   Uint8Array::Initialize(s_global);
   Uint8ClampedArray::Initialize(s_global);
@@ -81,6 +82,7 @@ void Uninitialize() {
 
   // Typed Array
   ArrayBuffer::Uninitialize();
+  ArrayBufferView::Uninitialize();
   Int8Array::Uninitialize();
   Uint8Array::Uninitialize();
   Uint8ClampedArray::Uninitialize();

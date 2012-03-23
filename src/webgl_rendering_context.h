@@ -119,6 +119,7 @@ class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
   bool ValidateDrawMode(const char* function, GLenum mode);
   bool ValidateFramebufferFuncParameters(const char* function, GLenum target, GLenum attachment);
   bool ValidateStencilFunc(const char* function, GLenum func);
+  bool ValidateBufferDataParameters(const char* function, GLenum target, GLenum usage);
 
   static unsigned long s_context_counter;
 
