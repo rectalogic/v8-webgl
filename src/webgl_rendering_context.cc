@@ -15,6 +15,8 @@
 #include "webgl_texture.h"
 #include "webgl_uniform_location.h"
 
+#include <string>
+#include <vector>
 #include <sstream>
 
 namespace v8_webgl {
@@ -52,7 +54,13 @@ unsigned long WebGLRenderingContext::s_context_counter = 0;
 #define VALIDATE_CONTEXT(object)                                        \
   if (object && !object->get_webgl_object()->ValidateContext(context)) { \
     context->set_gl_error(GL_INVALID_OPERATION);                        \
-    return ThrowInvalidContext();                                       \
+    return v8::Undefined();                                             \
+  }
+
+#define VALIDATE_PROGRAM(program_id, location)                          \
+  if (location && !location->ValidateProgram(program_id)) {             \
+    context->set_gl_error(GL_INVALID_OPERATION);                        \
+    return v8::Undefined();                                             \
   }
 
 #define REQUIRE_OBJECT(object)                  \
@@ -74,10 +82,6 @@ unsigned long WebGLRenderingContext::s_context_counter = 0;
   context->MakeCurrent();                                               \
   bool ok = true;                                                       \
   (void)ok;
-
-static inline v8::Handle<v8::Value> ThrowInvalidContext() {
-  return v8::ThrowException(v8::Exception::TypeError(v8::String::New("Object not created with this WebGLRenderingContext")));
-}
 
 static bool TypedArrayToData(v8::Handle<v8::Value> value, void*& data, uint32_t& length, bool& ok) {
   ok = true;
@@ -165,8 +169,8 @@ WebGLTexture* WebGLRenderingContext::CreateTexture(GLuint texture_id) {
   return texture;
 }
 
-WebGLUniformLocation* WebGLRenderingContext::CreateUniformLocation(GLint location_id) {
-  return new WebGLUniformLocation(this, location_id);
+WebGLUniformLocation* WebGLRenderingContext::CreateUniformLocation(GLuint program_id, GLint location_id) {
+  return new WebGLUniformLocation(this, program_id, location_id);
 }
 
 void WebGLRenderingContext::DeleteBuffer(WebGLBuffer* buffer) {
@@ -1555,8 +1559,167 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getTexParameter(const v8::
   return TypeToV8<uint32_t>(static_cast<uint32_t>(value));
 }
 
+static bool UniformTypeToBaseLength(GLenum uniform_type, GLenum& uniform_base_type, uint32_t& length) {
+  switch (uniform_type) {
+    case GL_BOOL:
+      uniform_base_type = GL_BOOL;
+      length = 1;
+      break;
+    case GL_BOOL_VEC2:
+      uniform_base_type = GL_BOOL;
+      length = 2;
+      break;
+    case GL_BOOL_VEC3:
+      uniform_base_type = GL_BOOL;
+      length = 3;
+      break;
+    case GL_BOOL_VEC4:
+      uniform_base_type = GL_BOOL;
+      length = 4;
+      break;
+    case GL_INT:
+      uniform_base_type = GL_INT;
+      length = 1;
+      break;
+    case GL_INT_VEC2:
+      uniform_base_type = GL_INT;
+      length = 2;
+      break;
+    case GL_INT_VEC3:
+      uniform_base_type = GL_INT;
+      length = 3;
+      break;
+    case GL_INT_VEC4:
+      uniform_base_type = GL_INT;
+      length = 4;
+      break;
+    case GL_FLOAT:
+      uniform_base_type = GL_FLOAT;
+      length = 1;
+      break;
+    case GL_FLOAT_VEC2:
+      uniform_base_type = GL_FLOAT;
+      length = 2;
+      break;
+    case GL_FLOAT_VEC3:
+      uniform_base_type = GL_FLOAT;
+      length = 3;
+      break;
+    case GL_FLOAT_VEC4:
+      uniform_base_type = GL_FLOAT;
+      length = 4;
+      break;
+    case GL_FLOAT_MAT2:
+      uniform_base_type = GL_FLOAT;
+      length = 4;
+      break;
+    case GL_FLOAT_MAT3:
+      uniform_base_type = GL_FLOAT;
+      length = 9;
+      break;
+    case GL_FLOAT_MAT4:
+      uniform_base_type = GL_FLOAT;
+      length = 16;
+      break;
+    case GL_SAMPLER_2D:
+    case GL_SAMPLER_CUBE:
+      uniform_base_type = GL_INT;
+      length = 1;
+      break;
+    default:
+      return false;
+  }
+  return true;
+}
+
 // any getUniform(WebGLProgram program, WebGLUniformLocation location);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_getUniform(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_getUniform(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(2);
+  WebGLProgram* program = CONVERT_ARG(0, V8ToNative<WebGLProgram>);
+  REQUIRE_OBJECT(program);
+  VALIDATE_CONTEXT(program);
+  GLuint program_id = WEBGL_ID(program);
+  WebGLUniformLocation* location = CONVERT_ARG(1, V8ToNative<WebGLUniformLocation>);
+  REQUIRE_OBJECT(location);
+  VALIDATE_PROGRAM(program_id, location);
+
+  GLint location_id = WEBGL_ID(location);
+  GLint active_uniforms = 0;
+  glGetProgramiv(program_id, GL_ACTIVE_UNIFORMS, &active_uniforms);
+  GLint max_name_length = 0;
+  glGetProgramiv(program_id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &max_name_length);
+  std::vector<char> name_vec(max_name_length);
+  std::string array_ending("[0]");
+  // Search for our location_id
+  for (GLint i = 0; i < active_uniforms; i++) {
+    GLsizei name_length = 0;
+    GLint uniform_size = 0;
+    GLenum uniform_type = 0;
+    glGetActiveUniform(program_id, i, max_name_length, &name_length,
+                       &uniform_size, &uniform_type, &name_vec[0]);
+    std::string uniform_name(&name_vec[0], name_length);
+
+    // Strip "[0]" from name ending, if it's an array
+    if (uniform_size > 1 && uniform_name.length() > array_ending.length()
+        && uniform_name.compare(uniform_name.length() - array_ending.length(),
+                                array_ending.length(), array_ending)) {
+      uniform_name.resize(uniform_name.length() - 3);
+    }
+
+    // For arrays, iterate through each element appending "[index]" to the name
+    // and checking location
+    for (GLint index = 0; index < uniform_size; index++) {
+      std::string name(uniform_name);
+      if (uniform_size > 1 && index >= 1) {
+        std::stringstream ss(name);
+        ss << "[" << index << "]";
+        name = ss.str();
+      }
+      // Look the name up again
+      GLint uniform_location_id = glGetUniformLocation(program_id, name.c_str());
+      if (uniform_location_id == location_id) {
+        GLenum uniform_base_type = 0;
+        uint32_t length = 0;
+        if (!UniformTypeToBaseLength(uniform_type, uniform_base_type, length)) {
+          context->set_gl_error(GL_INVALID_VALUE);
+          return v8::Null();
+        }
+
+        switch (uniform_base_type) {
+          case GL_FLOAT: {
+            GLfloat value[16] = {0};
+            glGetUniformfv(program_id, location_id, value);
+            if (length == 1)
+              return TypeToV8<double>(value[0]);
+            return Float32Array::Create(value, length);
+          }
+          case GL_INT: {
+            GLint value[4] = {0};
+            glGetUniformiv(program_id, location_id, value);
+            if (length == 1)
+              return TypeToV8<int32_t>(value[0]);
+            return Int32Array::Create(value, length);
+          }
+          case GL_BOOL: {
+            GLint value[4] = {0};
+            glGetUniformiv(program_id, location_id, value);
+            if (length > 1) {
+              bool bool_value[4] = {0};
+              for (uint32_t j = 0; j < length; j++)
+                bool_value[j] = static_cast<bool>(value[j]);
+              return ArrayToV8<bool>(bool_value, length);
+            }
+            return TypeToV8<bool>(static_cast<bool>(value[0]));
+          }
+        }
+      }
+    }
+  }
+
+  context->set_gl_error(GL_INVALID_VALUE);
+  return v8::Null();
+}
 
 // WebGLUniformLocation getUniformLocation(WebGLProgram program, DOMString name);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_getUniformLocation(const v8::Arguments& args) {
@@ -1568,7 +1731,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getUniformLocation(const v
   GLuint program_id = WEBGL_ID(program);
   std::string name = CONVERT_ARG(1, V8ToString);
   GLint location_id = glGetUniformLocation(program_id, name.c_str());
-  WebGLUniformLocation* location = context->CreateUniformLocation(location_id);
+  WebGLUniformLocation* location = context->CreateUniformLocation(program_id, location_id);
   return location->ToV8();
 }
 
