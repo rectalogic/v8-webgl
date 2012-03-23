@@ -33,6 +33,9 @@ unsigned long WebGLRenderingContext::s_context_counter = 0;
 #ifndef GL_MAX_VARYING_VECTORS
 #define GL_MAX_VARYING_VECTORS 0x8DFC
 #endif
+#ifndef GL_RGB565
+#define GL_RGB565 0x8D62
+#endif
 
 // WebGL specific
 #define GL_UNPACK_FLIP_Y_WEBGL 0x9240
@@ -1954,7 +1957,44 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_readPixels(const v8::Argum
 
 // void renderbufferStorage(GLenum target, GLenum internalformat, 
 //                          GLsizei width, GLsizei height);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_renderbufferStorage(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_renderbufferStorage(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(4);
+  GLenum target = CONVERT_ARG(0, V8ToUint32);
+  GLenum internalformat = CONVERT_ARG(1, V8ToUint32);
+  GLsizei width = CONVERT_ARG(2, V8ToInt32);
+  GLsizei height = CONVERT_ARG(3, V8ToInt32);
+  if (target != GL_RENDERBUFFER) {
+    context->set_gl_error(GL_INVALID_ENUM);
+    return v8::Undefined();
+  }
+  //XXX some of these formats may not be supported on desktop GL - so we convert them (see GraphicsContext3DOpenGL.cpp:renderbufferStorage
+  //XXX this means getRenderbufferParameter will return the wrong value - we should really stash the original value in the bound WebGLRenderbuffer
+  //XXX http://www.khronos.org/webgl/public-mailing-list/archives/1010/msg00123.html
+  switch (internalformat) {
+    case GL_DEPTH_STENCIL:
+      internalformat = GL_DEPTH24_STENCIL8;
+      break;
+    case GL_DEPTH_COMPONENT16:
+      internalformat = GL_DEPTH_COMPONENT;
+      break;
+    case GL_RGBA4:
+    case GL_RGB5_A1:
+      internalformat = GL_RGBA;
+      break;
+    case GL_RGB565:
+      internalformat = GL_RGB;
+      break;
+    case GL_STENCIL_INDEX8:
+      break;
+    default:
+      context->set_gl_error(GL_INVALID_ENUM);
+      return v8::Undefined();
+  }
+
+  glRenderbufferStorage(target, internalformat, width, height);
+  return v8::Undefined();
+}
 
 // void sampleCoverage(GLclampf value, GLboolean invert);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_sampleCoverage(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
@@ -2011,7 +2051,23 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilMask(const v8::Argu
 }
 
 // void stencilMaskSeparate(GLenum face, GLuint mask);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilMaskSeparate(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilMaskSeparate(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(2);
+  GLenum face = CONVERT_ARG(0, V8ToUint32);
+  switch (face) {
+    case GL_FRONT_AND_BACK:
+    case GL_FRONT:
+    case GL_BACK:
+      break;
+    default:
+      context->set_gl_error(GL_INVALID_ENUM);
+      return v8::Undefined();
+  }
+  GLuint mask = CONVERT_ARG(1, V8ToUint32);
+  glStencilMaskSeparate(face, mask);
+  return v8::Undefined();
+}
 
 // void stencilOp(GLenum fail, GLenum zfail, GLenum zpass);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilOp(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
