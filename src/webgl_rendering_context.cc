@@ -1777,13 +1777,41 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getVertexAttrib(const v8::
 }
 
 // GLsizeiptr getVertexAttribOffset(GLuint index, GLenum pname);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_getVertexAttribOffset(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_getVertexAttribOffset(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(2);
+  GLuint index = CONVERT_ARG(0, V8ToUint32);
+  GLenum pname = CONVERT_ARG(1, V8ToUint32);
+  GLvoid* pointer = 0;
+  glGetVertexAttribPointerv(index, pname, &pointer);
+  return TypeToV8<int32_t>(static_cast<GLsizeiptr>(reinterpret_cast<intptr_t>(pointer)));
+}
 
 // void hint(GLenum target, GLenum mode);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_hint(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_hint(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(2);
+  GLenum target = CONVERT_ARG(0, V8ToUint32);
+  //XXX nedd to handle GL_FRAGMENT_SHADER_DERIVATIVE_HINT_OES when we support extensions
+  if (target != GL_GENERATE_MIPMAP_HINT) {
+    context->set_gl_error(GL_INVALID_ENUM);
+    return v8::Undefined();
+  }
+  GLenum mode = CONVERT_ARG(1, V8ToUint32);
+  glHint(target, mode);
+  return v8::Undefined();
+}
 
 // GLboolean isBuffer(WebGLBuffer buffer);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_isBuffer(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_isBuffer(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  WebGLBuffer* buffer = CONVERT_ARG(0, V8ToNative<WebGLBuffer>);
+  if (!buffer)
+    return TypeToV8<bool>(false);
+  GLuint buffer_id = WEBGL_ID(buffer);
+  return TypeToV8<bool>(glIsBuffer(buffer_id));
+}
 
 // GLboolean isEnabled(GLenum cap);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_isEnabled(const v8::Arguments& args) {
@@ -1797,19 +1825,59 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isEnabled(const v8::Argume
 }
 
 // GLboolean isFramebuffer(WebGLFramebuffer framebuffer);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_isFramebuffer(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_isFramebuffer(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  WebGLFramebuffer* framebuffer = CONVERT_ARG(0, V8ToNative<WebGLFramebuffer>);
+  if (!framebuffer)
+    return TypeToV8<bool>(false);
+  GLuint framebuffer_id = WEBGL_ID(framebuffer);
+  return TypeToV8<bool>(glIsFramebuffer(framebuffer_id));
+}
 
 // GLboolean isProgram(WebGLProgram program);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_isProgram(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_isProgram(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  WebGLProgram* program = CONVERT_ARG(0, V8ToNative<WebGLProgram>);
+  if (!program)
+    return TypeToV8<bool>(false);
+  GLuint program_id = WEBGL_ID(program);
+  return TypeToV8<bool>(glIsProgram(program_id));
+}
 
 // GLboolean isRenderbuffer(WebGLRenderbuffer renderbuffer);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_isRenderbuffer(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_isRenderbuffer(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  WebGLRenderbuffer* renderbuffer = CONVERT_ARG(0, V8ToNative<WebGLRenderbuffer>);
+  if (!renderbuffer)
+    return TypeToV8<bool>(false);
+  GLuint renderbuffer_id = WEBGL_ID(renderbuffer);
+  return TypeToV8<bool>(glIsRenderbuffer(renderbuffer_id));
+}
 
 // GLboolean isShader(WebGLShader shader);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_isShader(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_isShader(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  WebGLShader* shader = CONVERT_ARG(0, V8ToNative<WebGLShader>);
+  if (!shader)
+    return TypeToV8<bool>(false);
+  GLuint shader_id = WEBGL_ID(shader);
+  return TypeToV8<bool>(glIsShader(shader_id));
+}
 
 // GLboolean isTexture(WebGLTexture texture);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_isTexture(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_isTexture(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(1);
+  WebGLTexture* texture = CONVERT_ARG(0, V8ToNative<WebGLTexture>);
+  if (!texture)
+    return TypeToV8<bool>(false);
+  GLuint texture_id = WEBGL_ID(texture);
+  return TypeToV8<bool>(glIsTexture(texture_id));
+}
 
 // void lineWidth(GLfloat width);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_lineWidth(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
