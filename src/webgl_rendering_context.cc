@@ -1666,7 +1666,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getUniform(const v8::Argum
     // Strip "[0]" from name ending, if it's an array
     if (uniform_size > 1 && uniform_name.length() > array_ending.length()
         && uniform_name.compare(uniform_name.length() - array_ending.length(),
-                                array_ending.length(), array_ending)) {
+                                array_ending.length(), array_ending) == 0) {
       uniform_name.resize(uniform_name.length() - 3);
     }
 
