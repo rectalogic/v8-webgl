@@ -59,17 +59,31 @@ v8::Handle<v8::Array> ArrayToV8(T* values, uint32_t length) {
   return array;
 }
 
-std::string V8ToString(v8::Handle<v8::Value> value, bool& ok);
-inline double V8ToBoolean(v8::Handle<v8::Value> value, bool& ok) {
+template<typename T>
+T V8ToType(v8::Handle<v8::Value> value, bool& ok);
+template<>
+std::string V8ToType<std::string>(v8::Handle<v8::Value> value, bool& ok);
+
+template<>
+inline bool V8ToType<bool>(v8::Handle<v8::Value> value, bool& ok) {
   ok = true;
   return value->BooleanValue();
 }
-double V8ToNumber(v8::Handle<v8::Value> value, bool& ok);
-inline float V8ToFloat(v8::Handle<v8::Value> value, bool& ok) {
-  return static_cast<float>(V8ToNumber(value, ok));
+
+template<>
+double V8ToType<double>(v8::Handle<v8::Value> value, bool& ok);
+
+template<>
+inline float V8ToType<float>(v8::Handle<v8::Value> value, bool& ok) {
+  return static_cast<float>(V8ToType<double>(value, ok));
 }
-int32_t V8ToInt32(v8::Handle<v8::Value> value, bool& ok);
-uint32_t V8ToUint32(v8::Handle<v8::Value> value, bool& ok);
+
+template<>
+int32_t V8ToType<int32_t>(v8::Handle<v8::Value> value, bool& ok);
+
+template<>
+uint32_t V8ToType<uint32_t>(v8::Handle<v8::Value> value, bool& ok);
+
 
 template<class T>
 T* V8ToNative(v8::Handle<v8::Value> value, bool& ok) {

@@ -42,7 +42,8 @@ v8::Persistent<v8::FunctionTemplate> V8ObjectBase::CreateConstructorTemplate(con
   return constructor;
 }
 
-std::string V8ToString(v8::Handle<v8::Value> value, bool& ok) {
+template<>
+std::string V8ToType<std::string>(v8::Handle<v8::Value> value, bool& ok) {
   ok = true;
   v8::String::Utf8Value utf8_value(value);
   if (!*utf8_value) {
@@ -52,7 +53,8 @@ std::string V8ToString(v8::Handle<v8::Value> value, bool& ok) {
   return std::string(*utf8_value, utf8_value.length());
 }
 
-double V8ToNumber(v8::Handle<v8::Value> value, bool& ok) {
+template<>
+double V8ToType<double>(v8::Handle<v8::Value> value, bool& ok) {
   ok = true;
   v8::Local<v8::Number> num_value = value->ToNumber();
   if (num_value.IsEmpty()) {
@@ -62,7 +64,8 @@ double V8ToNumber(v8::Handle<v8::Value> value, bool& ok) {
   return num_value->Value();
 }
 
-int32_t V8ToInt32(v8::Handle<v8::Value> value, bool& ok) {
+template<>
+int32_t V8ToType<int32_t>(v8::Handle<v8::Value> value, bool& ok) {
   ok = true;
   v8::Local<v8::Int32> int_value = value->ToInt32();
   if (int_value.IsEmpty()) {
@@ -72,7 +75,8 @@ int32_t V8ToInt32(v8::Handle<v8::Value> value, bool& ok) {
   return int_value->Value();
 }
 
-uint32_t V8ToUint32(v8::Handle<v8::Value> value, bool& ok) {
+template<>
+uint32_t V8ToType<uint32_t>(v8::Handle<v8::Value> value, bool& ok) {
   ok = true;
   v8::Local<v8::Uint32> uint_value = value->ToUint32();
   if (uint_value.IsEmpty()) {

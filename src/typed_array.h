@@ -103,7 +103,7 @@ class TypedArray : public V8Object<T>, public ArrayDataInterface {
 
       // byteOffset
       if (args.Length() >= 2) {
-        byte_offset = V8ToUint32(args[1], ok);
+        byte_offset = V8ToType<uint32_t>(args[1], ok);
         if (!ok)
           return v8::Undefined();
         v8::Handle<v8::Value> err = CheckAlignment(byte_offset, ok);
@@ -113,7 +113,7 @@ class TypedArray : public V8Object<T>, public ArrayDataInterface {
 
       // length
       if (args.Length() >= 3) {
-        length = V8ToUint32(args[2], ok);
+        length = V8ToType<uint32_t>(args[2], ok);
         if (!ok)
           return v8::Undefined();
       }
@@ -140,7 +140,7 @@ class TypedArray : public V8Object<T>, public ArrayDataInterface {
     // TypedArray(type[] array)
     else if (args[0]->IsObject()) {
       v8::Local<v8::Object> object = v8::Local<v8::Object>::Cast(args[0]);
-      length = V8ToUint32(object->Get(v8::String::New("length")), ok);
+      length = V8ToType<uint32_t>(object->Get(v8::String::New("length")), ok);
       if (!ok)
         return v8::Undefined();
 
@@ -162,7 +162,7 @@ class TypedArray : public V8Object<T>, public ArrayDataInterface {
     // TypedArray(unsigned long length)
     else {
       if (args.Length() >= 1) {
-        length = V8ToUint32(args[0], ok);
+        length = V8ToType<uint32_t>(args[0], ok);
         if (!ok)
           return v8::Undefined();
       }
