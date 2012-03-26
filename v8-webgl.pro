@@ -7,6 +7,7 @@ SOURCES += src/typed_array.cc
 SOURCES += src/v8_binding.cc
 SOURCES += src/v8_webgl.cc
 SOURCES += src/webgl_rendering_context.cc
+SOURCES += src/webgl_rendering_context_callbacks.cc
 
 QT += opengl
 TARGET = gltest
