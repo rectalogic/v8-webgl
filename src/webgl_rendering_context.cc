@@ -186,16 +186,19 @@ bool WebGLRenderingContext::ValidateBlendFuncFactors(const char* function, GLenu
   return true;
 }
 
-bool WebGLRenderingContext::ValidateTextureBinding(const char* function, GLenum target) {
+bool WebGLRenderingContext::ValidateTextureBinding(const char* function, GLenum target, bool use_six_enums) {
   switch (target) {
     case GL_TEXTURE_2D:
+      break;
     case GL_TEXTURE_CUBE_MAP_POSITIVE_X:
     case GL_TEXTURE_CUBE_MAP_NEGATIVE_X:
     case GL_TEXTURE_CUBE_MAP_POSITIVE_Y:
     case GL_TEXTURE_CUBE_MAP_NEGATIVE_Y:
     case GL_TEXTURE_CUBE_MAP_POSITIVE_Z:
     case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z:
-      break;
+      if (use_six_enums)
+        break;
+      // else fall through and fail
     default:
       Log(Logger::kWarn, std::string(function) + ": invalid target.");
       set_gl_error(GL_INVALID_ENUM);
@@ -270,7 +273,7 @@ bool WebGLRenderingContext::ValidateTexFuncParameters(const char* function, GLen
     return false;
   }
 
-  if (!ValidateTextureBinding(function, target))
+  if (!ValidateTextureBinding(function, target, true))
     return false;
 
   if (format != internalformat) {
@@ -377,6 +380,27 @@ bool WebGLRenderingContext::ValidateBufferDataParameters(const char* function, G
       break;
     default:
       Log(Logger::kWarn, std::string(function) + ": invalid usage.");
+      set_gl_error(GL_INVALID_ENUM);
+      return false;
+  }
+  return true;
+}
+
+bool WebGLRenderingContext::ValidateTexParameter(const char* function, GLenum pname, GLint param) {
+  switch (pname) {
+    case GL_TEXTURE_MIN_FILTER:
+    case GL_TEXTURE_MAG_FILTER:
+      break;
+    case GL_TEXTURE_WRAP_S:
+    case GL_TEXTURE_WRAP_T:
+      if (param != GL_CLAMP_TO_EDGE && param != GL_MIRRORED_REPEAT && param != GL_REPEAT) {
+        Log(Logger::kWarn, std::string(function) + ": invalid parameter.");
+        set_gl_error(GL_INVALID_ENUM);
+        return false;
+      }
+      break;
+    default:
+      Log(Logger::kWarn, std::string(function) + ": invalid parameter name.");
       set_gl_error(GL_INVALID_ENUM);
       return false;
   }

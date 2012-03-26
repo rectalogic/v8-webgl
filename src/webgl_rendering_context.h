@@ -117,13 +117,14 @@ class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
 
   bool ValidateBlendEquation(const char* function, GLenum mode);
   bool ValidateBlendFuncFactors(const char* function, GLenum src, GLenum dst);
-  bool ValidateTextureBinding(const char* function, GLenum target);
+  bool ValidateTextureBinding(const char* function, GLenum target, bool use_six_enums);
   bool ValidateTexFuncParameters(const char* function, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type);
   bool ValidateCapability(const char* function, GLenum cap);
   bool ValidateDrawMode(const char* function, GLenum mode);
   bool ValidateFramebufferFuncParameters(const char* function, GLenum target, GLenum attachment);
   bool ValidateStencilFunc(const char* function, GLenum func);
   bool ValidateBufferDataParameters(const char* function, GLenum target, GLenum usage);
+  bool ValidateTexParameter(const char* function, GLenum pname, GLint param);
 
   static unsigned long s_context_counter;
 

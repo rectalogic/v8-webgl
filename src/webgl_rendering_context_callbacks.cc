@@ -1180,7 +1180,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getTexParameter(const v8::
   CALLBACK_PREAMBLE();
   CHECK_ARGS(2);
   GLenum target = CONVERT_ARG(0, V8ToUint32);
-  if (!context->ValidateTextureBinding("getTextParameter", target))
+  if (!context->ValidateTextureBinding("getTextParameter", target, false))
     return v8::Null();
   GLenum pname = CONVERT_ARG(1, V8ToUint32);
   switch (pname) {
@@ -1633,11 +1633,28 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_renderbufferStorage(const 
 }
 
 // void sampleCoverage(GLclampf value, GLboolean invert);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_sampleCoverage(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_sampleCoverage(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(2);
+  GLclampf value = CONVERT_ARG(0, V8ToFloat);
+  GLboolean invert = CONVERT_ARG(1, V8ToBoolean);
+  glSampleCoverage(value, invert);
+  return v8::Undefined();
+}
 
 // void scissor(GLint x, GLint y, GLsizei width, GLsizei height);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_scissor(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_scissor(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(4);
+  GLint x = CONVERT_ARG(0, V8ToInt32);
+  GLint y = CONVERT_ARG(1, V8ToInt32);
+  GLsizei width = CONVERT_ARG(2, V8ToInt32);
+  GLsizei height = CONVERT_ARG(3, V8ToInt32);
+  glScissor(x, y, width, height);
+  return v8::Undefined();
+}
 
+//XXX stash this in shader for use with ANGLE when compiling?
 // void shaderSource(WebGLShader shader, DOMString source);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_shaderSource(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
 
@@ -1706,10 +1723,27 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilMaskSeparate(const 
 }
 
 // void stencilOp(GLenum fail, GLenum zfail, GLenum zpass);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilOp(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilOp(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(3);
+  GLenum fail = CONVERT_ARG(0, V8ToUint32);
+  GLenum zfail = CONVERT_ARG(1, V8ToUint32);
+  GLenum zpass = CONVERT_ARG(2, V8ToUint32);
+  glStencilOp(fail, zfail, zpass);
+  return v8::Undefined();
+}
 
 // void stencilOpSeparate(GLenum face, GLenum fail, GLenum zfail, GLenum zpass);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilOpSeparate(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilOpSeparate(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(4);
+  GLenum face = CONVERT_ARG(0, V8ToUint32);
+  GLenum fail = CONVERT_ARG(1, V8ToUint32);
+  GLenum zfail = CONVERT_ARG(2, V8ToUint32);
+  GLenum zpass = CONVERT_ARG(3, V8ToUint32);
+  glStencilOpSeparate(face, fail, zfail, zpass);
+  return v8::Undefined();
+}
 
 // void texImage2D(GLenum target, GLint level, GLenum internalformat, 
 //                 GLsizei width, GLsizei height, GLint border, GLenum format, 
@@ -1725,10 +1759,34 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilOpSeparate(const v8
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_texImage2D(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
 
 // void texParameterf(GLenum target, GLenum pname, GLfloat param);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_texParameterf(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_texParameterf(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(3);
+  GLenum target = CONVERT_ARG(0, V8ToUint32);
+  if (!context->ValidateTextureBinding("texParameterf", target, false))
+    return v8::Undefined();
+  GLenum pname = CONVERT_ARG(1, V8ToUint32);
+  GLfloat param = CONVERT_ARG(2, V8ToFloat);
+  if (!context->ValidateTexParameter("texParameterf", pname, static_cast<GLint>(param)))
+    return v8::Undefined();
+  glTexParameterf(target, pname, param);
+  return v8::Undefined();
+}
 
 // void texParameteri(GLenum target, GLenum pname, GLint param);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_texParameteri(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_texParameteri(const v8::Arguments& args) {
+  CALLBACK_PREAMBLE();
+  CHECK_ARGS(3);
+  GLenum target = CONVERT_ARG(0, V8ToUint32);
+  if (!context->ValidateTextureBinding("texParameteri", target, false))
+    return v8::Undefined();
+  GLenum pname = CONVERT_ARG(1, V8ToUint32);
+  GLint param = CONVERT_ARG(2, V8ToInt32);
+  if (!context->ValidateTexParameter("texParameteri", pname, param))
+    return v8::Undefined();
+  glTexParameteri(target, pname, param);
+  return v8::Undefined();
+}
 
 // void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, 
 //                    GLsizei width, GLsizei height, 
