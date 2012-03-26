@@ -5,25 +5,18 @@
 #ifndef V8WEBGL_WEBGL_PROGRAM_H
 #define V8WEBGL_WEBGL_PROGRAM_H
 
-#include "v8_binding.h"
 #include "webgl_object.h"
 #include "webgl_rendering_context.h"
 
 namespace v8_webgl {
 
-class WebGLProgram : public V8Object<WebGLProgram> {
+class WebGLProgram : public WebGLObject<WebGLProgram, GLuint> {
  public:
   static const char* const ClassName() { return "WebGLProgram"; }
 
-  WebGLObject<GLuint>* get_webgl_object() { return &webgl_object_; }
-
  protected:
   WebGLProgram(WebGLRenderingContext* context, GLuint program_id)
-      : V8Object<WebGLProgram>()
-      , webgl_object_(context, program_id) {}
-
- private:
-  WebGLObject<GLuint> webgl_object_;
+      : WebGLObject<WebGLProgram, GLuint>(context, program_id) {}
 
   friend class WebGLRenderingContext;
 };

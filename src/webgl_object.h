@@ -5,15 +5,17 @@
 #ifndef V8WEBGL_WEBGL_OBJECT_H
 #define V8WEBGL_WEBGL_OBJECT_H
 
+#include "v8_binding.h"
 #include "webgl_rendering_context.h"
 
 namespace v8_webgl {
 
-template<typename T>
-class WebGLObject {
+template<class V, typename T>
+class WebGLObject : public V8Object<V> {
  public:
-  WebGLObject(WebGLRenderingContext* context, T webgl_id)
-      : context_id_(context->get_context_id())
+  WebGLObject(WebGLRenderingContext* context, T webgl_id, bool weak = false)
+      : V8Object<V>(weak)
+      , context_id_(context->get_context_id())
       , webgl_id_(webgl_id) {}
 
   bool ValidateContext(WebGLRenderingContext* context) { return context->get_context_id() == context_id_; }

@@ -24,7 +24,7 @@ unsigned long WebGLRenderingContext::s_context_counter = 0;
 #define PROTO_METHOD(name) AddCallback(proto, #name, WebGLRenderingContext::Callback_##name, signature)
 #define CONSTANT(name, value) AddConstant(#name, TypeToV8<int32_t>(value), proto, constructor)
 #define WEBGL_ID(object)                                        \
-  object ? object->get_webgl_object()->get_webgl_id() : 0
+  object ? object->get_webgl_id() : 0
 
 
 WebGLRenderingContext::WebGLRenderingContext(int width, int height)

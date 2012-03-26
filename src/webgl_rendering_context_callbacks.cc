@@ -48,7 +48,7 @@ namespace v8_webgl {
   if (!ok) return v8::Undefined();
 
 #define VALIDATE_CONTEXT(object)                                        \
-  if (object && !object->get_webgl_object()->ValidateContext(context)) { \
+  if (object && !object->ValidateContext(context)) { \
     context->set_gl_error(GL_INVALID_OPERATION);                        \
     return v8::Undefined();                                             \
   }
@@ -69,7 +69,7 @@ namespace v8_webgl {
   object ? static_cast<v8::Handle<v8::Value> >(object->ToV8()) : static_cast<v8::Handle<v8::Value> >(v8::Null())
 
 #define WEBGL_ID(object)                                        \
-  object ? object->get_webgl_object()->get_webgl_id() : 0
+  object ? object->get_webgl_id() : 0
 
 #define CALLBACK_PREAMBLE()                                             \
   WebGLRenderingContext* context = WebGLRenderingContext::ToNative(args.Holder()); \

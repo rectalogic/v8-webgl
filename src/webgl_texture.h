@@ -5,25 +5,18 @@
 #ifndef V8WEBGL_WEBGL_TEXTURE_H
 #define V8WEBGL_WEBGL_TEXTURE_H
 
-#include "v8_binding.h"
 #include "webgl_object.h"
 #include "webgl_rendering_context.h"
 
 namespace v8_webgl {
 
-class WebGLTexture : public V8Object<WebGLTexture> {
+class WebGLTexture : public WebGLObject<WebGLTexture, GLuint> {
  public:
   static const char* const ClassName() { return "WebGLTexture"; }
 
-  WebGLObject<GLuint>* get_webgl_object() { return &webgl_object_; }
-
  protected:
   WebGLTexture(WebGLRenderingContext* context, GLuint texture_id)
-      : V8Object<WebGLTexture>()
-      , webgl_object_(context, texture_id) {}
-
- private:
-  WebGLObject<GLuint> webgl_object_;
+      : WebGLObject<WebGLTexture, GLuint>(context, texture_id) {}
 
   friend class WebGLRenderingContext;
 };

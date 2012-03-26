@@ -5,25 +5,18 @@
 #ifndef V8WEBGL_WEBGL_SHADER_H
 #define V8WEBGL_WEBGL_SHADER_H
 
-#include "v8_binding.h"
 #include "webgl_object.h"
 #include "webgl_rendering_context.h"
 
 namespace v8_webgl {
 
-class WebGLShader : public V8Object<WebGLShader> {
+class WebGLShader : public WebGLObject<WebGLShader, GLuint> {
  public:
   static const char* const ClassName() { return "WebGLShader"; }
 
-  WebGLObject<GLuint>* get_webgl_object() { return &webgl_object_; }
-
  protected:
   WebGLShader(WebGLRenderingContext* context, GLuint shader_id)
-      : V8Object<WebGLShader>()
-      , webgl_object_(context, shader_id) {}
-
- private:
-  WebGLObject<GLuint> webgl_object_;
+      : WebGLObject<WebGLShader, GLuint>(context, shader_id) {}
 
   friend class WebGLRenderingContext;
 };

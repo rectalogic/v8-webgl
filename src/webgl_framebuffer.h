@@ -5,25 +5,18 @@
 #ifndef V8WEBGL_WEBGL_FRAMEBUFFER_H
 #define V8WEBGL_WEBGL_FRAMEBUFFER_H
 
-#include "v8_binding.h"
 #include "webgl_object.h"
 #include "webgl_rendering_context.h"
 
 namespace v8_webgl {
 
-class WebGLFramebuffer : public V8Object<WebGLFramebuffer> {
+class WebGLFramebuffer : public WebGLObject<WebGLFramebuffer, GLuint> {
  public:
   static const char* const ClassName() { return "WebGLFramebuffer"; }
 
-  WebGLObject<GLuint>* get_webgl_object() { return &webgl_object_; }
-
  protected:
   WebGLFramebuffer(WebGLRenderingContext* context, GLuint framebuffer_id)
-      : V8Object<WebGLFramebuffer>()
-      , webgl_object_(context, framebuffer_id) {}
-
- private:
-  WebGLObject<GLuint> webgl_object_;
+      : WebGLObject<WebGLFramebuffer, GLuint>(context, framebuffer_id) {}
 
   friend class WebGLRenderingContext;
 };
