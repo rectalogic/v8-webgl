@@ -77,7 +77,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_activeTexture(const v8::Ar
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLenum texture = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum texture = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   glActiveTexture(texture);
   return U();
 }
@@ -108,8 +108,8 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bindAttribLocation(const v
   if (!context->RequireObject(program)) return U();
   if (!context->ValidateObject(program)) return U();
   GLuint program_id = program ? program->get_webgl_id() : 0;
-  GLuint index = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
-  std::string name = V8ToType<std::string>(args[2], ok); if (!ok) return U();
+  GLuint index = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
+  std::string name = FromV8<std::string>(args[2], ok); if (!ok) return U();
   glBindAttribLocation(program_id, index, name.c_str());
   return U();
 }
@@ -119,7 +119,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bindBuffer(const v8::Argum
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum target = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   switch (target) {
     case GL_ARRAY_BUFFER:
     case GL_ELEMENT_ARRAY_BUFFER:
@@ -140,7 +140,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bindFramebuffer(const v8::
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum target = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   if (target != GL_FRAMEBUFFER) {
     context->set_gl_error(GL_INVALID_ENUM);
     return U();
@@ -158,7 +158,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bindRenderbuffer(const v8:
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum target = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   if (target != GL_RENDERBUFFER) {
     context->set_gl_error(GL_INVALID_ENUM);
     return U();
@@ -176,7 +176,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bindTexture(const v8::Argu
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum target = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   switch (target) {
     case GL_TEXTURE_2D:
     case GL_TEXTURE_CUBE_MAP:
@@ -197,10 +197,10 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_blendColor(const v8::Argum
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 4) return ThrowArgCount();
-  GLclampf red = V8ToType<float>(args[0], ok); if (!ok) return U();
-  GLclampf green = V8ToType<float>(args[1], ok); if (!ok) return U();
-  GLclampf blue = V8ToType<float>(args[2], ok); if (!ok) return U();
-  GLclampf alpha = V8ToType<float>(args[3], ok); if (!ok) return U();
+  GLclampf red = FromV8<float>(args[0], ok); if (!ok) return U();
+  GLclampf green = FromV8<float>(args[1], ok); if (!ok) return U();
+  GLclampf blue = FromV8<float>(args[2], ok); if (!ok) return U();
+  GLclampf alpha = FromV8<float>(args[3], ok); if (!ok) return U();
   glBlendColor(red, green, blue, alpha);
   return U();
  }
@@ -210,7 +210,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_blendEquation(const v8::Ar
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLenum mode = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum mode = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateBlendEquation("blendEquation", mode))
     return U();
   glBlendEquation(mode);
@@ -222,10 +222,10 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_blendEquationSeparate(cons
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLenum modeRGB = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum modeRGB = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateBlendEquation("blendEquationSeparate", modeRGB))
     return U();
-  GLenum modeAlpha = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
+  GLenum modeAlpha = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
   if (!context->ValidateBlendEquation("blendEquationSeparate", modeAlpha))
     return U();
   glBlendEquationSeparate(modeRGB, modeAlpha);
@@ -237,8 +237,8 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_blendFunc(const v8::Argume
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLenum sfactor = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
-  GLenum dfactor = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
+  GLenum sfactor = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum dfactor = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
   if (!context->ValidateBlendFuncFactors("blendFunc", sfactor, dfactor))
     return U();
   glBlendFunc(sfactor, dfactor);
@@ -251,12 +251,12 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_blendFuncSeparate(const v8
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 4) return ThrowArgCount();
-  GLenum srcRGB = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
-  GLenum dstRGB = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
+  GLenum srcRGB = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum dstRGB = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
   if (!context->ValidateBlendFuncFactors("blendFuncSeparate", srcRGB, dstRGB))
     return U();
-  GLenum srcAlpha = V8ToType<uint32_t>(args[2], ok); if (!ok) return U();
-  GLenum dstAlpha = V8ToType<uint32_t>(args[3], ok); if (!ok) return U();
+  GLenum srcAlpha = FromV8<uint32_t>(args[2], ok); if (!ok) return U();
+  GLenum dstAlpha = FromV8<uint32_t>(args[3], ok); if (!ok) return U();
   glBlendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
   return U();
 }
@@ -272,7 +272,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bufferData(const v8::Argum
     context->set_gl_error(GL_INVALID_VALUE);
     return U();
   }
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum target = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   void* data = NULL;
   GLsizeiptr size = 0;
   uint32_t length = 0;
@@ -281,9 +281,9 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bufferData(const v8::Argum
   else {
     if (!ok)
       return U();
-    size = V8ToType<int32_t>(args[1], ok); if (!ok) return U();
+    size = FromV8<int32_t>(args[1], ok); if (!ok) return U();
   }
-  GLenum usage = V8ToType<uint32_t>(args[2], ok); if (!ok) return U();
+  GLenum usage = FromV8<uint32_t>(args[2], ok); if (!ok) return U();
   if (!context->ValidateBufferDataParameters("bufferData", target, usage))
     return U();
   glBufferData(target, size, data, usage);
@@ -296,10 +296,10 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bufferSubData(const v8::Ar
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 3) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum target = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateBufferDataParameters("bufferSubData", target, GL_STATIC_DRAW))
     return U();
-  GLintptr offset = V8ToType<int32_t>(args[1], ok); if (!ok) return U();
+  GLintptr offset = FromV8<int32_t>(args[1], ok); if (!ok) return U();
   void* data = NULL;
   GLsizeiptr size = 0;
   uint32_t length = 0;
@@ -317,7 +317,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_checkFramebufferStatus(con
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum target = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   if (target != GL_FRAMEBUFFER) {
     context->set_gl_error(GL_INVALID_ENUM);
     return TypeToV8<uint32_t>(0);
@@ -330,7 +330,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_clear(const v8::Arguments&
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLbitfield mask = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLbitfield mask = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   if (mask & ~(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT)) {
     context->set_gl_error(GL_INVALID_VALUE);
     return U();
@@ -344,10 +344,10 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_clearColor(const v8::Argum
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 4) return ThrowArgCount();
-  GLclampf red = V8ToType<float>(args[0], ok); if (!ok) return U();
-  GLclampf green = V8ToType<float>(args[1], ok); if (!ok) return U();
-  GLclampf blue = V8ToType<float>(args[2], ok); if (!ok) return U();
-  GLclampf alpha = V8ToType<float>(args[3], ok); if (!ok) return U();
+  GLclampf red = FromV8<float>(args[0], ok); if (!ok) return U();
+  GLclampf green = FromV8<float>(args[1], ok); if (!ok) return U();
+  GLclampf blue = FromV8<float>(args[2], ok); if (!ok) return U();
+  GLclampf alpha = FromV8<float>(args[3], ok); if (!ok) return U();
   glClearColor(red, green, blue, alpha);
   return U();
 }
@@ -357,7 +357,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_clearDepth(const v8::Argum
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLclampf depth = V8ToType<float>(args[0], ok); if (!ok) return U();
+  GLclampf depth = FromV8<float>(args[0], ok); if (!ok) return U();
   glClearDepth(depth);
   return U();
 }
@@ -367,7 +367,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_clearStencil(const v8::Arg
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLint s = V8ToType<int32_t>(args[0], ok); if (!ok) return U();
+  GLint s = FromV8<int32_t>(args[0], ok); if (!ok) return U();
   glClearStencil(s);
   return U();
 }
@@ -377,10 +377,10 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_colorMask(const v8::Argume
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 4) return ThrowArgCount();
-  GLboolean red = V8ToType<bool>(args[0], ok); if (!ok) return U();
-  GLboolean green = V8ToType<bool>(args[1], ok); if (!ok) return U();
-  GLboolean blue = V8ToType<bool>(args[2], ok); if (!ok) return U();
-  GLboolean alpha = V8ToType<bool>(args[3], ok); if (!ok) return U();
+  GLboolean red = FromV8<bool>(args[0], ok); if (!ok) return U();
+  GLboolean green = FromV8<bool>(args[1], ok); if (!ok) return U();
+  GLboolean blue = FromV8<bool>(args[2], ok); if (!ok) return U();
+  GLboolean alpha = FromV8<bool>(args[3], ok); if (!ok) return U();
   glColorMask(red, green, blue, alpha);
   return U();
 }
@@ -406,14 +406,14 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_copyTexImage2D(const v8::A
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 8) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
-  GLint level = V8ToType<int32_t>(args[1], ok); if (!ok) return U();
-  GLenum internalformat = V8ToType<uint32_t>(args[2], ok); if (!ok) return U();
-  GLint x = V8ToType<int32_t>(args[3], ok); if (!ok) return U();
-  GLint y = V8ToType<int32_t>(args[4], ok); if (!ok) return U();
-  GLsizei width = V8ToType<int32_t>(args[5], ok); if (!ok) return U();
-  GLsizei height = V8ToType<int32_t>(args[6], ok); if (!ok) return U();
-  GLint border = V8ToType<int32_t>(args[7], ok); if (!ok) return U();
+  GLenum target = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
+  GLint level = FromV8<int32_t>(args[1], ok); if (!ok) return U();
+  GLenum internalformat = FromV8<uint32_t>(args[2], ok); if (!ok) return U();
+  GLint x = FromV8<int32_t>(args[3], ok); if (!ok) return U();
+  GLint y = FromV8<int32_t>(args[4], ok); if (!ok) return U();
+  GLsizei width = FromV8<int32_t>(args[5], ok); if (!ok) return U();
+  GLsizei height = FromV8<int32_t>(args[6], ok); if (!ok) return U();
+  GLint border = FromV8<int32_t>(args[7], ok); if (!ok) return U();
   if (!context->ValidateTexFuncParameters("copyTexImage2D", target, level, internalformat, width, height, border, internalformat, GL_UNSIGNED_BYTE))
     return U();
   glCopyTexImage2D(target, level, internalformat, x, y, width, height, border);
@@ -426,14 +426,14 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_copyTexSubImage2D(const v8
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 8) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
-  GLint level = V8ToType<int32_t>(args[1], ok); if (!ok) return U();
-  GLint xoffset = V8ToType<int32_t>(args[2], ok); if (!ok) return U();
-  GLint yoffset = V8ToType<int32_t>(args[3], ok); if (!ok) return U();
-  GLint x = V8ToType<int32_t>(args[4], ok); if (!ok) return U();
-  GLint y = V8ToType<int32_t>(args[5], ok); if (!ok) return U();
-  GLsizei width = V8ToType<int32_t>(args[6], ok); if (!ok) return U();
-  GLsizei height = V8ToType<int32_t>(args[7], ok); if (!ok) return U();
+  GLenum target = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
+  GLint level = FromV8<int32_t>(args[1], ok); if (!ok) return U();
+  GLint xoffset = FromV8<int32_t>(args[2], ok); if (!ok) return U();
+  GLint yoffset = FromV8<int32_t>(args[3], ok); if (!ok) return U();
+  GLint x = FromV8<int32_t>(args[4], ok); if (!ok) return U();
+  GLint y = FromV8<int32_t>(args[5], ok); if (!ok) return U();
+  GLsizei width = FromV8<int32_t>(args[6], ok); if (!ok) return U();
+  GLsizei height = FromV8<int32_t>(args[7], ok); if (!ok) return U();
   glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
   return U();
 }
@@ -484,7 +484,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_createShader(const v8::Arg
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLenum type = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum type = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   GLuint shader_id = glCreateShader(type);
   WebGLShader* shader = context->CreateShader(shader_id);
   return shader->ToV8();
@@ -505,7 +505,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_cullFace(const v8::Argumen
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLenum mode = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum mode = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   glCullFace(mode);
   return U();
 }
@@ -595,7 +595,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_depthFunc(const v8::Argume
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLenum func = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum func = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   glDepthFunc(func);
   return U();
 }
@@ -605,7 +605,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_depthMask(const v8::Argume
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLboolean flag = V8ToType<bool>(args[0], ok); if (!ok) return U();
+  GLboolean flag = FromV8<bool>(args[0], ok); if (!ok) return U();
   glDepthMask(flag);
   return U();
 }
@@ -615,8 +615,8 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_depthRange(const v8::Argum
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLclampf zNear = V8ToType<float>(args[0], ok); if (!ok) return U();
-  GLclampf zFar = V8ToType<float>(args[1], ok); if (!ok) return U();
+  GLclampf zNear = FromV8<float>(args[0], ok); if (!ok) return U();
+  GLclampf zFar = FromV8<float>(args[1], ok); if (!ok) return U();
   glDepthRange(zNear, zFar);
   return U();
 }
@@ -643,7 +643,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_disable(const v8::Argument
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLenum cap = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum cap = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateCapability("disable", cap))
     return U();
   glDisable(cap);
@@ -655,7 +655,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_disableVertexAttribArray(c
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLuint index = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLuint index = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   glDisableVertexAttribArray(index);
   return U();
 }
@@ -665,11 +665,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_drawArrays(const v8::Argum
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 3) return ThrowArgCount();
-  GLenum mode = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum mode = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateDrawMode("drawArrays", mode))
     return U();
-  GLint first = V8ToType<int32_t>(args[1], ok); if (!ok) return U();
-  GLsizei count = V8ToType<int32_t>(args[2], ok); if (!ok) return U();
+  GLint first = FromV8<int32_t>(args[1], ok); if (!ok) return U();
+  GLsizei count = FromV8<int32_t>(args[2], ok); if (!ok) return U();
   glDrawArrays(mode, first, count);
   return U();
 }
@@ -679,12 +679,12 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_drawElements(const v8::Arg
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 4) return ThrowArgCount();
-  GLenum mode = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum mode = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateDrawMode("drawElements", mode))
     return U();
-  GLsizei count = V8ToType<int32_t>(args[1], ok); if (!ok) return U();
-  GLenum type = V8ToType<uint32_t>(args[2], ok); if (!ok) return U();
-  GLintptr offset = V8ToType<int32_t>(args[3], ok); if (!ok) return U();
+  GLsizei count = FromV8<int32_t>(args[1], ok); if (!ok) return U();
+  GLenum type = FromV8<uint32_t>(args[2], ok); if (!ok) return U();
+  GLintptr offset = FromV8<int32_t>(args[3], ok); if (!ok) return U();
   glDrawElements(mode, count, type, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(offset)));
   return U();
 }
@@ -694,7 +694,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_enable(const v8::Arguments
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLenum cap = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum cap = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateCapability("enable", cap))
     return U();
   glEnable(cap);
@@ -706,7 +706,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_enableVertexAttribArray(co
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLuint index = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLuint index = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   glEnableVertexAttribArray(index);
   return U();
 }
@@ -734,11 +734,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_framebufferRenderbuffer(co
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 4) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
-  GLenum attachment = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
+  GLenum target = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum attachment = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
   if (!context->ValidateFramebufferFuncParameters("framebufferRenderbuffer", target, attachment))
     return U();
-  GLenum renderbuffertarget = V8ToType<uint32_t>(args[2], ok); if (!ok) return U();
+  GLenum renderbuffertarget = FromV8<uint32_t>(args[2], ok); if (!ok) return U();
   if (renderbuffertarget != GL_RENDERBUFFER) {
     context->set_gl_error(GL_INVALID_ENUM);
     return U();
@@ -757,15 +757,15 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_framebufferTexture2D(const
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 5) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
-  GLenum attachment = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
+  GLenum target = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum attachment = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
   if (!context->ValidateFramebufferFuncParameters("framebufferTexture2D", target, attachment))
     return U();
-  GLenum textarget = V8ToType<uint32_t>(args[2], ok); if (!ok) return U();
+  GLenum textarget = FromV8<uint32_t>(args[2], ok); if (!ok) return U();
   WebGLTexture* texture = V8ToNative<WebGLTexture>(args[3], ok); if (!ok) return U();
   if (!context->ValidateObject(texture)) return U();
   GLuint texture_id = texture ? texture->get_webgl_id() : 0;
-  GLint level = V8ToType<int32_t>(args[4], ok); if (!ok) return U();
+  GLint level = FromV8<int32_t>(args[4], ok); if (!ok) return U();
   //XXX glFramebufferTexture2DEXT
   glFramebufferTexture2D(target, attachment, textarget, texture_id, level);
   return U();
@@ -776,7 +776,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_frontFace(const v8::Argume
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLenum mode = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum mode = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   glFrontFace(mode);
   return U();
 }
@@ -786,7 +786,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_generateMipmap(const v8::A
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum target = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   //XXX glGenerateMipmapEXT etc.
   glGenerateMipmap(target);
   return U();
@@ -811,7 +811,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getAttribLocation(const v8
   if (!context->RequireObject(program)) return U();
   if (!context->ValidateObject(program)) return U();
   GLuint program_id = program ? program->get_webgl_id() : 0;
-  std::string name = V8ToType<std::string>(args[1], ok); if (!ok) return U();
+  std::string name = FromV8<std::string>(args[1], ok); if (!ok) return U();
   GLint location = glGetAttribLocation(program_id, name.c_str());
   return TypeToV8<int32_t>(location);
 }
@@ -821,7 +821,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getParameter(const v8::Arg
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLenum pname = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum pname = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   switch (pname) {
     case GL_ACTIVE_TEXTURE:
     case GL_BLEND_DST_ALPHA:
@@ -1045,12 +1045,12 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getBufferParameter(const v
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum target = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   if (target != GL_ARRAY_BUFFER && target != GL_ELEMENT_ARRAY_BUFFER) {
     context->set_gl_error(GL_INVALID_ENUM);
     return v8::Null();
   }
-  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
+  GLenum pname = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
   if (pname != GL_BUFFER_SIZE && pname != GL_BUFFER_USAGE) {
     context->set_gl_error(GL_INVALID_ENUM);
     return v8::Null();
@@ -1076,11 +1076,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getFramebufferAttachmentPa
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 3) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
-  GLenum attachment = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
+  GLenum target = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum attachment = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
   if (!context->ValidateFramebufferFuncParameters("getFramebufferAttachmentParameter", target, attachment))
     return v8::Null();
-  GLenum pname = V8ToType<uint32_t>(args[2], ok); if (!ok) return U();
+  GLenum pname = FromV8<uint32_t>(args[2], ok); if (!ok) return U();
   GLint value = 0;
   //XXX glGetFramebufferAttachmentParameterivEXT etc.
   glGetFramebufferAttachmentParameteriv(target, attachment, pname, &value);
@@ -1123,7 +1123,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getProgramParameter(const 
   if (!context->RequireObject(program)) return U();
   if (!context->ValidateObject(program)) return U();
   GLuint program_id = program ? program->get_webgl_id() : 0;
-  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
+  GLenum pname = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
   GLint value = 0;
   glGetProgramiv(program_id, pname, &value);
 
@@ -1151,12 +1151,12 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getRenderbufferParameter(c
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum target = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   if (target != GL_RENDERBUFFER) {
     context->set_gl_error(GL_INVALID_ENUM);
     return v8::Null();
   }
-  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
+  GLenum pname = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
   GLint value = 0;
   //XXX glGetRenderbufferParameterivEXT
   glGetRenderbufferParameteriv(target, pname, &value);
@@ -1187,7 +1187,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getShaderParameter(const v
   if (!context->RequireObject(shader)) return U();
   if (!context->ValidateObject(shader)) return U();
   GLuint shader_id = shader ? shader->get_webgl_id() : 0;
-  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
+  GLenum pname = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
   GLint value = 0;
   glGetShaderiv(shader_id, pname, &value);
   switch (pname) {
@@ -1213,10 +1213,10 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getTexParameter(const v8::
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum target = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateTextureBinding("getTextParameter", target, false))
     return v8::Null();
-  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
+  GLenum pname = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
   switch (pname) {
     case GL_TEXTURE_MAG_FILTER:
     case GL_TEXTURE_MIN_FILTER:
@@ -1405,7 +1405,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getUniformLocation(const v
   if (!context->RequireObject(program)) return U();
   if (!context->ValidateObject(program)) return U();
   GLuint program_id = program ? program->get_webgl_id() : 0;
-  std::string name = V8ToType<std::string>(args[1], ok); if (!ok) return U();
+  std::string name = FromV8<std::string>(args[1], ok); if (!ok) return U();
   GLint location_id = glGetUniformLocation(program_id, name.c_str());
   WebGLUniformLocation* location = context->CreateUniformLocation(program_id, location_id);
   return location->ToV8();
@@ -1416,8 +1416,8 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getVertexAttrib(const v8::
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLuint index = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
-  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
+  GLuint index = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum pname = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
   switch (pname) {
     case GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING: {
       GLint value = 0;
@@ -1458,8 +1458,8 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getVertexAttribOffset(cons
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLuint index = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
-  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
+  GLuint index = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum pname = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
   GLvoid* pointer = 0;
   glGetVertexAttribPointerv(index, pname, &pointer);
   return TypeToV8<int32_t>(static_cast<GLsizeiptr>(reinterpret_cast<intptr_t>(pointer)));
@@ -1470,13 +1470,13 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_hint(const v8::Arguments& 
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum target = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   //XXX nedd to handle GL_FRAGMENT_SHADER_DERIVATIVE_HINT_OES when we support extensions
   if (target != GL_GENERATE_MIPMAP_HINT) {
     context->set_gl_error(GL_INVALID_ENUM);
     return U();
   }
-  GLenum mode = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
+  GLenum mode = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
   glHint(target, mode);
   return U();
 }
@@ -1498,7 +1498,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isEnabled(const v8::Argume
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLenum cap = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum cap = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateCapability("isEnabled", cap))
     return TypeToV8<bool>(false);
   glIsEnabled(cap);
@@ -1570,7 +1570,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_lineWidth(const v8::Argume
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLfloat width = V8ToType<float>(args[0], ok); if (!ok) return U();
+  GLfloat width = FromV8<float>(args[0], ok); if (!ok) return U();
   glLineWidth(width);
   return U();
 }
@@ -1597,8 +1597,8 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_polygonOffset(const v8::Ar
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLfloat factor = V8ToType<float>(args[0], ok); if (!ok) return U();
-  GLfloat units = V8ToType<float>(args[1], ok); if (!ok) return U();
+  GLfloat factor = FromV8<float>(args[0], ok); if (!ok) return U();
+  GLfloat units = FromV8<float>(args[1], ok); if (!ok) return U();
   glPolygonOffset(factor, units);
   return U();
 }
@@ -1609,12 +1609,12 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_readPixels(const v8::Argum
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 7) return ThrowArgCount();
-  GLint x = V8ToType<int32_t>(args[0], ok); if (!ok) return U();
-  GLint y = V8ToType<int32_t>(args[1], ok); if (!ok) return U();
-  GLsizei width = V8ToType<int32_t>(args[2], ok); if (!ok) return U();
-  GLsizei height = V8ToType<int32_t>(args[3], ok); if (!ok) return U();
-  GLenum format = V8ToType<uint32_t>(args[4], ok); if (!ok) return U();
-  GLenum type = V8ToType<uint32_t>(args[5], ok); if (!ok) return U();
+  GLint x = FromV8<int32_t>(args[0], ok); if (!ok) return U();
+  GLint y = FromV8<int32_t>(args[1], ok); if (!ok) return U();
+  GLsizei width = FromV8<int32_t>(args[2], ok); if (!ok) return U();
+  GLsizei height = FromV8<int32_t>(args[3], ok); if (!ok) return U();
+  GLenum format = FromV8<uint32_t>(args[4], ok); if (!ok) return U();
+  GLenum type = FromV8<uint32_t>(args[5], ok); if (!ok) return U();
   if (format != GL_RGBA || type != GL_UNSIGNED_BYTE) {
     context->set_gl_error(GL_INVALID_OPERATION);
     return U();
@@ -1648,10 +1648,10 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_renderbufferStorage(const 
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 4) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
-  GLenum internalformat = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
-  GLsizei width = V8ToType<int32_t>(args[2], ok); if (!ok) return U();
-  GLsizei height = V8ToType<int32_t>(args[3], ok); if (!ok) return U();
+  GLenum target = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum internalformat = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
+  GLsizei width = FromV8<int32_t>(args[2], ok); if (!ok) return U();
+  GLsizei height = FromV8<int32_t>(args[3], ok); if (!ok) return U();
   if (target != GL_RENDERBUFFER) {
     context->set_gl_error(GL_INVALID_ENUM);
     return U();
@@ -1689,8 +1689,8 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_sampleCoverage(const v8::A
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLclampf value = V8ToType<float>(args[0], ok); if (!ok) return U();
-  GLboolean invert = V8ToType<bool>(args[1], ok); if (!ok) return U();
+  GLclampf value = FromV8<float>(args[0], ok); if (!ok) return U();
+  GLboolean invert = FromV8<bool>(args[1], ok); if (!ok) return U();
   glSampleCoverage(value, invert);
   return U();
 }
@@ -1700,10 +1700,10 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_scissor(const v8::Argument
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 4) return ThrowArgCount();
-  GLint x = V8ToType<int32_t>(args[0], ok); if (!ok) return U();
-  GLint y = V8ToType<int32_t>(args[1], ok); if (!ok) return U();
-  GLsizei width = V8ToType<int32_t>(args[2], ok); if (!ok) return U();
-  GLsizei height = V8ToType<int32_t>(args[3], ok); if (!ok) return U();
+  GLint x = FromV8<int32_t>(args[0], ok); if (!ok) return U();
+  GLint y = FromV8<int32_t>(args[1], ok); if (!ok) return U();
+  GLsizei width = FromV8<int32_t>(args[2], ok); if (!ok) return U();
+  GLsizei height = FromV8<int32_t>(args[3], ok); if (!ok) return U();
   glScissor(x, y, width, height);
   return U();
 }
@@ -1717,11 +1717,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilFunc(const v8::Argu
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 3) return ThrowArgCount();
-  GLenum func = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum func = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateStencilFunc("stencilFunc", func))
     return U();
-  GLint ref = V8ToType<int32_t>(args[1], ok); if (!ok) return U();
-  GLuint mask = V8ToType<uint32_t>(args[2], ok); if (!ok) return U();
+  GLint ref = FromV8<int32_t>(args[1], ok); if (!ok) return U();
+  GLuint mask = FromV8<uint32_t>(args[2], ok); if (!ok) return U();
   glStencilFunc(func, ref, mask);
   return U();
 }
@@ -1731,7 +1731,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilFuncSeparate(const 
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 4) return ThrowArgCount();
-  GLenum face = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum face = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   switch (face) {
     case GL_FRONT_AND_BACK:
     case GL_FRONT:
@@ -1741,11 +1741,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilFuncSeparate(const 
       context->set_gl_error(GL_INVALID_ENUM);
       return U();
   }
-  GLenum func = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
+  GLenum func = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
   if (!context->ValidateStencilFunc("stencilFuncSeparate", func))
     return U();
-  GLint ref = V8ToType<int32_t>(args[2], ok); if (!ok) return U();
-  GLuint mask = V8ToType<uint32_t>(args[3], ok); if (!ok) return U();
+  GLint ref = FromV8<int32_t>(args[2], ok); if (!ok) return U();
+  GLuint mask = FromV8<uint32_t>(args[3], ok); if (!ok) return U();
   glStencilFuncSeparate(face, func, ref, mask);
   return U();
 }
@@ -1755,7 +1755,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilMask(const v8::Argu
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLuint mask = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLuint mask = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   glStencilMask(mask);
   return U();
 }
@@ -1765,7 +1765,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilMaskSeparate(const 
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLenum face = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum face = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   switch (face) {
     case GL_FRONT_AND_BACK:
     case GL_FRONT:
@@ -1775,7 +1775,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilMaskSeparate(const 
       context->set_gl_error(GL_INVALID_ENUM);
       return U();
   }
-  GLuint mask = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
+  GLuint mask = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
   glStencilMaskSeparate(face, mask);
   return U();
 }
@@ -1785,9 +1785,9 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilOp(const v8::Argume
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 3) return ThrowArgCount();
-  GLenum fail = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
-  GLenum zfail = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
-  GLenum zpass = V8ToType<uint32_t>(args[2], ok); if (!ok) return U();
+  GLenum fail = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum zfail = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
+  GLenum zpass = FromV8<uint32_t>(args[2], ok); if (!ok) return U();
   glStencilOp(fail, zfail, zpass);
   return U();
 }
@@ -1797,10 +1797,10 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilOpSeparate(const v8
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 4) return ThrowArgCount();
-  GLenum face = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
-  GLenum fail = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
-  GLenum zfail = V8ToType<uint32_t>(args[2], ok); if (!ok) return U();
-  GLenum zpass = V8ToType<uint32_t>(args[3], ok); if (!ok) return U();
+  GLenum face = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum fail = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
+  GLenum zfail = FromV8<uint32_t>(args[2], ok); if (!ok) return U();
+  GLenum zpass = FromV8<uint32_t>(args[3], ok); if (!ok) return U();
   glStencilOpSeparate(face, fail, zfail, zpass);
   return U();
 }
@@ -1823,11 +1823,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_texParameterf(const v8::Ar
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 3) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum target = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateTextureBinding("texParameterf", target, false))
     return U();
-  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
-  GLfloat param = V8ToType<float>(args[2], ok); if (!ok) return U();
+  GLenum pname = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
+  GLfloat param = FromV8<float>(args[2], ok); if (!ok) return U();
   if (!context->ValidateTexParameter("texParameterf", pname, static_cast<GLint>(param)))
     return U();
   glTexParameterf(target, pname, param);
@@ -1839,11 +1839,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_texParameteri(const v8::Ar
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 3) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum target = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateTextureBinding("texParameteri", target, false))
     return U();
-  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
-  GLint param = V8ToType<int32_t>(args[2], ok); if (!ok) return U();
+  GLenum pname = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
+  GLint param = FromV8<int32_t>(args[2], ok); if (!ok) return U();
   if (!context->ValidateTexParameter("texParameteri", pname, param))
     return U();
   glTexParameteri(target, pname, param);

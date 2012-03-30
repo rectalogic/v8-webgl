@@ -31,7 +31,7 @@ v8::Handle<v8::Value> ArrayBuffer::ConstructorCallback(const v8::Arguments& args
   void* data = NULL;
   if (args.Length() >= 1) {
     bool ok = true;
-    length = V8ToType<uint32_t>(args[0], ok);
+    length = FromV8<uint32_t>(args[0], ok);
     if (!ok)
       return v8::Undefined();
 
