@@ -194,9 +194,16 @@ class TypedArray : public V8Object<T>, public ArrayDataInterface {
   }
 
   uint32_t GetArrayLength() {
+    return GetTypedArrayLength() * sizeof(TNative);
+  }
+
+  inline TNative* GetTypedArrayData() {
+    return static_cast<TNative*>(GetArrayData());
+  }
+
+  uint32_t GetTypedArrayLength() {
     v8::Handle<v8::Object> array = V8ObjectBase::ToV8();
-    int32_t length = array->GetIndexedPropertiesExternalArrayDataLength();
-    return length * sizeof(TNative);
+    return array->GetIndexedPropertiesExternalArrayDataLength();
   }
 
  protected:
@@ -214,7 +221,10 @@ class TypedArray : public V8Object<T>, public ArrayDataInterface {
 
 //////
 
-#define DECLARE_TYPED_ARRAY(name, arraytype, native)                    \
+template<typename T>
+struct Array {};
+
+#define DECLARE_TYPED_ARRAY_NO_TYPEDEF(name, arraytype, native)         \
   class name : public TypedArray<name, arraytype, native> {             \
    public:                                                              \
    static const char* const ClassName() { return #name; }               \
@@ -222,19 +232,27 @@ class TypedArray : public V8Object<T>, public ArrayDataInterface {
    name(v8::Handle<v8::Object> instance)                                \
        : TypedArray<name, arraytype, native>(instance) {}               \
    friend class TypedArray<name, arraytype, native>;                    \
-  };
+  }
 
-DECLARE_TYPED_ARRAY(Int8Array, v8::kExternalByteArray, int8_t)
-DECLARE_TYPED_ARRAY(Uint8Array, v8::kExternalUnsignedByteArray, uint8_t)
-DECLARE_TYPED_ARRAY(Uint8ClampedArray, v8::kExternalPixelArray, uint8_t)
-DECLARE_TYPED_ARRAY(Int16Array, v8::kExternalShortArray, int16_t)
-DECLARE_TYPED_ARRAY(Uint16Array, v8::kExternalUnsignedShortArray, uint16_t)
-DECLARE_TYPED_ARRAY(Int32Array, v8::kExternalIntArray, int32_t)
-DECLARE_TYPED_ARRAY(Uint32Array, v8::kExternalUnsignedIntArray, uint32_t)
-DECLARE_TYPED_ARRAY(Float32Array, v8::kExternalFloatArray, float)
-DECLARE_TYPED_ARRAY(Float64Array, v8::kExternalDoubleArray, double)
+#define DECLARE_TYPED_ARRAY(name, arraytype, native)                    \
+  DECLARE_TYPED_ARRAY_NO_TYPEDEF(name, arraytype, native);              \
+  template<>                                                            \
+  struct Array<native> {                                                \
+    typedef name Type;                                                  \
+  }
+
+DECLARE_TYPED_ARRAY(Int8Array, v8::kExternalByteArray, int8_t);
+DECLARE_TYPED_ARRAY(Uint8Array, v8::kExternalUnsignedByteArray, uint8_t);
+DECLARE_TYPED_ARRAY_NO_TYPEDEF(Uint8ClampedArray, v8::kExternalPixelArray, uint8_t);
+DECLARE_TYPED_ARRAY(Int16Array, v8::kExternalShortArray, int16_t);
+DECLARE_TYPED_ARRAY(Uint16Array, v8::kExternalUnsignedShortArray, uint16_t);
+DECLARE_TYPED_ARRAY(Int32Array, v8::kExternalIntArray, int32_t);
+DECLARE_TYPED_ARRAY(Uint32Array, v8::kExternalUnsignedIntArray, uint32_t);
+DECLARE_TYPED_ARRAY(Float32Array, v8::kExternalFloatArray, float);
+DECLARE_TYPED_ARRAY(Float64Array, v8::kExternalDoubleArray, double);
 
 #undef DECLARE_TYPED_ARRAY
+#undef DECLARE_TYPED_ARRAY_NO_TYPEDEF
 
 //////
 
