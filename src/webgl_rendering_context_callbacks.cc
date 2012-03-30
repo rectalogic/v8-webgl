@@ -38,11 +38,14 @@ namespace v8_webgl {
 #define GL_UNPACK_PREMULTIPLY_ALPHA_WEBGL 0x9241
 #define GL_UNPACK_COLORSPACE_CONVERSION_WEBGL 0x9243
 
+static inline v8::Handle<v8::Primitive> U() {
+  return v8::Undefined();
+}
+
 static WebGLRenderingContext* CallbackContext(const v8::Arguments& args) {
   WebGLRenderingContext* context = WebGLRenderingContext::ToNative(args.Holder());
-  if (!context)
-    return NULL;
-  context->MakeCurrent();
+  if (context)
+    context->MakeCurrent();
   return context;
 }
 
@@ -53,7 +56,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getContextAttributes(const
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   /*XXX finish, need to add WebGLContextAttributes class*/
-  return v8::Undefined();
+  return U();
 }
 
 // boolean isContextLost();
@@ -64,19 +67,19 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isContextLost(const v8::Ar
 }
 
 // DOMString[ ] getSupportedExtensions();
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_getSupportedExtensions(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_getSupportedExtensions(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // object getExtension(DOMString name);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_getExtension(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_getExtension(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void activeTexture(GLenum texture);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_activeTexture(const v8::Arguments& args) {
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLenum texture = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum texture = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   glActiveTexture(texture);
-  return v8::Undefined();
+  return U();
 }
 
 // void attachShader(WebGLProgram program, WebGLShader shader);
@@ -84,16 +87,16 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_attachShader(const v8::Arg
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return v8::Undefined();
-  if (!context->RequireObject(program)) return v8::Undefined();
-  if (!context->ValidateObject(program)) return v8::Undefined();
+  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return U();
+  if (!context->RequireObject(program)) return U();
+  if (!context->ValidateObject(program)) return U();
   GLuint program_id = program ? program->get_webgl_id() : 0;
-  WebGLShader* shader = V8ToNative<WebGLShader>(args[1], ok); if (!ok) return v8::Undefined();
-  if (!context->RequireObject(shader)) return v8::Undefined();
-  if (!context->ValidateObject(shader)) return v8::Undefined();
+  WebGLShader* shader = V8ToNative<WebGLShader>(args[1], ok); if (!ok) return U();
+  if (!context->RequireObject(shader)) return U();
+  if (!context->ValidateObject(shader)) return U();
   GLuint shader_id = shader ? shader->get_webgl_id() : 0;
   glAttachShader(program_id, shader_id);
-  return v8::Undefined();
+  return U();
 }
 
 // void bindAttribLocation(WebGLProgram program, GLuint index, DOMString name);
@@ -101,14 +104,14 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bindAttribLocation(const v
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 3) return ThrowArgCount();
-  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return v8::Undefined();
-  if (!context->RequireObject(program)) return v8::Undefined();
-  if (!context->ValidateObject(program)) return v8::Undefined();
+  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return U();
+  if (!context->RequireObject(program)) return U();
+  if (!context->ValidateObject(program)) return U();
   GLuint program_id = program ? program->get_webgl_id() : 0;
-  GLuint index = V8ToType<uint32_t>(args[1], ok); if (!ok) return v8::Undefined();
-  std::string name = V8ToType<std::string>(args[2], ok); if (!ok) return v8::Undefined();
+  GLuint index = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
+  std::string name = V8ToType<std::string>(args[2], ok); if (!ok) return U();
   glBindAttribLocation(program_id, index, name.c_str());
-  return v8::Undefined();
+  return U();
 }
 
 // void bindBuffer(GLenum target, WebGLBuffer buffer);
@@ -116,20 +119,20 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bindBuffer(const v8::Argum
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   switch (target) {
     case GL_ARRAY_BUFFER:
     case GL_ELEMENT_ARRAY_BUFFER:
       break;
     default:
       context->set_gl_error(GL_INVALID_ENUM);
-      return v8::Undefined();
+      return U();
   }
-  WebGLBuffer* buffer = V8ToNative<WebGLBuffer>(args[1], ok); if (!ok) return v8::Undefined();
-  if (!context->ValidateObject(buffer)) return v8::Undefined();
+  WebGLBuffer* buffer = V8ToNative<WebGLBuffer>(args[1], ok); if (!ok) return U();
+  if (!context->ValidateObject(buffer)) return U();
   GLuint buffer_id = buffer ? buffer->get_webgl_id() : 0;
   glBindBuffer(target, buffer_id);
-  return v8::Undefined();
+  return U();
 }
 
 // void bindFramebuffer(GLenum target, WebGLFramebuffer framebuffer);
@@ -137,17 +140,17 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bindFramebuffer(const v8::
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   if (target != GL_FRAMEBUFFER) {
     context->set_gl_error(GL_INVALID_ENUM);
-    return v8::Undefined();
+    return U();
   }
-  WebGLFramebuffer* framebuffer = V8ToNative<WebGLFramebuffer>(args[1], ok); if (!ok) return v8::Undefined();
-  if (!context->ValidateObject(framebuffer)) return v8::Undefined();
+  WebGLFramebuffer* framebuffer = V8ToNative<WebGLFramebuffer>(args[1], ok); if (!ok) return U();
+  if (!context->ValidateObject(framebuffer)) return U();
   GLuint framebuffer_id = framebuffer ? framebuffer->get_webgl_id() : 0;
   //XXX glBindFramebufferEXT
   glBindFramebuffer(target, framebuffer_id);
-  return v8::Undefined();
+  return U();
 }
 
 // void bindRenderbuffer(GLenum target, WebGLRenderbuffer renderbuffer);
@@ -155,17 +158,17 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bindRenderbuffer(const v8:
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   if (target != GL_RENDERBUFFER) {
     context->set_gl_error(GL_INVALID_ENUM);
-    return v8::Undefined();
+    return U();
   }
-  WebGLRenderbuffer* renderbuffer = V8ToNative<WebGLRenderbuffer>(args[1], ok); if (!ok) return v8::Undefined();
-  if (!context->ValidateObject(renderbuffer)) return v8::Undefined();
+  WebGLRenderbuffer* renderbuffer = V8ToNative<WebGLRenderbuffer>(args[1], ok); if (!ok) return U();
+  if (!context->ValidateObject(renderbuffer)) return U();
   GLuint renderbuffer_id = renderbuffer ? renderbuffer->get_webgl_id() : 0;
   //XXX glBindRenderbufferEXT
   glBindRenderbuffer(target, renderbuffer_id);
-  return v8::Undefined();
+  return U();
 }
 
 // void bindTexture(GLenum target, WebGLTexture texture);
@@ -173,20 +176,20 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bindTexture(const v8::Argu
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   switch (target) {
     case GL_TEXTURE_2D:
     case GL_TEXTURE_CUBE_MAP:
       break;
     default:
       context->set_gl_error(GL_INVALID_ENUM);
-      return v8::Undefined();
+      return U();
   }
-  WebGLTexture* texture = V8ToNative<WebGLTexture>(args[1], ok); if (!ok) return v8::Undefined();
-  if (!context->ValidateObject(texture)) return v8::Undefined();
+  WebGLTexture* texture = V8ToNative<WebGLTexture>(args[1], ok); if (!ok) return U();
+  if (!context->ValidateObject(texture)) return U();
   GLuint texture_id = texture ? texture->get_webgl_id() : 0;
   glBindTexture(target, texture_id);
-  return v8::Undefined();
+  return U();
 }
 
 // void blendColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
@@ -194,12 +197,12 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_blendColor(const v8::Argum
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 4) return ThrowArgCount();
-  GLclampf red = V8ToType<float>(args[0], ok); if (!ok) return v8::Undefined();
-  GLclampf green = V8ToType<float>(args[1], ok); if (!ok) return v8::Undefined();
-  GLclampf blue = V8ToType<float>(args[2], ok); if (!ok) return v8::Undefined();
-  GLclampf alpha = V8ToType<float>(args[3], ok); if (!ok) return v8::Undefined();
+  GLclampf red = V8ToType<float>(args[0], ok); if (!ok) return U();
+  GLclampf green = V8ToType<float>(args[1], ok); if (!ok) return U();
+  GLclampf blue = V8ToType<float>(args[2], ok); if (!ok) return U();
+  GLclampf alpha = V8ToType<float>(args[3], ok); if (!ok) return U();
   glBlendColor(red, green, blue, alpha);
-  return v8::Undefined();
+  return U();
  }
 
 // void blendEquation(GLenum mode);
@@ -207,11 +210,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_blendEquation(const v8::Ar
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLenum mode = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum mode = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateBlendEquation("blendEquation", mode))
-    return v8::Undefined();
+    return U();
   glBlendEquation(mode);
-  return v8::Undefined();
+  return U();
 }
 
 // void blendEquationSeparate(GLenum modeRGB, GLenum modeAlpha);
@@ -219,14 +222,14 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_blendEquationSeparate(cons
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLenum modeRGB = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum modeRGB = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateBlendEquation("blendEquationSeparate", modeRGB))
-    return v8::Undefined();
-  GLenum modeAlpha = V8ToType<uint32_t>(args[1], ok); if (!ok) return v8::Undefined();
+    return U();
+  GLenum modeAlpha = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
   if (!context->ValidateBlendEquation("blendEquationSeparate", modeAlpha))
-    return v8::Undefined();
+    return U();
   glBlendEquationSeparate(modeRGB, modeAlpha);
-  return v8::Undefined();
+  return U();
 }
 
 // void blendFunc(GLenum sfactor, GLenum dfactor);
@@ -234,12 +237,12 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_blendFunc(const v8::Argume
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLenum sfactor = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
-  GLenum dfactor = V8ToType<uint32_t>(args[1], ok); if (!ok) return v8::Undefined();
+  GLenum sfactor = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum dfactor = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
   if (!context->ValidateBlendFuncFactors("blendFunc", sfactor, dfactor))
-    return v8::Undefined();
+    return U();
   glBlendFunc(sfactor, dfactor);
-  return v8::Undefined();
+  return U();
 }
 
 // void blendFuncSeparate(GLenum srcRGB, GLenum dstRGB, 
@@ -248,14 +251,14 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_blendFuncSeparate(const v8
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 4) return ThrowArgCount();
-  GLenum srcRGB = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
-  GLenum dstRGB = V8ToType<uint32_t>(args[1], ok); if (!ok) return v8::Undefined();
+  GLenum srcRGB = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum dstRGB = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
   if (!context->ValidateBlendFuncFactors("blendFuncSeparate", srcRGB, dstRGB))
-    return v8::Undefined();
-  GLenum srcAlpha = V8ToType<uint32_t>(args[2], ok); if (!ok) return v8::Undefined();
-  GLenum dstAlpha = V8ToType<uint32_t>(args[3], ok); if (!ok) return v8::Undefined();
+    return U();
+  GLenum srcAlpha = V8ToType<uint32_t>(args[2], ok); if (!ok) return U();
+  GLenum dstAlpha = V8ToType<uint32_t>(args[3], ok); if (!ok) return U();
   glBlendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
-  return v8::Undefined();
+  return U();
 }
 
 // void bufferData(GLenum target, GLsizeiptr size, GLenum usage);
@@ -267,9 +270,9 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bufferData(const v8::Argum
   if (args.Length() < 3) return ThrowArgCount();
   if (args[1]->IsNull()) {
     context->set_gl_error(GL_INVALID_VALUE);
-    return v8::Undefined();
+    return U();
   }
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   void* data = NULL;
   GLsizeiptr size = 0;
   uint32_t length = 0;
@@ -277,14 +280,14 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bufferData(const v8::Argum
     size = length;
   else {
     if (!ok)
-      return v8::Undefined();
-    size = V8ToType<int32_t>(args[1], ok); if (!ok) return v8::Undefined();
+      return U();
+    size = V8ToType<int32_t>(args[1], ok); if (!ok) return U();
   }
-  GLenum usage = V8ToType<uint32_t>(args[2], ok); if (!ok) return v8::Undefined();
+  GLenum usage = V8ToType<uint32_t>(args[2], ok); if (!ok) return U();
   if (!context->ValidateBufferDataParameters("bufferData", target, usage))
-    return v8::Undefined();
+    return U();
   glBufferData(target, size, data, usage);
-  return v8::Undefined();
+  return U();
 }
 
 // void bufferSubData(GLenum target, GLintptr offset, ArrayBufferView data);
@@ -293,20 +296,20 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bufferSubData(const v8::Ar
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 3) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateBufferDataParameters("bufferSubData", target, GL_STATIC_DRAW))
-    return v8::Undefined();
-  GLintptr offset = V8ToType<int32_t>(args[1], ok); if (!ok) return v8::Undefined();
+    return U();
+  GLintptr offset = V8ToType<int32_t>(args[1], ok); if (!ok) return U();
   void* data = NULL;
   GLsizeiptr size = 0;
   uint32_t length = 0;
   if (TypedArrayToData(args[2], data, length, ok))
     size = length;
   else
-    return v8::Undefined();
+    return U();
 
   glBufferSubData(target, offset, size, data);
-  return v8::Undefined();
+  return U();
 }
 
 // GLenum checkFramebufferStatus(GLenum target);
@@ -314,7 +317,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_checkFramebufferStatus(con
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   if (target != GL_FRAMEBUFFER) {
     context->set_gl_error(GL_INVALID_ENUM);
     return TypeToV8<uint32_t>(0);
@@ -327,13 +330,13 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_clear(const v8::Arguments&
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLbitfield mask = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLbitfield mask = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   if (mask & ~(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT)) {
     context->set_gl_error(GL_INVALID_VALUE);
-    return v8::Undefined();
+    return U();
   }
   glClear(mask);
-  return v8::Undefined();
+  return U();
 }
 
 // void clearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
@@ -341,12 +344,12 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_clearColor(const v8::Argum
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 4) return ThrowArgCount();
-  GLclampf red = V8ToType<float>(args[0], ok); if (!ok) return v8::Undefined();
-  GLclampf green = V8ToType<float>(args[1], ok); if (!ok) return v8::Undefined();
-  GLclampf blue = V8ToType<float>(args[2], ok); if (!ok) return v8::Undefined();
-  GLclampf alpha = V8ToType<float>(args[3], ok); if (!ok) return v8::Undefined();
+  GLclampf red = V8ToType<float>(args[0], ok); if (!ok) return U();
+  GLclampf green = V8ToType<float>(args[1], ok); if (!ok) return U();
+  GLclampf blue = V8ToType<float>(args[2], ok); if (!ok) return U();
+  GLclampf alpha = V8ToType<float>(args[3], ok); if (!ok) return U();
   glClearColor(red, green, blue, alpha);
-  return v8::Undefined();
+  return U();
 }
 
 // void clearDepth(GLclampf depth);
@@ -354,9 +357,9 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_clearDepth(const v8::Argum
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLclampf depth = V8ToType<float>(args[0], ok); if (!ok) return v8::Undefined();
+  GLclampf depth = V8ToType<float>(args[0], ok); if (!ok) return U();
   glClearDepth(depth);
-  return v8::Undefined();
+  return U();
 }
 
 // void clearStencil(GLint s);
@@ -364,9 +367,9 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_clearStencil(const v8::Arg
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLint s = V8ToType<int32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLint s = V8ToType<int32_t>(args[0], ok); if (!ok) return U();
   glClearStencil(s);
-  return v8::Undefined();
+  return U();
 }
 
 // void colorMask(GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha);
@@ -374,12 +377,12 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_colorMask(const v8::Argume
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 4) return ThrowArgCount();
-  GLboolean red = V8ToType<bool>(args[0], ok); if (!ok) return v8::Undefined();
-  GLboolean green = V8ToType<bool>(args[1], ok); if (!ok) return v8::Undefined();
-  GLboolean blue = V8ToType<bool>(args[2], ok); if (!ok) return v8::Undefined();
-  GLboolean alpha = V8ToType<bool>(args[3], ok); if (!ok) return v8::Undefined();
+  GLboolean red = V8ToType<bool>(args[0], ok); if (!ok) return U();
+  GLboolean green = V8ToType<bool>(args[1], ok); if (!ok) return U();
+  GLboolean blue = V8ToType<bool>(args[2], ok); if (!ok) return U();
+  GLboolean alpha = V8ToType<bool>(args[3], ok); if (!ok) return U();
   glColorMask(red, green, blue, alpha);
-  return v8::Undefined();
+  return U();
 }
 
 //XXX need to use ANGLE to translate shader source - see GraphicsContext3D::compileShader
@@ -388,12 +391,12 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_compileShader(const v8::Ar
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLShader* shader = V8ToNative<WebGLShader>(args[0], ok); if (!ok) return v8::Undefined();
-  if (!context->RequireObject(shader)) return v8::Undefined();
-  if (!context->ValidateObject(shader)) return v8::Undefined();
+  WebGLShader* shader = V8ToNative<WebGLShader>(args[0], ok); if (!ok) return U();
+  if (!context->RequireObject(shader)) return U();
+  if (!context->ValidateObject(shader)) return U();
   GLuint shader_id = shader ? shader->get_webgl_id() : 0;
   glCompileShader(shader_id);
-  return v8::Undefined();
+  return U();
 }
 
 // void copyTexImage2D(GLenum target, GLint level, GLenum internalformat, 
@@ -403,18 +406,18 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_copyTexImage2D(const v8::A
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 8) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
-  GLint level = V8ToType<int32_t>(args[1], ok); if (!ok) return v8::Undefined();
-  GLenum internalformat = V8ToType<uint32_t>(args[2], ok); if (!ok) return v8::Undefined();
-  GLint x = V8ToType<int32_t>(args[3], ok); if (!ok) return v8::Undefined();
-  GLint y = V8ToType<int32_t>(args[4], ok); if (!ok) return v8::Undefined();
-  GLsizei width = V8ToType<int32_t>(args[5], ok); if (!ok) return v8::Undefined();
-  GLsizei height = V8ToType<int32_t>(args[6], ok); if (!ok) return v8::Undefined();
-  GLint border = V8ToType<int32_t>(args[7], ok); if (!ok) return v8::Undefined();
+  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLint level = V8ToType<int32_t>(args[1], ok); if (!ok) return U();
+  GLenum internalformat = V8ToType<uint32_t>(args[2], ok); if (!ok) return U();
+  GLint x = V8ToType<int32_t>(args[3], ok); if (!ok) return U();
+  GLint y = V8ToType<int32_t>(args[4], ok); if (!ok) return U();
+  GLsizei width = V8ToType<int32_t>(args[5], ok); if (!ok) return U();
+  GLsizei height = V8ToType<int32_t>(args[6], ok); if (!ok) return U();
+  GLint border = V8ToType<int32_t>(args[7], ok); if (!ok) return U();
   if (!context->ValidateTexFuncParameters("copyTexImage2D", target, level, internalformat, width, height, border, internalformat, GL_UNSIGNED_BYTE))
-    return v8::Undefined();
+    return U();
   glCopyTexImage2D(target, level, internalformat, x, y, width, height, border);
-  return v8::Undefined();
+  return U();
 }
 
 // void copyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, 
@@ -423,16 +426,16 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_copyTexSubImage2D(const v8
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 8) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
-  GLint level = V8ToType<int32_t>(args[1], ok); if (!ok) return v8::Undefined();
-  GLint xoffset = V8ToType<int32_t>(args[2], ok); if (!ok) return v8::Undefined();
-  GLint yoffset = V8ToType<int32_t>(args[3], ok); if (!ok) return v8::Undefined();
-  GLint x = V8ToType<int32_t>(args[4], ok); if (!ok) return v8::Undefined();
-  GLint y = V8ToType<int32_t>(args[5], ok); if (!ok) return v8::Undefined();
-  GLsizei width = V8ToType<int32_t>(args[6], ok); if (!ok) return v8::Undefined();
-  GLsizei height = V8ToType<int32_t>(args[7], ok); if (!ok) return v8::Undefined();
+  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLint level = V8ToType<int32_t>(args[1], ok); if (!ok) return U();
+  GLint xoffset = V8ToType<int32_t>(args[2], ok); if (!ok) return U();
+  GLint yoffset = V8ToType<int32_t>(args[3], ok); if (!ok) return U();
+  GLint x = V8ToType<int32_t>(args[4], ok); if (!ok) return U();
+  GLint y = V8ToType<int32_t>(args[5], ok); if (!ok) return U();
+  GLsizei width = V8ToType<int32_t>(args[6], ok); if (!ok) return U();
+  GLsizei height = V8ToType<int32_t>(args[7], ok); if (!ok) return U();
   glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
-  return v8::Undefined();
+  return U();
 }
 
 // WebGLBuffer createBuffer();
@@ -481,7 +484,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_createShader(const v8::Arg
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLenum type = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum type = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   GLuint shader_id = glCreateShader(type);
   WebGLShader* shader = context->CreateShader(shader_id);
   return shader->ToV8();
@@ -502,9 +505,9 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_cullFace(const v8::Argumen
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLenum mode = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum mode = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   glCullFace(mode);
-  return v8::Undefined();
+  return U();
 }
 
 // void deleteBuffer(WebGLBuffer buffer);
@@ -512,12 +515,12 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_deleteBuffer(const v8::Arg
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLBuffer* buffer = V8ToNative<WebGLBuffer>(args[0], ok); if (!ok) return v8::Undefined();
-  if (!context->ValidateObject(buffer)) return v8::Undefined();
+  WebGLBuffer* buffer = V8ToNative<WebGLBuffer>(args[0], ok); if (!ok) return U();
+  if (!context->ValidateObject(buffer)) return U();
   GLuint buffer_id = buffer ? buffer->get_webgl_id() : 0;
   glDeleteBuffers(1, &buffer_id);
   context->DeleteBuffer(buffer);
-  return v8::Undefined();
+  return U();
 }
 
 // void deleteFramebuffer(WebGLFramebuffer framebuffer);
@@ -525,13 +528,13 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_deleteFramebuffer(const v8
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLFramebuffer* framebuffer = V8ToNative<WebGLFramebuffer>(args[0], ok); if (!ok) return v8::Undefined();
-  if (!context->ValidateObject(framebuffer)) return v8::Undefined();
+  WebGLFramebuffer* framebuffer = V8ToNative<WebGLFramebuffer>(args[0], ok); if (!ok) return U();
+  if (!context->ValidateObject(framebuffer)) return U();
   GLuint framebuffer_id = framebuffer ? framebuffer->get_webgl_id() : 0;
   //XXX glDeleteFramebuffersEXT etc.
   glDeleteFramebuffers(1, &framebuffer_id);
   context->DeleteFramebuffer(framebuffer);
-  return v8::Undefined();
+  return U();
 }
 
 // void deleteProgram(WebGLProgram program);
@@ -539,12 +542,12 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_deleteProgram(const v8::Ar
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return v8::Undefined();
-  if (!context->ValidateObject(program)) return v8::Undefined();
+  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return U();
+  if (!context->ValidateObject(program)) return U();
   GLuint program_id = program ? program->get_webgl_id() : 0;
   glDeleteProgram(program_id);
   context->DeleteProgram(program);
-  return v8::Undefined();
+  return U();
 }
 
 // void deleteRenderbuffer(WebGLRenderbuffer renderbuffer);
@@ -552,13 +555,13 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_deleteRenderbuffer(const v
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLRenderbuffer* renderbuffer = V8ToNative<WebGLRenderbuffer>(args[0], ok); if (!ok) return v8::Undefined();
-  if (!context->ValidateObject(renderbuffer)) return v8::Undefined();
+  WebGLRenderbuffer* renderbuffer = V8ToNative<WebGLRenderbuffer>(args[0], ok); if (!ok) return U();
+  if (!context->ValidateObject(renderbuffer)) return U();
   GLuint renderbuffer_id = renderbuffer ? renderbuffer->get_webgl_id() : 0;
   //XXX glDeleteRenderbuffersEXT etc.
   glDeleteRenderbuffers(1, &renderbuffer_id);
   context->DeleteRenderbuffer(renderbuffer);
-  return v8::Undefined();
+  return U();
 }
 
 // void deleteShader(WebGLShader shader);
@@ -566,12 +569,12 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_deleteShader(const v8::Arg
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLShader* shader = V8ToNative<WebGLShader>(args[0], ok); if (!ok) return v8::Undefined();
-  if (!context->ValidateObject(shader)) return v8::Undefined();
+  WebGLShader* shader = V8ToNative<WebGLShader>(args[0], ok); if (!ok) return U();
+  if (!context->ValidateObject(shader)) return U();
   GLuint shader_id = shader ? shader->get_webgl_id() : 0;
   glDeleteShader(shader_id);
   context->DeleteShader(shader);
-  return v8::Undefined();
+  return U();
 }
 
 // void deleteTexture(WebGLTexture texture);
@@ -579,12 +582,12 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_deleteTexture(const v8::Ar
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLTexture* texture = V8ToNative<WebGLTexture>(args[0], ok); if (!ok) return v8::Undefined();
-  if (!context->ValidateObject(texture)) return v8::Undefined();
+  WebGLTexture* texture = V8ToNative<WebGLTexture>(args[0], ok); if (!ok) return U();
+  if (!context->ValidateObject(texture)) return U();
   GLuint texture_id = texture ? texture->get_webgl_id() : 0;
   glDeleteTextures(1, &texture_id);
   context->DeleteTexture(texture);
-  return v8::Undefined();
+  return U();
 }
 
 // void depthFunc(GLenum func);
@@ -592,9 +595,9 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_depthFunc(const v8::Argume
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLenum func = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum func = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   glDepthFunc(func);
-  return v8::Undefined();
+  return U();
 }
 
 // void depthMask(GLboolean flag);
@@ -602,9 +605,9 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_depthMask(const v8::Argume
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLboolean flag = V8ToType<bool>(args[0], ok); if (!ok) return v8::Undefined();
+  GLboolean flag = V8ToType<bool>(args[0], ok); if (!ok) return U();
   glDepthMask(flag);
-  return v8::Undefined();
+  return U();
 }
 
 // void depthRange(GLclampf zNear, GLclampf zFar);
@@ -612,10 +615,10 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_depthRange(const v8::Argum
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLclampf zNear = V8ToType<float>(args[0], ok); if (!ok) return v8::Undefined();
-  GLclampf zFar = V8ToType<float>(args[1], ok); if (!ok) return v8::Undefined();
+  GLclampf zNear = V8ToType<float>(args[0], ok); if (!ok) return U();
+  GLclampf zFar = V8ToType<float>(args[1], ok); if (!ok) return U();
   glDepthRange(zNear, zFar);
-  return v8::Undefined();
+  return U();
 }
 
 // void detachShader(WebGLProgram program, WebGLShader shader);
@@ -623,16 +626,16 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_detachShader(const v8::Arg
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return v8::Undefined();
-  if (!context->RequireObject(program)) return v8::Undefined();
-  if (!context->ValidateObject(program)) return v8::Undefined();
+  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return U();
+  if (!context->RequireObject(program)) return U();
+  if (!context->ValidateObject(program)) return U();
   GLuint program_id = program ? program->get_webgl_id() : 0;
-  WebGLShader* shader = V8ToNative<WebGLShader>(args[1], ok); if (!ok) return v8::Undefined();
-  if (!context->RequireObject(shader)) return v8::Undefined();
-  if (!context->ValidateObject(shader)) return v8::Undefined();
+  WebGLShader* shader = V8ToNative<WebGLShader>(args[1], ok); if (!ok) return U();
+  if (!context->RequireObject(shader)) return U();
+  if (!context->ValidateObject(shader)) return U();
   GLuint shader_id = shader ? shader->get_webgl_id() : 0;
   glDetachShader(program_id, shader_id);
-  return v8::Undefined();
+  return U();
 }
 
 // void disable(GLenum cap);
@@ -640,11 +643,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_disable(const v8::Argument
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLenum cap = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum cap = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateCapability("disable", cap))
-    return v8::Undefined();
+    return U();
   glDisable(cap);
-  return v8::Undefined();
+  return U();
 }
 
 // void disableVertexAttribArray(GLuint index);
@@ -652,9 +655,9 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_disableVertexAttribArray(c
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLuint index = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLuint index = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   glDisableVertexAttribArray(index);
-  return v8::Undefined();
+  return U();
 }
 
 // void drawArrays(GLenum mode, GLint first, GLsizei count);
@@ -662,13 +665,13 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_drawArrays(const v8::Argum
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 3) return ThrowArgCount();
-  GLenum mode = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum mode = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateDrawMode("drawArrays", mode))
-    return v8::Undefined();
-  GLint first = V8ToType<int32_t>(args[1], ok); if (!ok) return v8::Undefined();
-  GLsizei count = V8ToType<int32_t>(args[2], ok); if (!ok) return v8::Undefined();
+    return U();
+  GLint first = V8ToType<int32_t>(args[1], ok); if (!ok) return U();
+  GLsizei count = V8ToType<int32_t>(args[2], ok); if (!ok) return U();
   glDrawArrays(mode, first, count);
-  return v8::Undefined();
+  return U();
 }
 
 // void drawElements(GLenum mode, GLsizei count, GLenum type, GLintptr offset);
@@ -676,14 +679,14 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_drawElements(const v8::Arg
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 4) return ThrowArgCount();
-  GLenum mode = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum mode = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateDrawMode("drawElements", mode))
-    return v8::Undefined();
-  GLsizei count = V8ToType<int32_t>(args[1], ok); if (!ok) return v8::Undefined();
-  GLenum type = V8ToType<uint32_t>(args[2], ok); if (!ok) return v8::Undefined();
-  GLintptr offset = V8ToType<int32_t>(args[3], ok); if (!ok) return v8::Undefined();
+    return U();
+  GLsizei count = V8ToType<int32_t>(args[1], ok); if (!ok) return U();
+  GLenum type = V8ToType<uint32_t>(args[2], ok); if (!ok) return U();
+  GLintptr offset = V8ToType<int32_t>(args[3], ok); if (!ok) return U();
   glDrawElements(mode, count, type, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(offset)));
-  return v8::Undefined();
+  return U();
 }
 
 // void enable(GLenum cap);
@@ -691,11 +694,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_enable(const v8::Arguments
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLenum cap = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum cap = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateCapability("enable", cap))
-    return v8::Undefined();
+    return U();
   glEnable(cap);
-  return v8::Undefined();
+  return U();
 }
 
 // void enableVertexAttribArray(GLuint index);
@@ -703,9 +706,9 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_enableVertexAttribArray(co
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLuint index = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLuint index = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   glEnableVertexAttribArray(index);
-  return v8::Undefined();
+  return U();
 }
 
 // void finish();
@@ -713,7 +716,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_finish(const v8::Arguments
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   glFinish();
-  return v8::Undefined();
+  return U();
 }
 
 // void flush();
@@ -721,7 +724,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_flush(const v8::Arguments&
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   glFlush();
-  return v8::Undefined();
+  return U();
 }
 
 // void framebufferRenderbuffer(GLenum target, GLenum attachment, 
@@ -731,21 +734,21 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_framebufferRenderbuffer(co
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 4) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
-  GLenum attachment = V8ToType<uint32_t>(args[1], ok); if (!ok) return v8::Undefined();
+  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum attachment = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
   if (!context->ValidateFramebufferFuncParameters("framebufferRenderbuffer", target, attachment))
-    return v8::Undefined();
-  GLenum renderbuffertarget = V8ToType<uint32_t>(args[2], ok); if (!ok) return v8::Undefined();
+    return U();
+  GLenum renderbuffertarget = V8ToType<uint32_t>(args[2], ok); if (!ok) return U();
   if (renderbuffertarget != GL_RENDERBUFFER) {
     context->set_gl_error(GL_INVALID_ENUM);
-    return v8::Undefined();
+    return U();
   }
-  WebGLRenderbuffer* renderbuffer = V8ToNative<WebGLRenderbuffer>(args[3], ok); if (!ok) return v8::Undefined();
-  if (!context->ValidateObject(renderbuffer)) return v8::Undefined();
+  WebGLRenderbuffer* renderbuffer = V8ToNative<WebGLRenderbuffer>(args[3], ok); if (!ok) return U();
+  if (!context->ValidateObject(renderbuffer)) return U();
   GLuint renderbuffer_id = renderbuffer ? renderbuffer->get_webgl_id() : 0;
   //XXX glFramebufferRenderbufferEXT
   glFramebufferRenderbuffer(target, attachment, renderbuffertarget, renderbuffer_id);
-  return v8::Undefined();
+  return U();
 }
 
 // void framebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, 
@@ -754,18 +757,18 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_framebufferTexture2D(const
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 5) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
-  GLenum attachment = V8ToType<uint32_t>(args[1], ok); if (!ok) return v8::Undefined();
+  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum attachment = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
   if (!context->ValidateFramebufferFuncParameters("framebufferTexture2D", target, attachment))
-    return v8::Undefined();
-  GLenum textarget = V8ToType<uint32_t>(args[2], ok); if (!ok) return v8::Undefined();
-  WebGLTexture* texture = V8ToNative<WebGLTexture>(args[3], ok); if (!ok) return v8::Undefined();
-  if (!context->ValidateObject(texture)) return v8::Undefined();
+    return U();
+  GLenum textarget = V8ToType<uint32_t>(args[2], ok); if (!ok) return U();
+  WebGLTexture* texture = V8ToNative<WebGLTexture>(args[3], ok); if (!ok) return U();
+  if (!context->ValidateObject(texture)) return U();
   GLuint texture_id = texture ? texture->get_webgl_id() : 0;
-  GLint level = V8ToType<int32_t>(args[4], ok); if (!ok) return v8::Undefined();
+  GLint level = V8ToType<int32_t>(args[4], ok); if (!ok) return U();
   //XXX glFramebufferTexture2DEXT
   glFramebufferTexture2D(target, attachment, textarget, texture_id, level);
-  return v8::Undefined();
+  return U();
 }
 
 // void frontFace(GLenum mode);
@@ -773,9 +776,9 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_frontFace(const v8::Argume
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLenum mode = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum mode = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   glFrontFace(mode);
-  return v8::Undefined();
+  return U();
 }
 
 // void generateMipmap(GLenum target);
@@ -783,20 +786,20 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_generateMipmap(const v8::A
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   //XXX glGenerateMipmapEXT etc.
   glGenerateMipmap(target);
-  return v8::Undefined();
+  return U();
 }
 
 // WebGLActiveInfo getActiveAttrib(WebGLProgram program, GLuint index);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_getActiveAttrib(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_getActiveAttrib(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // WebGLActiveInfo getActiveUniform(WebGLProgram program, GLuint index);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_getActiveUniform(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_getActiveUniform(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // WebGLShader[ ] getAttachedShaders(WebGLProgram program);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_getAttachedShaders(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_getAttachedShaders(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 //XXX should return -1 (webkit) or 0 (firefox) on error, not Undefined - should preamble define a fail: label that can return whatever is needed?
 // GLint getAttribLocation(WebGLProgram program, DOMString name);
@@ -804,11 +807,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getAttribLocation(const v8
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return v8::Undefined();
-  if (!context->RequireObject(program)) return v8::Undefined();
-  if (!context->ValidateObject(program)) return v8::Undefined();
+  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return U();
+  if (!context->RequireObject(program)) return U();
+  if (!context->ValidateObject(program)) return U();
   GLuint program_id = program ? program->get_webgl_id() : 0;
-  std::string name = V8ToType<std::string>(args[1], ok); if (!ok) return v8::Undefined();
+  std::string name = V8ToType<std::string>(args[1], ok); if (!ok) return U();
   GLint location = glGetAttribLocation(program_id, name.c_str());
   return TypeToV8<int32_t>(location);
 }
@@ -818,7 +821,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getParameter(const v8::Arg
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLenum pname = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum pname = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   switch (pname) {
     case GL_ACTIVE_TEXTURE:
     case GL_BLEND_DST_ALPHA:
@@ -1032,7 +1035,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getParameter(const v8::Arg
       std::stringstream ss;
       ss << "getParameter: Unrecognized parameter name: " << pname;
       Log(Logger::kWarn, ss.str());
-      return v8::Undefined();
+      return U();
     }
   }
 }
@@ -1042,12 +1045,12 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getBufferParameter(const v
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   if (target != GL_ARRAY_BUFFER && target != GL_ELEMENT_ARRAY_BUFFER) {
     context->set_gl_error(GL_INVALID_ENUM);
     return v8::Null();
   }
-  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return v8::Undefined();
+  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
   if (pname != GL_BUFFER_SIZE && pname != GL_BUFFER_USAGE) {
     context->set_gl_error(GL_INVALID_ENUM);
     return v8::Null();
@@ -1073,11 +1076,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getFramebufferAttachmentPa
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 3) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
-  GLenum attachment = V8ToType<uint32_t>(args[1], ok); if (!ok) return v8::Undefined();
+  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum attachment = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
   if (!context->ValidateFramebufferFuncParameters("getFramebufferAttachmentParameter", target, attachment))
     return v8::Null();
-  GLenum pname = V8ToType<uint32_t>(args[2], ok); if (!ok) return v8::Undefined();
+  GLenum pname = V8ToType<uint32_t>(args[2], ok); if (!ok) return U();
   GLint value = 0;
   //XXX glGetFramebufferAttachmentParameterivEXT etc.
   glGetFramebufferAttachmentParameteriv(target, attachment, pname, &value);
@@ -1116,11 +1119,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getProgramParameter(const 
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return v8::Undefined();
-  if (!context->RequireObject(program)) return v8::Undefined();
-  if (!context->ValidateObject(program)) return v8::Undefined();
+  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return U();
+  if (!context->RequireObject(program)) return U();
+  if (!context->ValidateObject(program)) return U();
   GLuint program_id = program ? program->get_webgl_id() : 0;
-  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return v8::Undefined();
+  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
   GLint value = 0;
   glGetProgramiv(program_id, pname, &value);
 
@@ -1141,19 +1144,19 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getProgramParameter(const 
 
 //XXX should use log from ANGLE
 // DOMString getProgramInfoLog(WebGLProgram program);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_getProgramInfoLog(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_getProgramInfoLog(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // any getRenderbufferParameter(GLenum target, GLenum pname);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_getRenderbufferParameter(const v8::Arguments& args) {
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   if (target != GL_RENDERBUFFER) {
     context->set_gl_error(GL_INVALID_ENUM);
     return v8::Null();
   }
-  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return v8::Undefined();
+  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
   GLint value = 0;
   //XXX glGetRenderbufferParameterivEXT
   glGetRenderbufferParameteriv(target, pname, &value);
@@ -1180,11 +1183,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getShaderParameter(const v
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  WebGLShader* shader = V8ToNative<WebGLShader>(args[0], ok); if (!ok) return v8::Undefined();
-  if (!context->RequireObject(shader)) return v8::Undefined();
-  if (!context->ValidateObject(shader)) return v8::Undefined();
+  WebGLShader* shader = V8ToNative<WebGLShader>(args[0], ok); if (!ok) return U();
+  if (!context->RequireObject(shader)) return U();
+  if (!context->ValidateObject(shader)) return U();
   GLuint shader_id = shader ? shader->get_webgl_id() : 0;
-  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return v8::Undefined();
+  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
   GLint value = 0;
   glGetShaderiv(shader_id, pname, &value);
   switch (pname) {
@@ -1200,20 +1203,20 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getShaderParameter(const v
 }
 
 // DOMString getShaderInfoLog(WebGLShader shader);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_getShaderInfoLog(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_getShaderInfoLog(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // DOMString getShaderSource(WebGLShader shader);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_getShaderSource(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_getShaderSource(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // any getTexParameter(GLenum target, GLenum pname);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_getTexParameter(const v8::Arguments& args) {
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateTextureBinding("getTextParameter", target, false))
     return v8::Null();
-  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return v8::Undefined();
+  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
   switch (pname) {
     case GL_TEXTURE_MAG_FILTER:
     case GL_TEXTURE_MIN_FILTER:
@@ -1307,13 +1310,13 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getUniform(const v8::Argum
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return v8::Undefined();
-  if (!context->RequireObject(program)) return v8::Undefined();
-  if (!context->ValidateObject(program)) return v8::Undefined();
+  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return U();
+  if (!context->RequireObject(program)) return U();
+  if (!context->ValidateObject(program)) return U();
   GLuint program_id = program ? program->get_webgl_id() : 0;
-  WebGLUniformLocation* location = V8ToNative<WebGLUniformLocation>(args[1], ok); if (!ok) return v8::Undefined();
-  if (!context->RequireObject(location)) return v8::Undefined();
-  if (!context->ValidateLocationProgram(location, program_id)) return v8::Undefined();
+  WebGLUniformLocation* location = V8ToNative<WebGLUniformLocation>(args[1], ok); if (!ok) return U();
+  if (!context->RequireObject(location)) return U();
+  if (!context->ValidateLocationProgram(location, program_id)) return U();
   //XXX need to catch std::bad_alloc from string/vector
 
   GLint location_id = location ? location->get_webgl_id() : 0;
@@ -1398,11 +1401,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getUniformLocation(const v
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return v8::Undefined();
-  if (!context->RequireObject(program)) return v8::Undefined();
-  if (!context->ValidateObject(program)) return v8::Undefined();
+  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return U();
+  if (!context->RequireObject(program)) return U();
+  if (!context->ValidateObject(program)) return U();
   GLuint program_id = program ? program->get_webgl_id() : 0;
-  std::string name = V8ToType<std::string>(args[1], ok); if (!ok) return v8::Undefined();
+  std::string name = V8ToType<std::string>(args[1], ok); if (!ok) return U();
   GLint location_id = glGetUniformLocation(program_id, name.c_str());
   WebGLUniformLocation* location = context->CreateUniformLocation(program_id, location_id);
   return location->ToV8();
@@ -1413,8 +1416,8 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getVertexAttrib(const v8::
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLuint index = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
-  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return v8::Undefined();
+  GLuint index = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
   switch (pname) {
     case GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING: {
       GLint value = 0;
@@ -1455,8 +1458,8 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getVertexAttribOffset(cons
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLuint index = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
-  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return v8::Undefined();
+  GLuint index = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
   GLvoid* pointer = 0;
   glGetVertexAttribPointerv(index, pname, &pointer);
   return TypeToV8<int32_t>(static_cast<GLsizeiptr>(reinterpret_cast<intptr_t>(pointer)));
@@ -1467,15 +1470,15 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_hint(const v8::Arguments& 
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   //XXX nedd to handle GL_FRAGMENT_SHADER_DERIVATIVE_HINT_OES when we support extensions
   if (target != GL_GENERATE_MIPMAP_HINT) {
     context->set_gl_error(GL_INVALID_ENUM);
-    return v8::Undefined();
+    return U();
   }
-  GLenum mode = V8ToType<uint32_t>(args[1], ok); if (!ok) return v8::Undefined();
+  GLenum mode = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
   glHint(target, mode);
-  return v8::Undefined();
+  return U();
 }
 
 // GLboolean isBuffer(WebGLBuffer buffer);
@@ -1483,7 +1486,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isBuffer(const v8::Argumen
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLBuffer* buffer = V8ToNative<WebGLBuffer>(args[0], ok); if (!ok) return v8::Undefined();
+  WebGLBuffer* buffer = V8ToNative<WebGLBuffer>(args[0], ok); if (!ok) return U();
   if (!buffer)
     return TypeToV8<bool>(false);
   GLuint buffer_id = buffer ? buffer->get_webgl_id() : 0;
@@ -1495,11 +1498,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isEnabled(const v8::Argume
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLenum cap = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum cap = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateCapability("isEnabled", cap))
     return TypeToV8<bool>(false);
   glIsEnabled(cap);
-  return v8::Undefined();
+  return U();
 }
 
 // GLboolean isFramebuffer(WebGLFramebuffer framebuffer);
@@ -1507,7 +1510,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isFramebuffer(const v8::Ar
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLFramebuffer* framebuffer = V8ToNative<WebGLFramebuffer>(args[0], ok); if (!ok) return v8::Undefined();
+  WebGLFramebuffer* framebuffer = V8ToNative<WebGLFramebuffer>(args[0], ok); if (!ok) return U();
   if (!framebuffer)
     return TypeToV8<bool>(false);
   GLuint framebuffer_id = framebuffer ? framebuffer->get_webgl_id() : 0;
@@ -1519,7 +1522,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isProgram(const v8::Argume
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return v8::Undefined();
+  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return U();
   if (!program)
     return TypeToV8<bool>(false);
   GLuint program_id = program ? program->get_webgl_id() : 0;
@@ -1531,7 +1534,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isRenderbuffer(const v8::A
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLRenderbuffer* renderbuffer = V8ToNative<WebGLRenderbuffer>(args[0], ok); if (!ok) return v8::Undefined();
+  WebGLRenderbuffer* renderbuffer = V8ToNative<WebGLRenderbuffer>(args[0], ok); if (!ok) return U();
   if (!renderbuffer)
     return TypeToV8<bool>(false);
   GLuint renderbuffer_id = renderbuffer ? renderbuffer->get_webgl_id() : 0;
@@ -1543,7 +1546,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isShader(const v8::Argumen
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLShader* shader = V8ToNative<WebGLShader>(args[0], ok); if (!ok) return v8::Undefined();
+  WebGLShader* shader = V8ToNative<WebGLShader>(args[0], ok); if (!ok) return U();
   if (!shader)
     return TypeToV8<bool>(false);
   GLuint shader_id = shader ? shader->get_webgl_id() : 0;
@@ -1555,7 +1558,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isTexture(const v8::Argume
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLTexture* texture = V8ToNative<WebGLTexture>(args[0], ok); if (!ok) return v8::Undefined();
+  WebGLTexture* texture = V8ToNative<WebGLTexture>(args[0], ok); if (!ok) return U();
   if (!texture)
     return TypeToV8<bool>(false);
   GLuint texture_id = texture ? texture->get_webgl_id() : 0;
@@ -1567,9 +1570,9 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_lineWidth(const v8::Argume
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLfloat width = V8ToType<float>(args[0], ok); if (!ok) return v8::Undefined();
+  GLfloat width = V8ToType<float>(args[0], ok); if (!ok) return U();
   glLineWidth(width);
-  return v8::Undefined();
+  return U();
 }
 
 // void linkProgram(WebGLProgram program);
@@ -1577,27 +1580,27 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_linkProgram(const v8::Argu
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return v8::Undefined();
-  if (!context->RequireObject(program)) return v8::Undefined();
-  if (!context->ValidateObject(program)) return v8::Undefined();
+  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return U();
+  if (!context->RequireObject(program)) return U();
+  if (!context->ValidateObject(program)) return U();
   GLuint program_id = program ? program->get_webgl_id() : 0;
   glLinkProgram(program_id);
-  return v8::Undefined();
+  return U();
 }
 
 //XXX this needs to deal with custom WebGL attrs like UNPACK_FLIP_Y_WEBGL
 // void pixelStorei(GLenum pname, GLint param);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_pixelStorei(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_pixelStorei(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void polygonOffset(GLfloat factor, GLfloat units);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_polygonOffset(const v8::Arguments& args) {
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLfloat factor = V8ToType<float>(args[0], ok); if (!ok) return v8::Undefined();
-  GLfloat units = V8ToType<float>(args[1], ok); if (!ok) return v8::Undefined();
+  GLfloat factor = V8ToType<float>(args[0], ok); if (!ok) return U();
+  GLfloat units = V8ToType<float>(args[1], ok); if (!ok) return U();
   glPolygonOffset(factor, units);
-  return v8::Undefined();
+  return U();
 }
 
 // void readPixels(GLint x, GLint y, GLsizei width, GLsizei height, 
@@ -1606,18 +1609,18 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_readPixels(const v8::Argum
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 7) return ThrowArgCount();
-  GLint x = V8ToType<int32_t>(args[0], ok); if (!ok) return v8::Undefined();
-  GLint y = V8ToType<int32_t>(args[1], ok); if (!ok) return v8::Undefined();
-  GLsizei width = V8ToType<int32_t>(args[2], ok); if (!ok) return v8::Undefined();
-  GLsizei height = V8ToType<int32_t>(args[3], ok); if (!ok) return v8::Undefined();
-  GLenum format = V8ToType<uint32_t>(args[4], ok); if (!ok) return v8::Undefined();
-  GLenum type = V8ToType<uint32_t>(args[5], ok); if (!ok) return v8::Undefined();
+  GLint x = V8ToType<int32_t>(args[0], ok); if (!ok) return U();
+  GLint y = V8ToType<int32_t>(args[1], ok); if (!ok) return U();
+  GLsizei width = V8ToType<int32_t>(args[2], ok); if (!ok) return U();
+  GLsizei height = V8ToType<int32_t>(args[3], ok); if (!ok) return U();
+  GLenum format = V8ToType<uint32_t>(args[4], ok); if (!ok) return U();
+  GLenum type = V8ToType<uint32_t>(args[5], ok); if (!ok) return U();
   if (format != GL_RGBA || type != GL_UNSIGNED_BYTE) {
     context->set_gl_error(GL_INVALID_OPERATION);
-    return v8::Undefined();
+    return U();
   }
-  Uint8Array* array = V8ToNative<Uint8Array>(args[6], ok); if (!ok) return v8::Undefined();
-  if (!context->RequireObject(array)) return v8::Undefined();
+  Uint8Array* array = V8ToNative<Uint8Array>(args[6], ok); if (!ok) return U();
+  if (!context->RequireObject(array)) return U();
 
   GLint alignment = 4;
   glGetIntegerv(GL_PACK_ALIGNMENT, &alignment);
@@ -1630,13 +1633,13 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_readPixels(const v8::Argum
   uint32_t length = array->GetArrayLength();
   if (length < length_required) {
     context->set_gl_error(GL_INVALID_OPERATION);
-    return v8::Undefined();
+    return U();
   }
 
   void* data = array->GetArrayData();
   glReadPixels(x, y, width, height, format, type, data);
 
-  return v8::Undefined();
+  return U();
 }
 
 // void renderbufferStorage(GLenum target, GLenum internalformat, 
@@ -1645,13 +1648,13 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_renderbufferStorage(const 
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 4) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
-  GLenum internalformat = V8ToType<uint32_t>(args[1], ok); if (!ok) return v8::Undefined();
-  GLsizei width = V8ToType<int32_t>(args[2], ok); if (!ok) return v8::Undefined();
-  GLsizei height = V8ToType<int32_t>(args[3], ok); if (!ok) return v8::Undefined();
+  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum internalformat = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
+  GLsizei width = V8ToType<int32_t>(args[2], ok); if (!ok) return U();
+  GLsizei height = V8ToType<int32_t>(args[3], ok); if (!ok) return U();
   if (target != GL_RENDERBUFFER) {
     context->set_gl_error(GL_INVALID_ENUM);
-    return v8::Undefined();
+    return U();
   }
   //XXX some of these formats may not be supported on desktop GL - so we convert them (see GraphicsContext3DOpenGL.cpp:renderbufferStorage
   //XXX this means getRenderbufferParameter will return the wrong value - we should really stash the original value in the bound WebGLRenderbuffer
@@ -1674,11 +1677,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_renderbufferStorage(const 
       break;
     default:
       context->set_gl_error(GL_INVALID_ENUM);
-      return v8::Undefined();
+      return U();
   }
 
   glRenderbufferStorage(target, internalformat, width, height);
-  return v8::Undefined();
+  return U();
 }
 
 // void sampleCoverage(GLclampf value, GLboolean invert);
@@ -1686,10 +1689,10 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_sampleCoverage(const v8::A
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLclampf value = V8ToType<float>(args[0], ok); if (!ok) return v8::Undefined();
-  GLboolean invert = V8ToType<bool>(args[1], ok); if (!ok) return v8::Undefined();
+  GLclampf value = V8ToType<float>(args[0], ok); if (!ok) return U();
+  GLboolean invert = V8ToType<bool>(args[1], ok); if (!ok) return U();
   glSampleCoverage(value, invert);
-  return v8::Undefined();
+  return U();
 }
 
 // void scissor(GLint x, GLint y, GLsizei width, GLsizei height);
@@ -1697,30 +1700,30 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_scissor(const v8::Argument
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 4) return ThrowArgCount();
-  GLint x = V8ToType<int32_t>(args[0], ok); if (!ok) return v8::Undefined();
-  GLint y = V8ToType<int32_t>(args[1], ok); if (!ok) return v8::Undefined();
-  GLsizei width = V8ToType<int32_t>(args[2], ok); if (!ok) return v8::Undefined();
-  GLsizei height = V8ToType<int32_t>(args[3], ok); if (!ok) return v8::Undefined();
+  GLint x = V8ToType<int32_t>(args[0], ok); if (!ok) return U();
+  GLint y = V8ToType<int32_t>(args[1], ok); if (!ok) return U();
+  GLsizei width = V8ToType<int32_t>(args[2], ok); if (!ok) return U();
+  GLsizei height = V8ToType<int32_t>(args[3], ok); if (!ok) return U();
   glScissor(x, y, width, height);
-  return v8::Undefined();
+  return U();
 }
 
 //XXX stash this in shader for use with ANGLE when compiling?
 // void shaderSource(WebGLShader shader, DOMString source);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_shaderSource(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_shaderSource(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void stencilFunc(GLenum func, GLint ref, GLuint mask);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilFunc(const v8::Arguments& args) {
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 3) return ThrowArgCount();
-  GLenum func = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum func = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateStencilFunc("stencilFunc", func))
-    return v8::Undefined();
-  GLint ref = V8ToType<int32_t>(args[1], ok); if (!ok) return v8::Undefined();
-  GLuint mask = V8ToType<uint32_t>(args[2], ok); if (!ok) return v8::Undefined();
+    return U();
+  GLint ref = V8ToType<int32_t>(args[1], ok); if (!ok) return U();
+  GLuint mask = V8ToType<uint32_t>(args[2], ok); if (!ok) return U();
   glStencilFunc(func, ref, mask);
-  return v8::Undefined();
+  return U();
 }
 
 // void stencilFuncSeparate(GLenum face, GLenum func, GLint ref, GLuint mask);
@@ -1728,7 +1731,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilFuncSeparate(const 
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 4) return ThrowArgCount();
-  GLenum face = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum face = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   switch (face) {
     case GL_FRONT_AND_BACK:
     case GL_FRONT:
@@ -1736,15 +1739,15 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilFuncSeparate(const 
       break;
     default:
       context->set_gl_error(GL_INVALID_ENUM);
-      return v8::Undefined();
+      return U();
   }
-  GLenum func = V8ToType<uint32_t>(args[1], ok); if (!ok) return v8::Undefined();
+  GLenum func = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
   if (!context->ValidateStencilFunc("stencilFuncSeparate", func))
-    return v8::Undefined();
-  GLint ref = V8ToType<int32_t>(args[2], ok); if (!ok) return v8::Undefined();
-  GLuint mask = V8ToType<uint32_t>(args[3], ok); if (!ok) return v8::Undefined();
+    return U();
+  GLint ref = V8ToType<int32_t>(args[2], ok); if (!ok) return U();
+  GLuint mask = V8ToType<uint32_t>(args[3], ok); if (!ok) return U();
   glStencilFuncSeparate(face, func, ref, mask);
-  return v8::Undefined();
+  return U();
 }
 
 // void stencilMask(GLuint mask);
@@ -1752,9 +1755,9 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilMask(const v8::Argu
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  GLuint mask = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLuint mask = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   glStencilMask(mask);
-  return v8::Undefined();
+  return U();
 }
 
 // void stencilMaskSeparate(GLenum face, GLuint mask);
@@ -1762,7 +1765,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilMaskSeparate(const 
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  GLenum face = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum face = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   switch (face) {
     case GL_FRONT_AND_BACK:
     case GL_FRONT:
@@ -1770,11 +1773,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilMaskSeparate(const 
       break;
     default:
       context->set_gl_error(GL_INVALID_ENUM);
-      return v8::Undefined();
+      return U();
   }
-  GLuint mask = V8ToType<uint32_t>(args[1], ok); if (!ok) return v8::Undefined();
+  GLuint mask = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
   glStencilMaskSeparate(face, mask);
-  return v8::Undefined();
+  return U();
 }
 
 // void stencilOp(GLenum fail, GLenum zfail, GLenum zpass);
@@ -1782,11 +1785,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilOp(const v8::Argume
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 3) return ThrowArgCount();
-  GLenum fail = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
-  GLenum zfail = V8ToType<uint32_t>(args[1], ok); if (!ok) return v8::Undefined();
-  GLenum zpass = V8ToType<uint32_t>(args[2], ok); if (!ok) return v8::Undefined();
+  GLenum fail = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum zfail = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
+  GLenum zpass = V8ToType<uint32_t>(args[2], ok); if (!ok) return U();
   glStencilOp(fail, zfail, zpass);
-  return v8::Undefined();
+  return U();
 }
 
 // void stencilOpSeparate(GLenum face, GLenum fail, GLenum zfail, GLenum zpass);
@@ -1794,12 +1797,12 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilOpSeparate(const v8
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 4) return ThrowArgCount();
-  GLenum face = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
-  GLenum fail = V8ToType<uint32_t>(args[1], ok); if (!ok) return v8::Undefined();
-  GLenum zfail = V8ToType<uint32_t>(args[2], ok); if (!ok) return v8::Undefined();
-  GLenum zpass = V8ToType<uint32_t>(args[3], ok); if (!ok) return v8::Undefined();
+  GLenum face = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
+  GLenum fail = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
+  GLenum zfail = V8ToType<uint32_t>(args[2], ok); if (!ok) return U();
+  GLenum zpass = V8ToType<uint32_t>(args[3], ok); if (!ok) return U();
   glStencilOpSeparate(face, fail, zfail, zpass);
-  return v8::Undefined();
+  return U();
 }
 
 // void texImage2D(GLenum target, GLint level, GLenum internalformat, 
@@ -1813,22 +1816,22 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilOpSeparate(const v8
 //                 GLenum format, GLenum type, HTMLCanvasElement canvas) raises (DOMException);
 // void texImage2D(GLenum target, GLint level, GLenum internalformat,
 //                 GLenum format, GLenum type, HTMLVideoElement video) raises (DOMException);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_texImage2D(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_texImage2D(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void texParameterf(GLenum target, GLenum pname, GLfloat param);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_texParameterf(const v8::Arguments& args) {
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 3) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateTextureBinding("texParameterf", target, false))
-    return v8::Undefined();
-  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return v8::Undefined();
-  GLfloat param = V8ToType<float>(args[2], ok); if (!ok) return v8::Undefined();
+    return U();
+  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
+  GLfloat param = V8ToType<float>(args[2], ok); if (!ok) return U();
   if (!context->ValidateTexParameter("texParameterf", pname, static_cast<GLint>(param)))
-    return v8::Undefined();
+    return U();
   glTexParameterf(target, pname, param);
-  return v8::Undefined();
+  return U();
 }
 
 // void texParameteri(GLenum target, GLenum pname, GLint param);
@@ -1836,15 +1839,15 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_texParameteri(const v8::Ar
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 3) return ThrowArgCount();
-  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return v8::Undefined();
+  GLenum target = V8ToType<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateTextureBinding("texParameteri", target, false))
-    return v8::Undefined();
-  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return v8::Undefined();
-  GLint param = V8ToType<int32_t>(args[2], ok); if (!ok) return v8::Undefined();
+    return U();
+  GLenum pname = V8ToType<uint32_t>(args[1], ok); if (!ok) return U();
+  GLint param = V8ToType<int32_t>(args[2], ok); if (!ok) return U();
   if (!context->ValidateTexParameter("texParameteri", pname, param))
-    return v8::Undefined();
+    return U();
   glTexParameteri(target, pname, param);
-  return v8::Undefined();
+  return U();
 }
 
 // void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, 
@@ -1858,121 +1861,121 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_texParameteri(const v8::Ar
 //                    GLenum format, GLenum type, HTMLCanvasElement canvas) raises (DOMException);
 // void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, 
 //                    GLenum format, GLenum type, HTMLVideoElement video) raises (DOMException);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_texSubImage2D(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_texSubImage2D(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniform1f(WebGLUniformLocation location, GLfloat x);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1f(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1f(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniform1fv(WebGLUniformLocation location, FloatArray v);
 // void uniform1fv(WebGLUniformLocation location, sequence<float> v);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1fv(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1fv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniform1i(WebGLUniformLocation location, GLint x);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1i(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1i(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniform1iv(WebGLUniformLocation location, Int32Array v);
 // void uniform1iv(WebGLUniformLocation location, sequence<long> v);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1iv(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1iv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniform2f(WebGLUniformLocation location, GLfloat x, GLfloat y);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform2f(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform2f(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniform2fv(WebGLUniformLocation location, FloatArray v);
 // void uniform2fv(WebGLUniformLocation location, sequence<float> v);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform2fv(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform2fv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniform2i(WebGLUniformLocation location, GLint x, GLint y);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform2i(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform2i(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniform2iv(WebGLUniformLocation location, Int32Array v);
 // void uniform2iv(WebGLUniformLocation location, sequence<long> v);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform2iv(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform2iv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniform3f(WebGLUniformLocation location, GLfloat x, GLfloat y, GLfloat z);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform3f(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform3f(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniform3fv(WebGLUniformLocation location, FloatArray v);
 // void uniform3fv(WebGLUniformLocation location, sequence<float> v);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform3fv(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform3fv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniform3i(WebGLUniformLocation location, GLint x, GLint y, GLint z);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform3i(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform3i(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniform3iv(WebGLUniformLocation location, Int32Array v);
 // void uniform3iv(WebGLUniformLocation location, sequence<long> v);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform3iv(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform3iv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniform4f(WebGLUniformLocation location, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4f(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4f(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniform4fv(WebGLUniformLocation location, FloatArray v);
 // void uniform4fv(WebGLUniformLocation location, sequence<float> v);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4fv(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4fv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniform4i(WebGLUniformLocation location, GLint x, GLint y, GLint z, GLint w);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4i(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4i(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniform4iv(WebGLUniformLocation location, Int32Array v);
 // void uniform4iv(WebGLUniformLocation location, sequence<long> v);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4iv(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4iv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniformMatrix2fv(WebGLUniformLocation location, GLboolean transpose, 
 //                       FloatArray value);
 // void uniformMatrix2fv(WebGLUniformLocation location, GLboolean transpose, 
 //                       sequence<float> value);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniformMatrix2fv(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniformMatrix2fv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniformMatrix3fv(WebGLUniformLocation location, GLboolean transpose, 
 //                       FloatArray value);
 // void uniformMatrix3fv(WebGLUniformLocation location, GLboolean transpose, 
 //                       sequence<float> value);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniformMatrix3fv(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniformMatrix3fv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniformMatrix4fv(WebGLUniformLocation location, GLboolean transpose, 
 //                       FloatArray value);
 // void uniformMatrix4fv(WebGLUniformLocation location, GLboolean transpose, 
 //                       sequence<float> value);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniformMatrix4fv(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniformMatrix4fv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void useProgram(WebGLProgram program);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_useProgram(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_useProgram(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void validateProgram(WebGLProgram program);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_validateProgram(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_validateProgram(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void vertexAttrib1f(GLuint indx, GLfloat x);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib1f(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib1f(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void vertexAttrib1fv(GLuint indx, FloatArray values);
 // void vertexAttrib1fv(GLuint indx, sequence<float> values);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib1fv(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib1fv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void vertexAttrib2f(GLuint indx, GLfloat x, GLfloat y);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib2f(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib2f(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void vertexAttrib2fv(GLuint indx, FloatArray values);
 // void vertexAttrib2fv(GLuint indx, sequence<float> values);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib2fv(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib2fv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void vertexAttrib3f(GLuint indx, GLfloat x, GLfloat y, GLfloat z);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib3f(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib3f(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void vertexAttrib3fv(GLuint indx, FloatArray values);
 // void vertexAttrib3fv(GLuint indx, sequence<float> values);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib3fv(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib3fv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void vertexAttrib4f(GLuint indx, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib4f(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib4f(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void vertexAttrib4fv(GLuint indx, FloatArray values);
 // void vertexAttrib4fv(GLuint indx, sequence<float> values);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib4fv(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib4fv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void vertexAttribPointer(GLuint indx, GLint size, GLenum type, 
 //                          GLboolean normalized, GLsizei stride, GLintptr offset);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttribPointer(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttribPointer(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void viewport(GLint x, GLint y, GLsizei width, GLsizei height);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_viewport(const v8::Arguments& args) { return v8::Undefined(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_viewport(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 }
