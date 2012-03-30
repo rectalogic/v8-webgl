@@ -10,8 +10,16 @@
 
 namespace v8_webgl {
 
+class WebGLObjectInterface {
+ public:
+  virtual ~WebGLObjectInterface() {}
+  virtual bool ValidateContext(WebGLRenderingContext* context) = 0;
+};
+
+//////
+
 template<class V, typename T>
-class WebGLObject : public V8Object<V> {
+class WebGLObject : public V8Object<V>, public WebGLObjectInterface {
  public:
   WebGLObject(WebGLRenderingContext* context, T webgl_id, bool weak = false)
       : V8Object<V>(weak)

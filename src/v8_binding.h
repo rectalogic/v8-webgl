@@ -143,6 +143,10 @@ class V8ObjectBase {
     return static_cast<V8ObjectBase*>(value->GetPointerFromInternalField(0));
   }
 
+  inline v8::Handle<v8::Object> ToV8() {
+    return instance_;
+  }
+
  protected:
   V8ObjectBase() {}
   virtual ~V8ObjectBase();
@@ -165,10 +169,6 @@ class V8ObjectBase {
   }
 
   static v8::Persistent<v8::FunctionTemplate> CreateConstructorTemplate(const char* class_name, v8::InvocationCallback callback);
-
-  inline v8::Handle<v8::Object> ToV8() {
-    return instance_;
-  }
 
   void SetInstance(v8::Handle<v8::Object> instance, bool weak = false);
 

@@ -90,32 +90,38 @@ WebGLUniformLocation* WebGLRenderingContext::CreateUniformLocation(GLuint progra
 }
 
 void WebGLRenderingContext::DeleteBuffer(WebGLBuffer* buffer) {
-  buffer_map_.erase(WEBGL_ID(buffer));
+  if (!buffer) return;
+  buffer_map_.erase(buffer->get_webgl_id());
   delete buffer;
 }
 
 void WebGLRenderingContext::DeleteFramebuffer(WebGLFramebuffer* framebuffer) {
-  framebuffer_map_.erase(WEBGL_ID(framebuffer));
+  if (!framebuffer) return;
+  framebuffer_map_.erase(framebuffer->get_webgl_id());
   delete framebuffer;
 }
 
 void WebGLRenderingContext::DeleteProgram(WebGLProgram* program) {
-  program_map_.erase(WEBGL_ID(program));
+  if (!program) return;
+  program_map_.erase(program->get_webgl_id());
   delete program;
 }
 
 void WebGLRenderingContext::DeleteRenderbuffer(WebGLRenderbuffer* renderbuffer) {
-  renderbuffer_map_.erase(WEBGL_ID(renderbuffer));
+  if (!renderbuffer) return;
+  renderbuffer_map_.erase(renderbuffer->get_webgl_id());
   delete renderbuffer;
 }
 
 void WebGLRenderingContext::DeleteShader(WebGLShader* shader) {
-  shader_map_.erase(WEBGL_ID(shader));
+  if (!shader) return;
+  shader_map_.erase(shader->get_webgl_id());
   delete shader;
 }
 
 void WebGLRenderingContext::DeleteTexture(WebGLTexture* texture) {
-  texture_map_.erase(WEBGL_ID(texture));
+  if (!texture) return;
+  texture_map_.erase(texture->get_webgl_id());
   delete texture;
 }
 
@@ -159,6 +165,22 @@ void WebGLRenderingContext::Log(Logger::Level level, std::string msg) {
   Logger* logger = GetFactory()->GetLogger();
   if (logger)
     logger->Log(level, msg);
+}
+
+bool WebGLRenderingContext::ValidateObject(WebGLObjectInterface* object) {
+  if (object && !object->ValidateContext(this)) {
+    set_gl_error(GL_INVALID_OPERATION);
+    return false;
+  }
+  return true;
+}
+
+bool WebGLRenderingContext::ValidateLocationProgram(WebGLUniformLocation* location, GLuint program_id) {
+  if (location && !location->ValidateProgram(program_id)) {
+    set_gl_error(GL_INVALID_OPERATION);
+    return false;
+  }
+  return true;
 }
 
 bool WebGLRenderingContext::ValidateBlendEquation(const char* function, GLenum mode) {

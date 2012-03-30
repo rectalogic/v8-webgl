@@ -18,6 +18,7 @@
 namespace v8_webgl {
 class GraphicContext;
 class Canvas;
+class WebGLObjectInterface;
 class WebGLActiveInfo;
 class WebGLBuffer;
 class WebGLFramebuffer;
@@ -114,6 +115,20 @@ class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
 
   static bool TypedArrayToData(v8::Handle<v8::Value> value, void*& data, uint32_t& length, bool& ok);
   static void Log(Logger::Level level, std::string msg);
+
+  static v8::Handle<v8::Value> ToV8OrNull(V8ObjectBase* object) {
+    return object ? static_cast<v8::Handle<v8::Value> >(object->ToV8()) : static_cast<v8::Handle<v8::Value> >(v8::Null());
+  }
+
+  bool ValidateObject(WebGLObjectInterface* object);
+  bool ValidateLocationProgram(WebGLUniformLocation* location, GLuint program_id);
+  bool RequireObject(const void* object) {
+    if (!object) {
+      set_gl_error(GL_INVALID_VALUE);
+      return false;
+    }
+    return true;
+  }
 
   bool ValidateBlendEquation(const char* function, GLenum mode);
   bool ValidateBlendFuncFactors(const char* function, GLenum src, GLenum dst);
