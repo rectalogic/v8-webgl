@@ -8,6 +8,7 @@
 #include <v8.h>
 #include <assert.h>
 #include <string>
+#include <vector>
 
 namespace v8_webgl {
 
@@ -61,6 +62,7 @@ v8::Handle<v8::Array> ArrayToV8(T* values, uint32_t length) {
 
 template<typename T>
 T V8ToType(v8::Handle<v8::Value> value, bool& ok);
+
 template<>
 std::string V8ToType<std::string>(v8::Handle<v8::Value> value, bool& ok);
 
@@ -105,6 +107,32 @@ T* V8ToNative(v8::Handle<v8::Value> value, bool& ok) {
     return 0;
   }
   return native;
+}
+
+template<class T>
+std::vector<T> V8ToArray(v8::Handle<v8::Value> value, bool& ok) {
+  try {
+    ok = true;
+    if (value->IsUndefined() || value->IsNull())
+      return std::vector<T>();
+    if (!value->IsArray()){
+      ok = false;
+      return std::vector<T>();
+    }
+    v8::Handle<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
+    uint32_t length = array->Length();
+    std::vector<T> vector(length);
+    for (uint32_t i = 0; i < length; i++) {
+      v8::Local<v8::Value> entry = array->Get(i);
+      vector[i] = V8ToType<T>(entry, ok);
+      if (!ok)
+        return std::vector<T>();
+    }
+    return vector;
+  } catch (std::bad_alloc& e) {
+    ok = false;
+    return std::vector<T>();
+  }
 }
 
 //////
