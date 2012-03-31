@@ -53,7 +53,6 @@ static WebGLRenderingContext* CallbackContext(const v8::Arguments& args) {
 
 // WebGLContextAttributes getContextAttributes();
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_getContextAttributes(const v8::Arguments& args) {
-  bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   /*XXX finish, need to add WebGLContextAttributes class*/
   return U();
@@ -61,7 +60,6 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getContextAttributes(const
 
 // boolean isContextLost();
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_isContextLost(const v8::Arguments& args) {
-  bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   return TypeToV8<bool>(false);
 }
@@ -440,7 +438,6 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_copyTexSubImage2D(const v8
 
 // WebGLBuffer createBuffer();
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_createBuffer(const v8::Arguments& args) {
-  bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   GLuint buffer_id = 0;
   glGenBuffers(1, &buffer_id);
@@ -450,7 +447,6 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_createBuffer(const v8::Arg
 
 // WebGLFramebuffer createFramebuffer();
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_createFramebuffer(const v8::Arguments& args) {
-  bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   GLuint framebuffer_id = 0;
   //XXX glGenFramebuffersEXT etc.
@@ -461,7 +457,6 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_createFramebuffer(const v8
 
 // WebGLProgram createProgram();
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_createProgram(const v8::Arguments& args) {
-  bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   GLuint program_id = glCreateProgram();
   WebGLProgram* program = context->CreateProgram(program_id);
@@ -470,7 +465,6 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_createProgram(const v8::Ar
 
 // WebGLRenderbuffer createRenderbuffer();
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_createRenderbuffer(const v8::Arguments& args) {
-  bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   GLuint renderbuffer_id = 0;
   //XXX glGenRenderbuffersEXT etc.
@@ -492,7 +486,6 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_createShader(const v8::Arg
 
 // WebGLTexture createTexture();
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_createTexture(const v8::Arguments& args) {
-  bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   GLuint texture_id = 0;
   glGenTextures(1, &texture_id);
@@ -713,7 +706,6 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_enableVertexAttribArray(co
 
 // void finish();
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_finish(const v8::Arguments& args) {
-  bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   glFinish();
   return U();
@@ -721,7 +713,6 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_finish(const v8::Arguments
 
 // void flush();
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_flush(const v8::Arguments& args) {
-  bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   glFlush();
   return U();
@@ -1064,7 +1055,6 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getBufferParameter(const v
 
 // GLenum getError();
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_getError(const v8::Arguments& args) {
-  bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   GLenum error = context->get_gl_error();
   return TypeToV8<uint32_t>(error);
