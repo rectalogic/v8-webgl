@@ -95,7 +95,7 @@ class TypedArray : public V8Object<T>, public ArrayDataInterface {
 
     // TypedArray(ArrayBuffer buffer, optional unsigned long byteOffset, optional unsigned long length)
     if (ArrayBuffer::HasInstance(args[0])) {
-      ArrayBuffer* buffer = V8ToNative<ArrayBuffer>(args[0], ok);
+      ArrayBuffer* buffer = NativeFromV8<ArrayBuffer>(args[0], ok);
       if (!ok)
         return v8::Undefined();
       buffer_value = v8::Handle<v8::Object>::Cast(args[0]);
@@ -147,7 +147,7 @@ class TypedArray : public V8Object<T>, public ArrayDataInterface {
       buffer_value = ArrayBuffer::Create(length * sizeof(TNative));
       if (buffer_value.IsEmpty())
         return v8::Undefined();
-      ArrayBuffer* buffer = V8ToNative<ArrayBuffer>(buffer_value, ok);
+      ArrayBuffer* buffer = NativeFromV8<ArrayBuffer>(buffer_value, ok);
       if (!ok)
         return v8::Undefined();
 
@@ -170,7 +170,7 @@ class TypedArray : public V8Object<T>, public ArrayDataInterface {
       buffer_value = ArrayBuffer::Create(length * sizeof(TNative));
       if (buffer_value.IsEmpty())
         return v8::Undefined();
-      ArrayBuffer* buffer = V8ToNative<ArrayBuffer>(buffer_value, ok);
+      ArrayBuffer* buffer = NativeFromV8<ArrayBuffer>(buffer_value, ok);
       if (!ok)
         return v8::Undefined();
 

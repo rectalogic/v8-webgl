@@ -43,7 +43,7 @@ static inline v8::Handle<v8::Primitive> U() {
 }
 
 static WebGLRenderingContext* CallbackContext(const v8::Arguments& args) {
-  WebGLRenderingContext* context = WebGLRenderingContext::ToNative(args.Holder());
+  WebGLRenderingContext* context = WebGLRenderingContext::FromV8Object(args.Holder());
   if (context)
     context->MakeCurrent();
   return context;
@@ -87,11 +87,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_attachShader(const v8::Arg
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return U();
+  WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], ok); if (!ok) return U();
   if (!context->RequireObject(program)) return U();
   if (!context->ValidateObject(program)) return U();
   GLuint program_id = program ? program->get_webgl_id() : 0;
-  WebGLShader* shader = V8ToNative<WebGLShader>(args[1], ok); if (!ok) return U();
+  WebGLShader* shader = NativeFromV8<WebGLShader>(args[1], ok); if (!ok) return U();
   if (!context->RequireObject(shader)) return U();
   if (!context->ValidateObject(shader)) return U();
   GLuint shader_id = shader ? shader->get_webgl_id() : 0;
@@ -104,7 +104,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bindAttribLocation(const v
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 3) return ThrowArgCount();
-  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return U();
+  WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], ok); if (!ok) return U();
   if (!context->RequireObject(program)) return U();
   if (!context->ValidateObject(program)) return U();
   GLuint program_id = program ? program->get_webgl_id() : 0;
@@ -128,7 +128,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bindBuffer(const v8::Argum
       context->set_gl_error(GL_INVALID_ENUM);
       return U();
   }
-  WebGLBuffer* buffer = V8ToNative<WebGLBuffer>(args[1], ok); if (!ok) return U();
+  WebGLBuffer* buffer = NativeFromV8<WebGLBuffer>(args[1], ok); if (!ok) return U();
   if (!context->ValidateObject(buffer)) return U();
   GLuint buffer_id = buffer ? buffer->get_webgl_id() : 0;
   glBindBuffer(target, buffer_id);
@@ -145,7 +145,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bindFramebuffer(const v8::
     context->set_gl_error(GL_INVALID_ENUM);
     return U();
   }
-  WebGLFramebuffer* framebuffer = V8ToNative<WebGLFramebuffer>(args[1], ok); if (!ok) return U();
+  WebGLFramebuffer* framebuffer = NativeFromV8<WebGLFramebuffer>(args[1], ok); if (!ok) return U();
   if (!context->ValidateObject(framebuffer)) return U();
   GLuint framebuffer_id = framebuffer ? framebuffer->get_webgl_id() : 0;
   //XXX glBindFramebufferEXT
@@ -163,7 +163,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bindRenderbuffer(const v8:
     context->set_gl_error(GL_INVALID_ENUM);
     return U();
   }
-  WebGLRenderbuffer* renderbuffer = V8ToNative<WebGLRenderbuffer>(args[1], ok); if (!ok) return U();
+  WebGLRenderbuffer* renderbuffer = NativeFromV8<WebGLRenderbuffer>(args[1], ok); if (!ok) return U();
   if (!context->ValidateObject(renderbuffer)) return U();
   GLuint renderbuffer_id = renderbuffer ? renderbuffer->get_webgl_id() : 0;
   //XXX glBindRenderbufferEXT
@@ -185,7 +185,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bindTexture(const v8::Argu
       context->set_gl_error(GL_INVALID_ENUM);
       return U();
   }
-  WebGLTexture* texture = V8ToNative<WebGLTexture>(args[1], ok); if (!ok) return U();
+  WebGLTexture* texture = NativeFromV8<WebGLTexture>(args[1], ok); if (!ok) return U();
   if (!context->ValidateObject(texture)) return U();
   GLuint texture_id = texture ? texture->get_webgl_id() : 0;
   glBindTexture(target, texture_id);
@@ -391,7 +391,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_compileShader(const v8::Ar
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLShader* shader = V8ToNative<WebGLShader>(args[0], ok); if (!ok) return U();
+  WebGLShader* shader = NativeFromV8<WebGLShader>(args[0], ok); if (!ok) return U();
   if (!context->RequireObject(shader)) return U();
   if (!context->ValidateObject(shader)) return U();
   GLuint shader_id = shader ? shader->get_webgl_id() : 0;
@@ -515,7 +515,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_deleteBuffer(const v8::Arg
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLBuffer* buffer = V8ToNative<WebGLBuffer>(args[0], ok); if (!ok) return U();
+  WebGLBuffer* buffer = NativeFromV8<WebGLBuffer>(args[0], ok); if (!ok) return U();
   if (!context->ValidateObject(buffer)) return U();
   GLuint buffer_id = buffer ? buffer->get_webgl_id() : 0;
   glDeleteBuffers(1, &buffer_id);
@@ -528,7 +528,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_deleteFramebuffer(const v8
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLFramebuffer* framebuffer = V8ToNative<WebGLFramebuffer>(args[0], ok); if (!ok) return U();
+  WebGLFramebuffer* framebuffer = NativeFromV8<WebGLFramebuffer>(args[0], ok); if (!ok) return U();
   if (!context->ValidateObject(framebuffer)) return U();
   GLuint framebuffer_id = framebuffer ? framebuffer->get_webgl_id() : 0;
   //XXX glDeleteFramebuffersEXT etc.
@@ -542,7 +542,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_deleteProgram(const v8::Ar
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return U();
+  WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], ok); if (!ok) return U();
   if (!context->ValidateObject(program)) return U();
   GLuint program_id = program ? program->get_webgl_id() : 0;
   glDeleteProgram(program_id);
@@ -555,7 +555,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_deleteRenderbuffer(const v
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLRenderbuffer* renderbuffer = V8ToNative<WebGLRenderbuffer>(args[0], ok); if (!ok) return U();
+  WebGLRenderbuffer* renderbuffer = NativeFromV8<WebGLRenderbuffer>(args[0], ok); if (!ok) return U();
   if (!context->ValidateObject(renderbuffer)) return U();
   GLuint renderbuffer_id = renderbuffer ? renderbuffer->get_webgl_id() : 0;
   //XXX glDeleteRenderbuffersEXT etc.
@@ -569,7 +569,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_deleteShader(const v8::Arg
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLShader* shader = V8ToNative<WebGLShader>(args[0], ok); if (!ok) return U();
+  WebGLShader* shader = NativeFromV8<WebGLShader>(args[0], ok); if (!ok) return U();
   if (!context->ValidateObject(shader)) return U();
   GLuint shader_id = shader ? shader->get_webgl_id() : 0;
   glDeleteShader(shader_id);
@@ -582,7 +582,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_deleteTexture(const v8::Ar
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLTexture* texture = V8ToNative<WebGLTexture>(args[0], ok); if (!ok) return U();
+  WebGLTexture* texture = NativeFromV8<WebGLTexture>(args[0], ok); if (!ok) return U();
   if (!context->ValidateObject(texture)) return U();
   GLuint texture_id = texture ? texture->get_webgl_id() : 0;
   glDeleteTextures(1, &texture_id);
@@ -626,11 +626,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_detachShader(const v8::Arg
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return U();
+  WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], ok); if (!ok) return U();
   if (!context->RequireObject(program)) return U();
   if (!context->ValidateObject(program)) return U();
   GLuint program_id = program ? program->get_webgl_id() : 0;
-  WebGLShader* shader = V8ToNative<WebGLShader>(args[1], ok); if (!ok) return U();
+  WebGLShader* shader = NativeFromV8<WebGLShader>(args[1], ok); if (!ok) return U();
   if (!context->RequireObject(shader)) return U();
   if (!context->ValidateObject(shader)) return U();
   GLuint shader_id = shader ? shader->get_webgl_id() : 0;
@@ -743,7 +743,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_framebufferRenderbuffer(co
     context->set_gl_error(GL_INVALID_ENUM);
     return U();
   }
-  WebGLRenderbuffer* renderbuffer = V8ToNative<WebGLRenderbuffer>(args[3], ok); if (!ok) return U();
+  WebGLRenderbuffer* renderbuffer = NativeFromV8<WebGLRenderbuffer>(args[3], ok); if (!ok) return U();
   if (!context->ValidateObject(renderbuffer)) return U();
   GLuint renderbuffer_id = renderbuffer ? renderbuffer->get_webgl_id() : 0;
   //XXX glFramebufferRenderbufferEXT
@@ -762,7 +762,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_framebufferTexture2D(const
   if (!context->ValidateFramebufferFuncParameters("framebufferTexture2D", target, attachment))
     return U();
   GLenum textarget = FromV8<uint32_t>(args[2], ok); if (!ok) return U();
-  WebGLTexture* texture = V8ToNative<WebGLTexture>(args[3], ok); if (!ok) return U();
+  WebGLTexture* texture = NativeFromV8<WebGLTexture>(args[3], ok); if (!ok) return U();
   if (!context->ValidateObject(texture)) return U();
   GLuint texture_id = texture ? texture->get_webgl_id() : 0;
   GLint level = FromV8<int32_t>(args[4], ok); if (!ok) return U();
@@ -807,7 +807,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getAttribLocation(const v8
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return U();
+  WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], ok); if (!ok) return U();
   if (!context->RequireObject(program)) return U();
   if (!context->ValidateObject(program)) return U();
   GLuint program_id = program ? program->get_webgl_id() : 0;
@@ -1119,7 +1119,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getProgramParameter(const 
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return U();
+  WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], ok); if (!ok) return U();
   if (!context->RequireObject(program)) return U();
   if (!context->ValidateObject(program)) return U();
   GLuint program_id = program ? program->get_webgl_id() : 0;
@@ -1183,7 +1183,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getShaderParameter(const v
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  WebGLShader* shader = V8ToNative<WebGLShader>(args[0], ok); if (!ok) return U();
+  WebGLShader* shader = NativeFromV8<WebGLShader>(args[0], ok); if (!ok) return U();
   if (!context->RequireObject(shader)) return U();
   if (!context->ValidateObject(shader)) return U();
   GLuint shader_id = shader ? shader->get_webgl_id() : 0;
@@ -1310,11 +1310,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getUniform(const v8::Argum
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return U();
+  WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], ok); if (!ok) return U();
   if (!context->RequireObject(program)) return U();
   if (!context->ValidateObject(program)) return U();
   GLuint program_id = program ? program->get_webgl_id() : 0;
-  WebGLUniformLocation* location = V8ToNative<WebGLUniformLocation>(args[1], ok); if (!ok) return U();
+  WebGLUniformLocation* location = NativeFromV8<WebGLUniformLocation>(args[1], ok); if (!ok) return U();
   if (!context->RequireObject(location)) return U();
   if (!context->ValidateLocationProgram(location, program_id)) return U();
   //XXX need to catch std::bad_alloc from string/vector
@@ -1401,7 +1401,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getUniformLocation(const v
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
-  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return U();
+  WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], ok); if (!ok) return U();
   if (!context->RequireObject(program)) return U();
   if (!context->ValidateObject(program)) return U();
   GLuint program_id = program ? program->get_webgl_id() : 0;
@@ -1486,7 +1486,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isBuffer(const v8::Argumen
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLBuffer* buffer = V8ToNative<WebGLBuffer>(args[0], ok); if (!ok) return U();
+  WebGLBuffer* buffer = NativeFromV8<WebGLBuffer>(args[0], ok); if (!ok) return U();
   if (!buffer)
     return TypeToV8<bool>(false);
   GLuint buffer_id = buffer ? buffer->get_webgl_id() : 0;
@@ -1510,7 +1510,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isFramebuffer(const v8::Ar
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLFramebuffer* framebuffer = V8ToNative<WebGLFramebuffer>(args[0], ok); if (!ok) return U();
+  WebGLFramebuffer* framebuffer = NativeFromV8<WebGLFramebuffer>(args[0], ok); if (!ok) return U();
   if (!framebuffer)
     return TypeToV8<bool>(false);
   GLuint framebuffer_id = framebuffer ? framebuffer->get_webgl_id() : 0;
@@ -1522,7 +1522,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isProgram(const v8::Argume
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return U();
+  WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], ok); if (!ok) return U();
   if (!program)
     return TypeToV8<bool>(false);
   GLuint program_id = program ? program->get_webgl_id() : 0;
@@ -1534,7 +1534,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isRenderbuffer(const v8::A
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLRenderbuffer* renderbuffer = V8ToNative<WebGLRenderbuffer>(args[0], ok); if (!ok) return U();
+  WebGLRenderbuffer* renderbuffer = NativeFromV8<WebGLRenderbuffer>(args[0], ok); if (!ok) return U();
   if (!renderbuffer)
     return TypeToV8<bool>(false);
   GLuint renderbuffer_id = renderbuffer ? renderbuffer->get_webgl_id() : 0;
@@ -1546,7 +1546,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isShader(const v8::Argumen
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLShader* shader = V8ToNative<WebGLShader>(args[0], ok); if (!ok) return U();
+  WebGLShader* shader = NativeFromV8<WebGLShader>(args[0], ok); if (!ok) return U();
   if (!shader)
     return TypeToV8<bool>(false);
   GLuint shader_id = shader ? shader->get_webgl_id() : 0;
@@ -1558,7 +1558,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isTexture(const v8::Argume
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLTexture* texture = V8ToNative<WebGLTexture>(args[0], ok); if (!ok) return U();
+  WebGLTexture* texture = NativeFromV8<WebGLTexture>(args[0], ok); if (!ok) return U();
   if (!texture)
     return TypeToV8<bool>(false);
   GLuint texture_id = texture ? texture->get_webgl_id() : 0;
@@ -1580,7 +1580,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_linkProgram(const v8::Argu
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 1) return ThrowArgCount();
-  WebGLProgram* program = V8ToNative<WebGLProgram>(args[0], ok); if (!ok) return U();
+  WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], ok); if (!ok) return U();
   if (!context->RequireObject(program)) return U();
   if (!context->ValidateObject(program)) return U();
   GLuint program_id = program ? program->get_webgl_id() : 0;
@@ -1619,7 +1619,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_readPixels(const v8::Argum
     context->set_gl_error(GL_INVALID_OPERATION);
     return U();
   }
-  Uint8Array* array = V8ToNative<Uint8Array>(args[6], ok); if (!ok) return U();
+  Uint8Array* array = NativeFromV8<Uint8Array>(args[6], ok); if (!ok) return U();
   if (!context->RequireObject(array)) return U();
 
   GLint alignment = 4;

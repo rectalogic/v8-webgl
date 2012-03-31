@@ -51,7 +51,7 @@ void Canvas::set_height(int height) {
 
 // WebGLRenderingContext getContext(DOMString type, hash);
 v8::Handle<v8::Value> Canvas::Callback_getContext(const v8::Arguments& args) {
-  Canvas* canvas = Canvas::ToNative(args.Holder());
+  Canvas* canvas = Canvas::FromV8Object(args.Holder());
   if (!canvas)
     return ThrowObjectDisposed();
   //XXX validate first arg is "experimental-webgl", handle optional second arg params
@@ -59,7 +59,7 @@ v8::Handle<v8::Value> Canvas::Callback_getContext(const v8::Arguments& args) {
 }
 
 static void Setter_width(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {
-  Canvas* canvas = Canvas::ToNative(info.Holder());
+  Canvas* canvas = Canvas::FromV8Object(info.Holder());
   if (!canvas) {
     ThrowObjectDisposed();
     return;
@@ -68,14 +68,14 @@ static void Setter_width(v8::Local<v8::String> property, v8::Local<v8::Value> va
 }
 
 static v8::Handle<v8::Value> Getter_width(v8::Local<v8::String> property, const v8::AccessorInfo& info) {
-  Canvas* canvas = Canvas::ToNative(info.Holder());
+  Canvas* canvas = Canvas::FromV8Object(info.Holder());
   if (!canvas)
     return ThrowObjectDisposed();
   return v8::Integer::New(canvas->get_width());
 }
 
 static void Setter_height(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {
-  Canvas* canvas = Canvas::ToNative(info.Holder());
+  Canvas* canvas = Canvas::FromV8Object(info.Holder());
   if (!canvas) {
     ThrowObjectDisposed();
     return;
@@ -84,7 +84,7 @@ static void Setter_height(v8::Local<v8::String> property, v8::Local<v8::Value> v
 }
 
 static v8::Handle<v8::Value> Getter_height(v8::Local<v8::String> property, const v8::AccessorInfo& info) {
-  Canvas* canvas = Canvas::ToNative(info.Holder());
+  Canvas* canvas = Canvas::FromV8Object(info.Holder());
   if (!canvas)
     return ThrowObjectDisposed();
   return v8::Integer::New(canvas->get_height());

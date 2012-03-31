@@ -88,23 +88,23 @@ uint32_t FromV8<uint32_t>(v8::Handle<v8::Value> value, bool& ok);
 
 
 template<class T>
-T* V8ToNative(v8::Handle<v8::Value> value, bool& ok) {
+T* NativeFromV8(v8::Handle<v8::Value> value, bool& ok) {
   ok = true;
 
   // Not an error if undefined/null
   if (value->IsUndefined() || value->IsNull())
-    return 0;
+    return NULL;
 
   if (!T::HasInstance(value)) {
     ok = false;
-    return 0;
+    return NULL;
   }
   v8::Handle<v8::Object> object = value->ToObject();
-  T* native = T::ToNative(object);
+  T* native = T::FromV8Object(object);
   if (!native) {
     ok = false;
     ThrowObjectDisposed();
-    return 0;
+    return NULL;
   }
   return native;
 }
@@ -139,7 +139,7 @@ std::vector<T> V8ToArray(v8::Handle<v8::Value> value, bool& ok) {
 
 class V8ObjectBase {
  public:
-  inline static V8ObjectBase* ToNative(v8::Handle<v8::Object> value) {
+  inline static V8ObjectBase* FromV8Object(v8::Handle<v8::Object> value) {
     return static_cast<V8ObjectBase*>(value->GetPointerFromInternalField(0));
   }
 
@@ -216,8 +216,8 @@ class V8Object : public V8ObjectBase {
     s_constructor_template.Clear();
   }
 
-  inline static T* ToNative(v8::Handle<v8::Object> value) {
-    return static_cast<T*>(V8ObjectBase::ToNative(value));
+  inline static T* FromV8Object(v8::Handle<v8::Object> value) {
+    return static_cast<T*>(V8ObjectBase::FromV8Object(value));
   }
 
   inline static bool HasInstance(v8::Handle<v8::Value> value){

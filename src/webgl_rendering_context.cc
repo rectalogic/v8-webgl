@@ -143,7 +143,7 @@ bool WebGLRenderingContext::TypedArrayToData(v8::Handle<v8::Value> value, void*&
   ok = true;
   if (ArrayBufferView::HasInstance(value) || ArrayBuffer::HasInstance(value)) {
     v8::Handle<v8::Object> object = value->ToObject();
-    ArrayDataInterface* array_data = dynamic_cast<ArrayDataInterface*>(V8ObjectBase::ToNative(object));
+    ArrayDataInterface* array_data = dynamic_cast<ArrayDataInterface*>(V8ObjectBase::FromV8Object(object));
     if (!array_data) {
       ThrowObjectDisposed();
       length = 0;
