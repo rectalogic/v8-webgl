@@ -102,9 +102,10 @@ template<typename TNative>
 class UniformHelper : public UVAHelper<TNative> {
  public:
   typedef void (*UniformCallback) (GLint, GLsizei, const TNative*);
-  UniformHelper(UniformCallback gl_callback)
+  UniformHelper(UniformCallback gl_callback, uint32_t min_size)
       : UVAHelper<TNative>()
-      , gl_callback_(gl_callback) {}
+      , gl_callback_(gl_callback)
+      , min_size_(min_size) {}
 
  protected:
   bool ProcessTarget(v8::Handle<v8::Value> value) {
@@ -115,12 +116,18 @@ class UniformHelper : public UVAHelper<TNative> {
     return true;
   }
   void InvokeGL(uint32_t array_length, const TNative* array_data) {
-    gl_callback_(location_id_, array_length, array_data);
+    // Array must be at least min_size and a multiple of it
+    if (array_length < min_size_ || (array_length % min_size_)) {
+      this->GetContext()->set_gl_error(GL_INVALID_VALUE);
+      return;
+    }
+    gl_callback_(location_id_, array_length / min_size_, array_data);
   }
 
  private:
   GLuint location_id_;
   UniformCallback gl_callback_;
+  uint32_t min_size_;
 };
 
 template<typename TNative>
@@ -1974,7 +1981,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1f(const v8::Argume
 // void uniform1fv(WebGLUniformLocation location, FloatArray v);
 // void uniform1fv(WebGLUniformLocation location, sequence<float> v);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1fv(const v8::Arguments& args) {
-  UniformHelper<GLfloat> h(glUniform1fv);
+  UniformHelper<GLfloat> h(glUniform1fv, 1);
   return h.Process(args);
 }
 
@@ -1996,7 +2003,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1i(const v8::Argume
 // void uniform1iv(WebGLUniformLocation location, Int32Array v);
 // void uniform1iv(WebGLUniformLocation location, sequence<long> v);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1iv(const v8::Arguments& args) {
-  UniformHelper<GLint> h(glUniform1iv);
+  UniformHelper<GLint> h(glUniform1iv, 1);
   return h.Process(args);
 }
 
@@ -2019,7 +2026,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform2f(const v8::Argume
 // void uniform2fv(WebGLUniformLocation location, FloatArray v);
 // void uniform2fv(WebGLUniformLocation location, sequence<float> v);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform2fv(const v8::Arguments& args) {
-  UniformHelper<GLfloat> h(glUniform2fv);
+  UniformHelper<GLfloat> h(glUniform2fv, 2);
   return h.Process(args);
 }
 
@@ -2042,7 +2049,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform2i(const v8::Argume
 // void uniform2iv(WebGLUniformLocation location, Int32Array v);
 // void uniform2iv(WebGLUniformLocation location, sequence<long> v);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform2iv(const v8::Arguments& args) {
-  UniformHelper<GLint> h(glUniform2iv);
+  UniformHelper<GLint> h(glUniform2iv, 2);
   return h.Process(args);
 }
 
@@ -2066,7 +2073,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform3f(const v8::Argume
 // void uniform3fv(WebGLUniformLocation location, FloatArray v);
 // void uniform3fv(WebGLUniformLocation location, sequence<float> v);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform3fv(const v8::Arguments& args) {
-  UniformHelper<GLfloat> h(glUniform3fv);
+  UniformHelper<GLfloat> h(glUniform3fv, 3);
   return h.Process(args);
 }
 
@@ -2090,7 +2097,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform3i(const v8::Argume
 // void uniform3iv(WebGLUniformLocation location, Int32Array v);
 // void uniform3iv(WebGLUniformLocation location, sequence<long> v);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform3iv(const v8::Arguments& args) {
-  UniformHelper<GLint> h(glUniform3iv);
+  UniformHelper<GLint> h(glUniform3iv, 3);
   return h.Process(args);
 }
 
@@ -2115,7 +2122,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4f(const v8::Argume
 // void uniform4fv(WebGLUniformLocation location, FloatArray v);
 // void uniform4fv(WebGLUniformLocation location, sequence<float> v);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4fv(const v8::Arguments& args) {
-  UniformHelper<GLfloat> h(glUniform4fv);
+  UniformHelper<GLfloat> h(glUniform4fv, 4);
   return h.Process(args);
 }
 
@@ -2140,7 +2147,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4i(const v8::Argume
 // void uniform4iv(WebGLUniformLocation location, Int32Array v);
 // void uniform4iv(WebGLUniformLocation location, sequence<long> v);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4iv(const v8::Arguments& args) {
-  UniformHelper<GLint> h(glUniform4iv);
+  UniformHelper<GLint> h(glUniform4iv, 4);
   return h.Process(args);
 }
 
