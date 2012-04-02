@@ -24,6 +24,10 @@ inline v8::Handle<v8::Value> ThrowArgCount() {
   return v8::ThrowException(v8::Exception::TypeError(v8::String::New("Not enough arguments")));
 }
 
+inline v8::Handle<v8::Value> ThrowTypeError() {
+  return v8::ThrowException(v8::Exception::TypeError(v8::String::New("Type error")));
+}
+
 inline v8::Handle<v8::Value> ThrowRangeError(const char* msg) {
   return v8::ThrowException(v8::Exception::RangeError(v8::String::New(msg)));
 }
@@ -110,7 +114,7 @@ T* NativeFromV8(v8::Handle<v8::Value> value, bool& ok) {
 }
 
 template<class T>
-std::vector<T> V8ToArray(v8::Handle<v8::Value> value, bool& ok) {
+std::vector<T> ArrayFromV8(v8::Handle<v8::Value> value, bool& ok) {
   try {
     ok = true;
     if (value->IsUndefined() || value->IsNull())

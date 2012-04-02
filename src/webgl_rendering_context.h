@@ -129,6 +129,7 @@ class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
     }
     return true;
   }
+  WebGLUniformLocation* UniformLocationFromV8(v8::Handle<v8::Value> value, bool& ok);
 
   bool ValidateBlendEquation(const char* function, GLenum mode);
   bool ValidateBlendFuncFactors(const char* function, GLenum src, GLenum dst);

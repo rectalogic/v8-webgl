@@ -161,6 +161,28 @@ bool WebGLRenderingContext::TypedArrayToData(v8::Handle<v8::Value> value, void*&
   return false;
 }
 
+WebGLUniformLocation* WebGLRenderingContext::UniformLocationFromV8(v8::Handle<v8::Value> value, bool& ok) {
+  ok = true;
+  WebGLUniformLocation* location = NativeFromV8<WebGLUniformLocation>(value, ok);
+  if (!ok)
+    return NULL;
+  // Not an error if NULL
+  if (!location)
+    return NULL;
+  if (!ValidateObject(location)) {
+    ok = false;
+    return NULL;
+  }
+
+  GLint program_id = 0;
+  glGetIntegerv(GL_CURRENT_PROGRAM, &program_id);
+  if (!ValidateLocationProgram(location, program_id)) {
+    ok = false;
+    return NULL;
+  }
+  return location;
+}
+
 void WebGLRenderingContext::Log(Logger::Level level, std::string msg) {
   Logger* logger = GetFactory()->GetLogger();
   if (logger)

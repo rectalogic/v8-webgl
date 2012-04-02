@@ -49,6 +49,66 @@ static WebGLRenderingContext* CallbackContext(const v8::Arguments& args) {
   return context;
 }
 
+template<typename T>
+struct GLFunc {
+  typedef void (*glVertexAttribNXvType) (GLuint, const T*);
+  typedef void (*glUniformNXvType) (GLint, GLsizei, const T*);
+};
+
+template<typename TNative>
+static v8::Handle<v8::Value> UniformAndVertexAttribHelper(const v8::Arguments& args, typename GLFunc<TNative>::glUniformNXvType gl_uniform_func, typename GLFunc<TNative>::glGetVertexAttribXvType gl_vertex_attrib_func = NULL, uint32_t vertex_attrib_required_length = 0) {
+  bool ok = true;
+  WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
+  if (args.Length() < 2) return ThrowArgCount();
+
+  GLuint location_id = 0;
+  GLint index = -1;
+  if (gl_uniform_func) {
+    WebGLUniformLocation* location = context->UniformLocationFromV8(args[0], ok);
+    if (!location) return U();
+    location_id = location->get_webgl_id();
+  }
+  else if (gl_vertex_attrib_func) {
+    index = FromV8<int32_t>(args[0], ok);
+    if (!ok) return U();
+  }
+
+  std::vector<TNative> vector;
+  const TNative* array_data = NULL;
+  uint32_t array_length = 0;
+  if (args[1]->IsUndefined() || args[1]->IsNull()) {
+    context->set_gl_error(GL_INVALID_VALUE);
+    return U();
+  }
+  else if (args[1]->IsArray()) {
+    vector = ArrayFromV8<TNative>(args[1], ok);
+    if (!ok) return U();
+    array_data = &vector[0];
+    array_length = vector.size();
+  }
+  else if (Array<TNative>::Type::HasInstance(args[1])) {
+    typename Array<TNative>::Type* array = Array<TNative>::Type::FromV8Object(args[1]->ToObject());
+    if (!array)
+      return ThrowObjectDisposed();
+    array_data = array->GetTypedArrayData();
+    array_length = array->GetTypedArrayLength();
+  }
+  else
+    return ThrowTypeError();
+
+  if (gl_uniform_func) {
+    gl_uniform_func(location_id, array_length, array_data);
+  }
+  else if (gl_vertex_attrib_func) {
+    if (array_length < vertex_attrib_required_length) {
+      context->set_gl_error(GL_INVALID_VALUE);
+      return U();
+    }
+    gl_vertex_attrib_func(index, array_data);
+  }
+  return U();
+}
+
 //////
 
 // WebGLContextAttributes getContextAttributes();
@@ -1854,11 +1914,29 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_texParameteri(const v8::Ar
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_texSubImage2D(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniform1f(WebGLUniformLocation location, GLfloat x);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1f(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1f(const v8::Arguments& args) {
+  bool ok = true;
+  WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
+  if (args.Length() < 2) return ThrowArgCount();
+
+  WebGLUniformLocation* location = context->UniformLocationFromV8(args[0], ok);
+  if (!location) return U();
+  GLuint location_id = location->get_webgl_id();
+
+  GLfloat x = FromV8<float>(args[1], ok); if (!ok) return U();
+  glUniform1f(location_id, x);
+  return U();
+}
 
 // void uniform1fv(WebGLUniformLocation location, FloatArray v);
 // void uniform1fv(WebGLUniformLocation location, sequence<float> v);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1fv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1fv(const v8::Arguments& args) {
+  //XXX need V8ToArray<T> - can we return std::vector?
+  //XXX call into helper, pass glUniformXfv function pointer - it can have if/else and either call with vector data or FloatArray - could templatize for int too
+  //XXX same for VertexAttrib - need to validate array size for vertex
+  //XXX need template typedef for gl func http://www.gotw.ca/gotw/079.htm
+  return U(); /*XXX finish*/
+}
 
 // void uniform1i(WebGLUniformLocation location, GLint x);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1i(const v8::Arguments& args) { return U(); /*XXX finish*/ }
