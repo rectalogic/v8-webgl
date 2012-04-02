@@ -161,25 +161,19 @@ bool WebGLRenderingContext::TypedArrayToData(v8::Handle<v8::Value> value, void*&
   return false;
 }
 
-WebGLUniformLocation* WebGLRenderingContext::UniformLocationFromV8(v8::Handle<v8::Value> value, bool& ok) {
-  ok = true;
+WebGLUniformLocation* WebGLRenderingContext::UniformLocationFromV8(v8::Handle<v8::Value> value) {
+  bool ok = true;
   WebGLUniformLocation* location = NativeFromV8<WebGLUniformLocation>(value, ok);
-  if (!ok)
+  // It's not an error if location is null
+  if (!location || !ok)
     return NULL;
-  // Not an error if NULL
-  if (!location)
+  if (!ValidateObject(location))
     return NULL;
-  if (!ValidateObject(location)) {
-    ok = false;
-    return NULL;
-  }
 
   GLint program_id = 0;
   glGetIntegerv(GL_CURRENT_PROGRAM, &program_id);
-  if (!ValidateLocationProgram(location, program_id)) {
-    ok = false;
+  if (!ValidateLocationProgram(location, program_id))
     return NULL;
-  }
   return location;
 }
 

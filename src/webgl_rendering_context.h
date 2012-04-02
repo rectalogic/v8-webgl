@@ -27,6 +27,9 @@ class WebGLRenderbuffer;
 class WebGLShader;
 class WebGLTexture;
 class WebGLUniformLocation;
+template<typename T> class UVAHelper;
+template<typename T> class UniformHelper;
+template<typename T> class VertexAttribHelper;
 
 class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
  public:
@@ -129,7 +132,7 @@ class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
     }
     return true;
   }
-  WebGLUniformLocation* UniformLocationFromV8(v8::Handle<v8::Value> value, bool& ok);
+  WebGLUniformLocation* UniformLocationFromV8(v8::Handle<v8::Value> value);
 
   bool ValidateBlendEquation(const char* function, GLenum mode);
   bool ValidateBlendFuncFactors(const char* function, GLenum src, GLenum dst);
@@ -143,6 +146,10 @@ class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
   bool ValidateTexParameter(const char* function, GLenum pname, GLint param);
 
   static unsigned long s_context_counter;
+
+  template<typename> friend class UVAHelper;
+  template<typename> friend class UniformHelper;
+  template<typename> friend class VertexAttribHelper;
 
   friend class Canvas;
 
