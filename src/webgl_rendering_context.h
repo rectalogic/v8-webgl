@@ -29,6 +29,7 @@ class WebGLTexture;
 class WebGLUniformLocation;
 template<typename T> class UVAHelper;
 template<typename T> class UniformHelper;
+template<typename T> class UniformMatrixHelper;
 template<typename T> class VertexAttribHelper;
 
 class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
@@ -149,6 +150,7 @@ class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
 
   template<typename> friend class UVAHelper;
   template<typename> friend class UniformHelper;
+  template<typename> friend class UniformMatrixHelper;
   template<typename> friend class VertexAttribHelper;
 
   friend class Canvas;

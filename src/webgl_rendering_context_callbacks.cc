@@ -109,8 +109,8 @@ template<typename TNative>
 class UniformHelper : public UVAHelper<TNative> {
  public:
   typedef void (*UniformCallback) (GLint, GLsizei, const TNative*);
-  UniformHelper(uint32_t argc, UniformCallback gl_callback, uint32_t min_size)
-      : UVAHelper<TNative>(argc)
+  UniformHelper(UniformCallback gl_callback, uint32_t min_size)
+      : UVAHelper<TNative>(2)
       , gl_callback_(gl_callback)
       , min_size_(min_size) {}
 
@@ -138,11 +138,52 @@ class UniformHelper : public UVAHelper<TNative> {
 };
 
 template<typename TNative>
+class UniformMatrixHelper : public UVAHelper<TNative> {
+ public:
+  typedef void (*UniformMatrixCallback) (GLint, GLsizei, GLboolean, const TNative*);
+  UniformMatrixHelper(UniformMatrixCallback gl_callback, uint32_t min_size)
+      : UVAHelper<TNative>(3)
+      , gl_callback_(gl_callback)
+      , min_size_(min_size) {}
+
+ protected:
+  int ProcessArgs(const v8::Arguments& args) {
+    bool ok = true;
+    location_id_ = 0;
+    WebGLUniformLocation* location = this->GetContext()->UniformLocationFromV8(args[0]);
+    if (!location) return -1;
+    location_id_ = location->get_webgl_id();
+    bool transpose = FromV8<bool>(args[1], ok);
+    if (!ok)
+      return -1;
+    // Must be GL_FALSE
+    if (transpose) {
+      this->GetContext()->set_gl_error(GL_INVALID_VALUE);
+      return -1;
+    }
+    return 2;
+  }
+  void InvokeGL(uint32_t array_length, const TNative* array_data) {
+    // Array must be at least min_size and a multiple of it
+    if (array_length < min_size_ || (array_length % min_size_)) {
+      this->GetContext()->set_gl_error(GL_INVALID_VALUE);
+      return;
+    }
+    gl_callback_(location_id_, GL_FALSE, array_length / min_size_, array_data);
+  }
+
+ private:
+  GLuint location_id_;
+  UniformMatrixCallback gl_callback_;
+  uint32_t min_size_;
+};
+
+template<typename TNative>
 class VertexAttribHelper : public UVAHelper<TNative> {
  public:
   typedef void (*VertexAttribCallback) (GLuint, const TNative*);
-  VertexAttribHelper(uint32_t argc, VertexAttribCallback gl_callback, uint32_t required_array_length)
-      : UVAHelper<TNative>(argc)
+  VertexAttribHelper(VertexAttribCallback gl_callback, uint32_t required_array_length)
+      : UVAHelper<TNative>(2)
       , gl_callback_(gl_callback)
       , required_array_length_(required_array_length)  {}
 
@@ -1990,7 +2031,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1f(const v8::Argume
 // void uniform1fv(WebGLUniformLocation location, FloatArray v);
 // void uniform1fv(WebGLUniformLocation location, sequence<float> v);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1fv(const v8::Arguments& args) {
-  UniformHelper<GLfloat> h(2, glUniform1fv, 1);
+  UniformHelper<GLfloat> h(glUniform1fv, 1);
   return h.Process(args);
 }
 
@@ -2012,7 +2053,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1i(const v8::Argume
 // void uniform1iv(WebGLUniformLocation location, Int32Array v);
 // void uniform1iv(WebGLUniformLocation location, sequence<long> v);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1iv(const v8::Arguments& args) {
-  UniformHelper<GLint> h(2, glUniform1iv, 1);
+  UniformHelper<GLint> h(glUniform1iv, 1);
   return h.Process(args);
 }
 
@@ -2035,7 +2076,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform2f(const v8::Argume
 // void uniform2fv(WebGLUniformLocation location, FloatArray v);
 // void uniform2fv(WebGLUniformLocation location, sequence<float> v);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform2fv(const v8::Arguments& args) {
-  UniformHelper<GLfloat> h(2, glUniform2fv, 2);
+  UniformHelper<GLfloat> h(glUniform2fv, 2);
   return h.Process(args);
 }
 
@@ -2058,7 +2099,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform2i(const v8::Argume
 // void uniform2iv(WebGLUniformLocation location, Int32Array v);
 // void uniform2iv(WebGLUniformLocation location, sequence<long> v);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform2iv(const v8::Arguments& args) {
-  UniformHelper<GLint> h(2, glUniform2iv, 2);
+  UniformHelper<GLint> h(glUniform2iv, 2);
   return h.Process(args);
 }
 
@@ -2082,7 +2123,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform3f(const v8::Argume
 // void uniform3fv(WebGLUniformLocation location, FloatArray v);
 // void uniform3fv(WebGLUniformLocation location, sequence<float> v);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform3fv(const v8::Arguments& args) {
-  UniformHelper<GLfloat> h(2, glUniform3fv, 3);
+  UniformHelper<GLfloat> h(glUniform3fv, 3);
   return h.Process(args);
 }
 
@@ -2106,7 +2147,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform3i(const v8::Argume
 // void uniform3iv(WebGLUniformLocation location, Int32Array v);
 // void uniform3iv(WebGLUniformLocation location, sequence<long> v);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform3iv(const v8::Arguments& args) {
-  UniformHelper<GLint> h(2, glUniform3iv, 3);
+  UniformHelper<GLint> h(glUniform3iv, 3);
   return h.Process(args);
 }
 
@@ -2131,7 +2172,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4f(const v8::Argume
 // void uniform4fv(WebGLUniformLocation location, FloatArray v);
 // void uniform4fv(WebGLUniformLocation location, sequence<float> v);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4fv(const v8::Arguments& args) {
-  UniformHelper<GLfloat> h(2, glUniform4fv, 4);
+  UniformHelper<GLfloat> h(glUniform4fv, 4);
   return h.Process(args);
 }
 
@@ -2156,7 +2197,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4i(const v8::Argume
 // void uniform4iv(WebGLUniformLocation location, Int32Array v);
 // void uniform4iv(WebGLUniformLocation location, sequence<long> v);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4iv(const v8::Arguments& args) {
-  UniformHelper<GLint> h(2, glUniform4iv, 4);
+  UniformHelper<GLint> h(glUniform4iv, 4);
   return h.Process(args);
 }
 
@@ -2164,19 +2205,28 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4iv(const v8::Argum
 //                       FloatArray value);
 // void uniformMatrix2fv(WebGLUniformLocation location, GLboolean transpose, 
 //                       sequence<float> value);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniformMatrix2fv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniformMatrix2fv(const v8::Arguments& args) {
+  UniformMatrixHelper<GLfloat> h(glUniformMatrix2fv, 4);
+  return h.Process(args);
+}
 
 // void uniformMatrix3fv(WebGLUniformLocation location, GLboolean transpose, 
 //                       FloatArray value);
 // void uniformMatrix3fv(WebGLUniformLocation location, GLboolean transpose, 
 //                       sequence<float> value);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniformMatrix3fv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniformMatrix3fv(const v8::Arguments& args) {
+  UniformMatrixHelper<GLfloat> h(glUniformMatrix3fv, 9);
+  return h.Process(args);
+}
 
 // void uniformMatrix4fv(WebGLUniformLocation location, GLboolean transpose, 
 //                       FloatArray value);
 // void uniformMatrix4fv(WebGLUniformLocation location, GLboolean transpose, 
 //                       sequence<float> value);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniformMatrix4fv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniformMatrix4fv(const v8::Arguments& args) {
+  UniformMatrixHelper<GLfloat> h(glUniformMatrix4fv, 16);
+  return h.Process(args);
+}
 
 // void useProgram(WebGLProgram program);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_useProgram(const v8::Arguments& args) { return U(); /*XXX finish*/ }
@@ -2200,7 +2250,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib1f(const v8::A
 // void vertexAttrib1fv(GLuint indx, FloatArray values);
 // void vertexAttrib1fv(GLuint indx, sequence<float> values);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib1fv(const v8::Arguments& args) {
-  VertexAttribHelper<GLfloat> h(2, glVertexAttrib1fv, 1);
+  VertexAttribHelper<GLfloat> h(glVertexAttrib1fv, 1);
   return h.Process(args);
 }
 
@@ -2221,7 +2271,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib2f(const v8::A
 // void vertexAttrib2fv(GLuint indx, FloatArray values);
 // void vertexAttrib2fv(GLuint indx, sequence<float> values);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib2fv(const v8::Arguments& args) {
-  VertexAttribHelper<GLfloat> h(2, glVertexAttrib2fv, 2);
+  VertexAttribHelper<GLfloat> h(glVertexAttrib2fv, 2);
   return h.Process(args);
 }
 
@@ -2243,7 +2293,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib3f(const v8::A
 // void vertexAttrib3fv(GLuint indx, FloatArray values);
 // void vertexAttrib3fv(GLuint indx, sequence<float> values);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib3fv(const v8::Arguments& args) {
-  VertexAttribHelper<GLfloat> h(2, glVertexAttrib3fv, 3);
+  VertexAttribHelper<GLfloat> h(glVertexAttrib3fv, 3);
   return h.Process(args);
 }
 
@@ -2266,7 +2316,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib4f(const v8::A
 // void vertexAttrib4fv(GLuint indx, FloatArray values);
 // void vertexAttrib4fv(GLuint indx, sequence<float> values);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib4fv(const v8::Arguments& args) {
-  VertexAttribHelper<GLfloat> h(2, glVertexAttrib4fv, 4);
+  VertexAttribHelper<GLfloat> h(glVertexAttrib4fv, 4);
   return h.Process(args);
 }
 
