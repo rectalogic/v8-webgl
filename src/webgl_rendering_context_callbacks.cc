@@ -51,12 +51,12 @@ static WebGLRenderingContext* CallbackContext(const v8::Arguments& args) {
 
 template<typename T>
 struct GLFunc {
-  typedef void (*glVertexAttribNXvType) (GLuint, const T*);
-  typedef void (*glUniformNXvType) (GLint, GLsizei, const T*);
+  typedef void (*glVertexAttribNTvType) (GLuint, const T*);
+  typedef void (*glUniformNTvType) (GLint, GLsizei, const T*);
 };
 
 template<typename TNative>
-static v8::Handle<v8::Value> UniformAndVertexAttribHelper(const v8::Arguments& args, typename GLFunc<TNative>::glUniformNXvType gl_uniform_func, typename GLFunc<TNative>::glGetVertexAttribXvType gl_vertex_attrib_func = NULL, uint32_t vertex_attrib_required_length = 0) {
+static v8::Handle<v8::Value> UniformAndVertexAttribHelper(const v8::Arguments& args, typename GLFunc<TNative>::glUniformNTvType gl_uniform_func, typename GLFunc<TNative>::glGetVertexAttribTvType gl_vertex_attrib_func = NULL, uint32_t vertex_attrib_required_length = 0) {
   bool ok = true;
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   if (args.Length() < 2) return ThrowArgCount();
@@ -1939,49 +1939,145 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1fv(const v8::Argum
 }
 
 // void uniform1i(WebGLUniformLocation location, GLint x);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1i(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1i(const v8::Arguments& args) {
+  bool ok = true;
+  WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
+  if (args.Length() < 2) return ThrowArgCount();
+
+  WebGLUniformLocation* location = context->UniformLocationFromV8(args[0], ok);
+  if (!location) return U();
+  GLuint location_id = location->get_webgl_id();
+
+  GLint x = FromV8<int32_t>(args[1], ok); if (!ok) return U();
+  glUniform1i(location_id, x);
+  return U();
+}
 
 // void uniform1iv(WebGLUniformLocation location, Int32Array v);
 // void uniform1iv(WebGLUniformLocation location, sequence<long> v);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1iv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniform2f(WebGLUniformLocation location, GLfloat x, GLfloat y);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform2f(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform2f(const v8::Arguments& args) {
+  bool ok = true;
+  WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
+  if (args.Length() < 3) return ThrowArgCount();
+
+  WebGLUniformLocation* location = context->UniformLocationFromV8(args[0], ok);
+  if (!location) return U();
+  GLuint location_id = location->get_webgl_id();
+
+  GLfloat x = FromV8<float>(args[1], ok); if (!ok) return U();
+  GLfloat y = FromV8<float>(args[2], ok); if (!ok) return U();
+  glUniform2f(location_id, x, y);
+  return U();
+}
 
 // void uniform2fv(WebGLUniformLocation location, FloatArray v);
 // void uniform2fv(WebGLUniformLocation location, sequence<float> v);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform2fv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniform2i(WebGLUniformLocation location, GLint x, GLint y);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform2i(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform2i(const v8::Arguments& args) {
+  bool ok = true;
+  WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
+  if (args.Length() < 3) return ThrowArgCount();
+
+  WebGLUniformLocation* location = context->UniformLocationFromV8(args[0], ok);
+  if (!location) return U();
+  GLuint location_id = location->get_webgl_id();
+
+  GLint x = FromV8<int32_t>(args[1], ok); if (!ok) return U();
+  GLint y = FromV8<int32_t>(args[2], ok); if (!ok) return U();
+  glUniform2i(location_id, x, y);
+  return U();
+}
 
 // void uniform2iv(WebGLUniformLocation location, Int32Array v);
 // void uniform2iv(WebGLUniformLocation location, sequence<long> v);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform2iv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniform3f(WebGLUniformLocation location, GLfloat x, GLfloat y, GLfloat z);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform3f(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform3f(const v8::Arguments& args) {
+  bool ok = true;
+  WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
+  if (args.Length() < 4) return ThrowArgCount();
+
+  WebGLUniformLocation* location = context->UniformLocationFromV8(args[0], ok);
+  if (!location) return U();
+  GLuint location_id = location->get_webgl_id();
+
+  GLfloat x = FromV8<float>(args[1], ok); if (!ok) return U();
+  GLfloat y = FromV8<float>(args[2], ok); if (!ok) return U();
+  GLfloat z = FromV8<float>(args[3], ok); if (!ok) return U();
+  glUniform3f(location_id, x, y, z);
+  return U();
+}
 
 // void uniform3fv(WebGLUniformLocation location, FloatArray v);
 // void uniform3fv(WebGLUniformLocation location, sequence<float> v);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform3fv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniform3i(WebGLUniformLocation location, GLint x, GLint y, GLint z);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform3i(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform3i(const v8::Arguments& args) {
+  bool ok = true;
+  WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
+  if (args.Length() < 4) return ThrowArgCount();
+
+  WebGLUniformLocation* location = context->UniformLocationFromV8(args[0], ok);
+  if (!location) return U();
+  GLuint location_id = location->get_webgl_id();
+
+  GLint x = FromV8<int32_t>(args[1], ok); if (!ok) return U();
+  GLint y = FromV8<int32_t>(args[2], ok); if (!ok) return U();
+  GLint z = FromV8<int32_t>(args[3], ok); if (!ok) return U();
+  glUniform3i(location_id, x, y, z);
+  return U();
+}
 
 // void uniform3iv(WebGLUniformLocation location, Int32Array v);
 // void uniform3iv(WebGLUniformLocation location, sequence<long> v);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform3iv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniform4f(WebGLUniformLocation location, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4f(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4f(const v8::Arguments& args) {
+  bool ok = true;
+  WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
+  if (args.Length() < 5) return ThrowArgCount();
+
+  WebGLUniformLocation* location = context->UniformLocationFromV8(args[0], ok);
+  if (!location) return U();
+  GLuint location_id = location->get_webgl_id();
+
+  GLfloat x = FromV8<float>(args[1], ok); if (!ok) return U();
+  GLfloat y = FromV8<float>(args[2], ok); if (!ok) return U();
+  GLfloat z = FromV8<float>(args[3], ok); if (!ok) return U();
+  GLfloat w = FromV8<float>(args[4], ok); if (!ok) return U();
+  glUniform4f(location_id, x, y, z, w);
+  return U();
+}
 
 // void uniform4fv(WebGLUniformLocation location, FloatArray v);
 // void uniform4fv(WebGLUniformLocation location, sequence<float> v);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4fv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void uniform4i(WebGLUniformLocation location, GLint x, GLint y, GLint z, GLint w);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4i(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4i(const v8::Arguments& args) {
+  bool ok = true;
+  WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
+  if (args.Length() < 5) return ThrowArgCount();
+
+  WebGLUniformLocation* location = context->UniformLocationFromV8(args[0], ok);
+  if (!location) return U();
+  GLuint location_id = location->get_webgl_id();
+
+  GLint x = FromV8<int32_t>(args[1], ok); if (!ok) return U();
+  GLint y = FromV8<int32_t>(args[2], ok); if (!ok) return U();
+  GLint z = FromV8<int32_t>(args[3], ok); if (!ok) return U();
+  GLint w = FromV8<int32_t>(args[4], ok); if (!ok) return U();
+  glUniform4i(location_id, x, y, z, w);
+  return U();
+}
 
 // void uniform4iv(WebGLUniformLocation location, Int32Array v);
 // void uniform4iv(WebGLUniformLocation location, sequence<long> v);
@@ -2012,28 +2108,74 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_useProgram(const v8::Argum
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_validateProgram(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void vertexAttrib1f(GLuint indx, GLfloat x);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib1f(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib1f(const v8::Arguments& args) {
+  bool ok = true;
+  WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
+  if (args.Length() < 2) return ThrowArgCount();
+
+  GLint index = FromV8<int32_t>(args[0], ok); if (!ok) return U();
+
+  GLfloat x = FromV8<float>(args[1], ok); if (!ok) return U();
+  glVertexAttrib1f(index, x);
+  return U();
+}
 
 // void vertexAttrib1fv(GLuint indx, FloatArray values);
 // void vertexAttrib1fv(GLuint indx, sequence<float> values);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib1fv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void vertexAttrib2f(GLuint indx, GLfloat x, GLfloat y);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib2f(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib2f(const v8::Arguments& args) {
+  bool ok = true;
+  WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
+  if (args.Length() < 3) return ThrowArgCount();
+
+  GLint index = FromV8<int32_t>(args[0], ok); if (!ok) return U();
+
+  GLfloat x = FromV8<float>(args[1], ok); if (!ok) return U();
+  GLfloat y = FromV8<float>(args[2], ok); if (!ok) return U();
+  glVertexAttrib2f(index, x, y);
+  return U();
+}
 
 // void vertexAttrib2fv(GLuint indx, FloatArray values);
 // void vertexAttrib2fv(GLuint indx, sequence<float> values);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib2fv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void vertexAttrib3f(GLuint indx, GLfloat x, GLfloat y, GLfloat z);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib3f(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib3f(const v8::Arguments& args) {
+  bool ok = true;
+  WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
+  if (args.Length() < 4) return ThrowArgCount();
+
+  GLint index = FromV8<int32_t>(args[0], ok); if (!ok) return U();
+
+  GLfloat x = FromV8<float>(args[1], ok); if (!ok) return U();
+  GLfloat y = FromV8<float>(args[2], ok); if (!ok) return U();
+  GLfloat z = FromV8<float>(args[3], ok); if (!ok) return U();
+  glVertexAttrib3f(index, x, y, z);
+  return U();
+}
 
 // void vertexAttrib3fv(GLuint indx, FloatArray values);
 // void vertexAttrib3fv(GLuint indx, sequence<float> values);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib3fv(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // void vertexAttrib4f(GLuint indx, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib4f(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib4f(const v8::Arguments& args) {
+  bool ok = true;
+  WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
+  if (args.Length() < 5) return ThrowArgCount();
+
+  GLint index = FromV8<int32_t>(args[0], ok); if (!ok) return U();
+
+  GLfloat x = FromV8<float>(args[1], ok); if (!ok) return U();
+  GLfloat y = FromV8<float>(args[2], ok); if (!ok) return U();
+  GLfloat z = FromV8<float>(args[3], ok); if (!ok) return U();
+  GLfloat w = FromV8<float>(args[4], ok); if (!ok) return U();
+  glVertexAttrib4f(index, x, y, z, w);
+  return U();
+}
 
 // void vertexAttrib4fv(GLuint indx, FloatArray values);
 // void vertexAttrib4fv(GLuint indx, sequence<float> values);
