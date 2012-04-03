@@ -135,7 +135,7 @@ std::vector<T> ArrayFromV8(v8::Handle<v8::Value> value, bool& ok) {
         return std::vector<T>();
     }
     return vector;
-  } catch (std::bad_alloc& e) {
+  } catch (std::exception& e) {
     ok = false;
     return std::vector<T>();
   }

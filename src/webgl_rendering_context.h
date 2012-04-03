@@ -118,7 +118,7 @@ class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
   GLenum get_gl_error();
 
   static bool TypedArrayToData(v8::Handle<v8::Value> value, void*& data, uint32_t& length, bool& ok);
-  static void Log(Logger::Level level, std::string msg);
+  static void Log(Logger::Level level, const char *fmt, ...);
 
   static v8::Handle<v8::Value> ToV8OrNull(V8ObjectBase* object) {
     return object ? static_cast<v8::Handle<v8::Value> >(object->ToV8Object()) : static_cast<v8::Handle<v8::Value> >(v8::Null());

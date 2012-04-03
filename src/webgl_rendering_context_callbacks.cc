@@ -14,8 +14,8 @@
 #include "webgl_uniform_location.h"
 
 #include <string>
-#include <vector>
 #include <sstream>
+#include <vector>
 
 namespace v8_webgl {
 
@@ -944,12 +944,67 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_generateMipmap(const v8::A
 }
 
 // WebGLActiveInfo getActiveAttrib(WebGLProgram program, GLuint index);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_getActiveAttrib(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_getActiveAttrib(const v8::Arguments& args) {
+  bool ok = true;
+  WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
+  if (args.Length() < 2) return ThrowArgCount();
+  WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], ok); if (!ok) return U();
+  if (!context->RequireObject(program)) return U();
+  if (!context->ValidateObject(program)) return U();
+  GLuint program_id = program->get_webgl_id();
+  GLuint index = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
+
+  try {
+    GLint max_name_length = 0;
+    glGetProgramiv(program_id, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &max_name_length);
+    std::vector<char> name_vec(max_name_length);
+    GLsizei name_length = 0;
+    GLint size = 0;
+    GLenum type = 0;
+    glGetActiveAttrib(program_id, index, max_name_length, &name_length, &size, &type, &name_vec[0]);
+    WebGLActiveInfo* active_info = context->CreateActiveInfo(size, type, &name_vec[0]);
+    return active_info->ToV8Object();
+  } catch (std::exception& e) {
+    context->set_gl_error(GL_OUT_OF_MEMORY);
+    return v8::Null();
+  }
+}
 
 // WebGLActiveInfo getActiveUniform(WebGLProgram program, GLuint index);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_getActiveUniform(const v8::Arguments& args) {
-  //XXX need to append "[0]" if name is array and doesn't have it
-  return U(); /*XXX finish*/
+  bool ok = true;
+  WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
+  if (args.Length() < 2) return ThrowArgCount();
+  WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], ok); if (!ok) return U();
+  if (!context->RequireObject(program)) return U();
+  if (!context->ValidateObject(program)) return U();
+  GLuint program_id = program->get_webgl_id();
+  GLuint index = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
+
+  try {
+    GLint max_name_length = 0;
+    glGetProgramiv(program_id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &max_name_length);
+    std::vector<char> name_vec(max_name_length);
+    GLsizei name_length = 0;
+    GLint size = 0;
+    GLenum type = 0;
+    glGetActiveUniform(program_id, index, max_name_length, &name_length, &size, &type, &name_vec[0]);
+    // If it's an array and the name doesn't end with "[0]", then append it
+    if (size > 1 && (name_length < 3
+                     || (name_vec[name_length - 3] != '['
+                         && name_vec[name_length - 2] != '0'
+                         && name_vec[name_length - 1] != ']'))) {
+      name_vec[name_length - 3] = '[';
+      name_vec[name_length - 2] = '0';
+      name_vec[name_length - 1] = ']';
+      name_vec[name_length] = 0;
+    }
+    WebGLActiveInfo* active_info = context->CreateActiveInfo(size, type, &name_vec[0]);
+    return active_info->ToV8Object();
+  } catch (std::exception& e) {
+    context->set_gl_error(GL_OUT_OF_MEMORY);
+    return v8::Null();
+  }
 }
 
 // WebGLShader[ ] getAttachedShaders(WebGLProgram program);
@@ -1185,9 +1240,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getParameter(const v8::Arg
 
     default: {
       context->set_gl_error(GL_INVALID_ENUM);
-      std::stringstream ss;
-      ss << "getParameter: Unrecognized parameter name: " << pname;
-      Log(Logger::kWarn, ss.str());
+      Log(Logger::kWarn, "getParameter: Unrecognized parameter name: %d", pname);
       return U();
     }
   }
@@ -1469,81 +1522,84 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getUniform(const v8::Argum
   WebGLUniformLocation* location = NativeFromV8<WebGLUniformLocation>(args[1], ok); if (!ok) return U();
   if (!context->RequireObject(location)) return U();
   if (!context->ValidateLocationProgram(location, program_id)) return U();
-  //XXX need to catch std::bad_alloc from string/vector
 
-  GLint location_id = location->get_webgl_id();
-  GLint active_uniforms = 0;
-  glGetProgramiv(program_id, GL_ACTIVE_UNIFORMS, &active_uniforms);
-  GLint max_name_length = 0;
-  glGetProgramiv(program_id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &max_name_length);
-  std::vector<char> name_vec(max_name_length);
-  std::string array_ending("[0]");
-  // Search for our location_id
-  for (GLint i = 0; i < active_uniforms; i++) {
-    GLsizei name_length = 0;
-    GLint uniform_size = 0;
-    GLenum uniform_type = 0;
-    glGetActiveUniform(program_id, i, max_name_length, &name_length,
-                       &uniform_size, &uniform_type, &name_vec[0]);
-    std::string uniform_name(&name_vec[0], name_length);
+  try {
+    GLint location_id = location->get_webgl_id();
+    GLint active_uniforms = 0;
+    glGetProgramiv(program_id, GL_ACTIVE_UNIFORMS, &active_uniforms);
+    GLint max_name_length = 0;
+    glGetProgramiv(program_id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &max_name_length);
+    std::vector<char> name_vec(max_name_length);
+    std::string array_ending("[0]");
+    // Search for our location_id
+    for (GLint i = 0; i < active_uniforms; i++) {
+      GLsizei name_length = 0;
+      GLint uniform_size = 0;
+      GLenum uniform_type = 0;
+      glGetActiveUniform(program_id, i, max_name_length, &name_length,
+                         &uniform_size, &uniform_type, &name_vec[0]);
+      std::string uniform_name(&name_vec[0], name_length);
 
-    // Strip "[0]" from name ending, if it's an array
-    if (uniform_size > 1 && uniform_name.length() > array_ending.length()
-        && uniform_name.compare(uniform_name.length() - array_ending.length(),
-                                array_ending.length(), array_ending) == 0) {
-      uniform_name.resize(uniform_name.length() - 3);
-    }
-
-    // For arrays, iterate through each element appending "[index]" to the name
-    // and checking location
-    for (GLint index = 0; index < uniform_size; index++) {
-      std::string name(uniform_name);
-      if (uniform_size > 1 && index >= 1) {
-        std::stringstream ss(name);
-        ss << "[" << index << "]";
-        name = ss.str();
+      // Strip "[0]" from name ending, if it's an array
+      if (uniform_size > 1 && uniform_name.length() > array_ending.length()
+          && uniform_name.compare(uniform_name.length() - array_ending.length(),
+                                  array_ending.length(), array_ending) == 0) {
+        uniform_name.resize(uniform_name.length() - 3);
       }
-      // Look the name up again
-      GLint uniform_location_id = glGetUniformLocation(program_id, name.c_str());
-      if (uniform_location_id == location_id) {
-        GLenum uniform_base_type = 0;
-        uint32_t length = 0;
-        if (!UniformTypeToBaseLength(uniform_type, uniform_base_type, length)) {
-          context->set_gl_error(GL_INVALID_VALUE);
-          return v8::Null();
-        }
 
-        switch (uniform_base_type) {
-          case GL_FLOAT: {
-            GLfloat value[16] = {0};
-            glGetUniformfv(program_id, location_id, value);
-            if (length == 1)
-              return ToV8<double>(value[0]);
-            return Float32Array::Create(value, length);
+      // For arrays, iterate through each element appending "[index]" to the name
+      // and checking location
+      for (GLint index = 0; index < uniform_size; index++) {
+        std::string name(uniform_name);
+        if (uniform_size > 1 && index >= 1) {
+          std::stringstream ss(name);
+          ss << "[" << index << "]";
+          name = ss.str();
+        }
+        // Look the name up again
+        GLint uniform_location_id = glGetUniformLocation(program_id, name.c_str());
+        if (uniform_location_id == location_id) {
+          GLenum uniform_base_type = 0;
+          uint32_t length = 0;
+          if (!UniformTypeToBaseLength(uniform_type, uniform_base_type, length)) {
+            context->set_gl_error(GL_INVALID_VALUE);
+            return v8::Null();
           }
-          case GL_INT: {
-            GLint value[4] = {0};
-            glGetUniformiv(program_id, location_id, value);
-            if (length == 1)
-              return ToV8(value[0]);
-            return Int32Array::Create(value, length);
-          }
-          case GL_BOOL: {
-            GLint value[4] = {0};
-            glGetUniformiv(program_id, location_id, value);
-            if (length > 1) {
-              bool bool_value[4] = {0};
-              for (uint32_t j = 0; j < length; j++)
-                bool_value[j] = static_cast<bool>(value[j]);
-              return ArrayToV8<bool>(bool_value, length);
+
+          switch (uniform_base_type) {
+            case GL_FLOAT: {
+              GLfloat value[16] = {0};
+              glGetUniformfv(program_id, location_id, value);
+              if (length == 1)
+                return ToV8<double>(value[0]);
+              return Float32Array::Create(value, length);
             }
-            return ToV8(static_cast<bool>(value[0]));
+            case GL_INT: {
+              GLint value[4] = {0};
+              glGetUniformiv(program_id, location_id, value);
+              if (length == 1)
+                return ToV8(value[0]);
+              return Int32Array::Create(value, length);
+            }
+            case GL_BOOL: {
+              GLint value[4] = {0};
+              glGetUniformiv(program_id, location_id, value);
+              if (length > 1) {
+                bool bool_value[4] = {0};
+                for (uint32_t j = 0; j < length; j++)
+                  bool_value[j] = static_cast<bool>(value[j]);
+                return ArrayToV8<bool>(bool_value, length);
+              }
+              return ToV8(static_cast<bool>(value[0]));
+            }
           }
         }
       }
     }
+  } catch (std::exception& e) {
+    context->set_gl_error(GL_OUT_OF_MEMORY);
+    return v8::Null();
   }
-
   context->set_gl_error(GL_INVALID_VALUE);
   return v8::Null();
 }

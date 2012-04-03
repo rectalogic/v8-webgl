@@ -16,6 +16,7 @@
 #include "webgl_uniform_location.h"
 
 #include <string>
+#include <stdarg.h>
 
 namespace v8_webgl {
 
@@ -177,10 +178,21 @@ WebGLUniformLocation* WebGLRenderingContext::UniformLocationFromV8(v8::Handle<v8
   return location;
 }
 
-void WebGLRenderingContext::Log(Logger::Level level, std::string msg) {
+void WebGLRenderingContext::Log(Logger::Level level, const char *fmt, ...) {
   Logger* logger = GetFactory()->GetLogger();
-  if (logger)
-    logger->Log(level, msg);
+  if (logger){
+    char buf[512];
+    va_list ap;
+    va_start(ap, fmt);
+    int n = vsnprintf(buf, sizeof(buf), fmt, ap);
+    va_end(ap);
+    try {
+      std::string msg(buf, n);
+      logger->Log(level, msg);
+    } catch (std::exception& e) {
+      fprintf(stderr, "Logging failed: %s\n", e.what());
+    }
+  }
 }
 
 bool WebGLRenderingContext::ValidateObject(WebGLObjectInterface* object) {
@@ -206,7 +218,7 @@ bool WebGLRenderingContext::ValidateBlendEquation(const char* function, GLenum m
     case GL_FUNC_REVERSE_SUBTRACT:
       return true;
     default:
-      Log(Logger::kWarn, std::string(function) + ": invalid mode.");
+      Log(Logger::kWarn, "%s: %s", function, "invalid mode.");
       set_gl_error(GL_INVALID_ENUM);
       return false;
   }
@@ -217,7 +229,7 @@ bool WebGLRenderingContext::ValidateBlendFuncFactors(const char* function, GLenu
        && (dst == GL_CONSTANT_ALPHA || dst == GL_ONE_MINUS_CONSTANT_ALPHA))
       || ((dst == GL_CONSTANT_COLOR || dst == GL_ONE_MINUS_CONSTANT_COLOR)
           && (src == GL_CONSTANT_ALPHA || src == GL_ONE_MINUS_CONSTANT_ALPHA))) {
-    Log(Logger::kWarn, std::string(function) + ": invalid blend factors.");
+    Log(Logger::kWarn, "%s: %s", function, "invalid blend factors.");
     set_gl_error(GL_INVALID_OPERATION);
     return false;
   }
@@ -238,7 +250,7 @@ bool WebGLRenderingContext::ValidateTextureBinding(const char* function, GLenum 
         break;
       // else fall through and fail
     default:
-      Log(Logger::kWarn, std::string(function) + ": invalid target.");
+      Log(Logger::kWarn, "%s: %s", function, "invalid target.");
       set_gl_error(GL_INVALID_ENUM);
       return false;
   }
@@ -254,7 +266,7 @@ bool WebGLRenderingContext::ValidateTexFuncParameters(const char* function, GLen
     case GL_RGBA:
       break;
     default:
-      Log(Logger::kWarn, std::string(function) + ": invalid format.");
+      Log(Logger::kWarn, "%s: %s", function, "invalid format.");
       set_gl_error(GL_INVALID_ENUM);
       return false;
   }
@@ -266,7 +278,7 @@ bool WebGLRenderingContext::ValidateTexFuncParameters(const char* function, GLen
     case GL_UNSIGNED_SHORT_5_5_5_1:
       break;
     default:
-      Log(Logger::kWarn, std::string(function) + ": invalid type.");
+      Log(Logger::kWarn, "%s: %s", function, "invalid type.");
       set_gl_error(GL_INVALID_ENUM);
       return false;
   }
@@ -276,14 +288,14 @@ bool WebGLRenderingContext::ValidateTexFuncParameters(const char* function, GLen
     case GL_LUMINANCE:
     case GL_LUMINANCE_ALPHA:
       if (type != GL_UNSIGNED_BYTE) {
-        Log(Logger::kWarn, std::string(function) + ": invalid type for format.");
+        Log(Logger::kWarn, "%s: %s", function, "invalid type for format.");
         set_gl_error(GL_INVALID_OPERATION);
         return false;
       }
       break;
     case GL_RGB:
       if (type != GL_UNSIGNED_BYTE && type != GL_UNSIGNED_SHORT_5_6_5) {
-        Log(Logger::kWarn, std::string(function) + ": invalid type for format.");
+        Log(Logger::kWarn, "%s: %s", function, "invalid type for format.");
         set_gl_error(GL_INVALID_OPERATION);
         return false;
       }
@@ -292,7 +304,7 @@ bool WebGLRenderingContext::ValidateTexFuncParameters(const char* function, GLen
       if (type != GL_UNSIGNED_BYTE
           && type != GL_UNSIGNED_SHORT_4_4_4_4
           && type != GL_UNSIGNED_SHORT_5_5_5_1) {
-        Log(Logger::kWarn, std::string(function) + ": invalid type for format.");
+        Log(Logger::kWarn, "%s: %s", function, "invalid type for format.");
         set_gl_error(GL_INVALID_OPERATION);
         return false;
       }
@@ -300,13 +312,13 @@ bool WebGLRenderingContext::ValidateTexFuncParameters(const char* function, GLen
   }
 
   if (level < 0) {
-    Log(Logger::kWarn, std::string(function) + ": invalid level.");
+    Log(Logger::kWarn, "%s: %s", function, "invalid level.");
     set_gl_error(GL_INVALID_VALUE);
     return false;
   }
 
   if (width < 0 || height < 0) {
-    Log(Logger::kWarn, std::string(function) + ": invalid width/height.");
+    Log(Logger::kWarn, "%s: %s", function, "invalid width/height.");
     set_gl_error(GL_INVALID_VALUE);
     return false;
   }
@@ -315,13 +327,13 @@ bool WebGLRenderingContext::ValidateTexFuncParameters(const char* function, GLen
     return false;
 
   if (format != internalformat) {
-    Log(Logger::kWarn, std::string(function) + ": invalid format.");
+    Log(Logger::kWarn, "%s: %s", function, "invalid format.");
     set_gl_error(GL_INVALID_OPERATION);
     return false;
   }
 
   if (border) {
-    Log(Logger::kWarn, std::string(function) + ": invalid border.");
+    Log(Logger::kWarn, "%s: %s", function, "invalid border.");
     set_gl_error(GL_INVALID_VALUE);
     return false;
   }
@@ -341,7 +353,7 @@ bool WebGLRenderingContext::ValidateCapability(const char* function, GLenum cap)
     case GL_STENCIL_TEST:
       return true;
     default:
-      Log(Logger::kWarn, std::string(function) + ": invalid capability.");
+      Log(Logger::kWarn, "%s: %s", function, "invalid capability.");
       set_gl_error(GL_INVALID_ENUM);
       return false;
   }
@@ -358,7 +370,7 @@ bool WebGLRenderingContext::ValidateDrawMode(const char* function, GLenum mode) 
     case GL_TRIANGLES:
       return true;
     default:
-      Log(Logger::kWarn, std::string(function) + ": invalid mode.");
+      Log(Logger::kWarn, "%s: %s", function, "invalid mode.");
       set_gl_error(GL_INVALID_ENUM);
       return false;
   }
@@ -366,7 +378,7 @@ bool WebGLRenderingContext::ValidateDrawMode(const char* function, GLenum mode) 
 
 bool WebGLRenderingContext::ValidateFramebufferFuncParameters(const char* function, GLenum target, GLenum attachment) {
   if (target != GL_FRAMEBUFFER) {
-    Log(Logger::kWarn, std::string(function) + ": invalid target.");
+    Log(Logger::kWarn, "%s: %s", function, "invalid target.");
     set_gl_error(GL_INVALID_ENUM);
     return false;
   }
@@ -377,7 +389,7 @@ bool WebGLRenderingContext::ValidateFramebufferFuncParameters(const char* functi
     case GL_DEPTH_STENCIL_ATTACHMENT:
       return true;
     default:
-      Log(Logger::kWarn, std::string(function) + ": invalid attachment.");
+      Log(Logger::kWarn, "%s: %s", function, "invalid attachment.");
       set_gl_error(GL_INVALID_ENUM);
       return false;
   }
@@ -395,7 +407,7 @@ bool WebGLRenderingContext::ValidateStencilFunc(const char* function, GLenum fun
     case GL_ALWAYS:
       return true;
     default:
-      Log(Logger::kWarn, std::string(function) + ": invalid function.");
+      Log(Logger::kWarn, "%s: %s", function, "invalid function.");
       set_gl_error(GL_INVALID_ENUM);
       return false;
   }
@@ -407,7 +419,7 @@ bool WebGLRenderingContext::ValidateBufferDataParameters(const char* function, G
     case GL_ARRAY_BUFFER:
       break;
     default:
-      Log(Logger::kWarn, std::string(function) + ": invalid target.");
+      Log(Logger::kWarn, "%s: %s", function, "invalid target.");
       set_gl_error(GL_INVALID_ENUM);
       return false;
   }
@@ -417,7 +429,7 @@ bool WebGLRenderingContext::ValidateBufferDataParameters(const char* function, G
     case GL_DYNAMIC_DRAW:
       break;
     default:
-      Log(Logger::kWarn, std::string(function) + ": invalid usage.");
+      Log(Logger::kWarn, "%s: %s", function, "invalid usage.");
       set_gl_error(GL_INVALID_ENUM);
       return false;
   }
@@ -432,13 +444,13 @@ bool WebGLRenderingContext::ValidateTexParameter(const char* function, GLenum pn
     case GL_TEXTURE_WRAP_S:
     case GL_TEXTURE_WRAP_T:
       if (param != GL_CLAMP_TO_EDGE && param != GL_MIRRORED_REPEAT && param != GL_REPEAT) {
-        Log(Logger::kWarn, std::string(function) + ": invalid parameter.");
+        Log(Logger::kWarn, "%s: %s", function, "invalid parameter.");
         set_gl_error(GL_INVALID_ENUM);
         return false;
       }
       break;
     default:
-      Log(Logger::kWarn, std::string(function) + ": invalid parameter name.");
+      Log(Logger::kWarn, "%s: %s", function, "invalid parameter name.");
       set_gl_error(GL_INVALID_ENUM);
       return false;
   }
