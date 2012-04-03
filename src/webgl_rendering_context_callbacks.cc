@@ -2241,7 +2241,17 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_useProgram(const v8::Argum
 }
 
 // void validateProgram(WebGLProgram program);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_validateProgram(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_validateProgram(const v8::Arguments& args) {
+  bool ok = true;
+  WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
+  if (args.Length() < 1) return ThrowArgCount();
+  WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], ok); if (!ok) return U();
+  if (!context->RequireObject(program)) return U();
+  if (!context->ValidateObject(program)) return U();
+  GLuint program_id = program->get_webgl_id();
+  glValidateProgram(program_id);
+  return U();
+}
 
 // void vertexAttrib1f(GLuint indx, GLfloat x);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib1f(const v8::Arguments& args) {
@@ -2331,9 +2341,62 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttrib4fv(const v8::
 
 // void vertexAttribPointer(GLuint indx, GLint size, GLenum type, 
 //                          GLboolean normalized, GLsizei stride, GLintptr offset);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttribPointer(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_vertexAttribPointer(const v8::Arguments& args) {
+  bool ok = true;
+  WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
+  if (args.Length() < 6) return ThrowArgCount();
+
+  GLuint indx = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
+  GLint size = FromV8<int32_t>(args[1], ok); if (!ok) return U();
+  GLenum type = FromV8<uint32_t>(args[2], ok); if (!ok) return U();
+  uint32_t type_size = 0;
+  switch (type) {
+    case GL_BYTE:
+      type_size = sizeof(GLbyte);
+      break;
+    case GL_UNSIGNED_BYTE:
+      type_size = sizeof(GLubyte);
+      break;
+    case GL_SHORT:
+      type_size = sizeof(GLshort);
+      break;
+    case GL_UNSIGNED_SHORT:
+      type_size = sizeof(GLushort);
+      break;
+    case GL_FLOAT:
+      type_size = sizeof(GLfloat);
+      break;
+    default:
+      context->set_gl_error(GL_INVALID_ENUM);
+      return U();
+  }
+  GLboolean normalized = FromV8<bool>(args[3], ok); if (!ok) return U();
+  GLsizei stride = FromV8<int32_t>(args[4], ok); if (!ok) return U();
+  GLintptr offset = FromV8<int32_t>(args[5], ok); if (!ok) return U();
+  if (size < 1 || size > 4 || stride < 0 || stride > 255 || offset < 0) {
+    context->set_gl_error(GL_INVALID_VALUE);
+    return U();
+  }
+  if ((stride % type_size) || (offset % type_size)) {
+    context->set_gl_error(GL_INVALID_OPERATION);
+    return U();
+  }
+  glVertexAttribPointer(indx, size, type, normalized, stride, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(offset)));
+  return U();
+}
 
 // void viewport(GLint x, GLint y, GLsizei width, GLsizei height);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_viewport(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_viewport(const v8::Arguments& args) {
+  bool ok = true;
+  WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
+  if (args.Length() < 4) return ThrowArgCount();
+
+  GLint x = FromV8<int32_t>(args[0], ok); if (!ok) return U();
+  GLint y = FromV8<int32_t>(args[1], ok); if (!ok) return U();
+  GLsizei width = FromV8<int32_t>(args[2], ok); if (!ok) return U();
+  GLsizei height = FromV8<int32_t>(args[3], ok); if (!ok) return U();
+  glViewport(x, y, width, height);
+  return U();
+}
 
 }
