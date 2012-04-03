@@ -1008,7 +1008,26 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getActiveUniform(const v8:
 }
 
 // WebGLShader[ ] getAttachedShaders(WebGLProgram program);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_getAttachedShaders(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_getAttachedShaders(const v8::Arguments& args) {
+  bool ok = true;
+  WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
+  if (args.Length() < 1) return ThrowArgCount();
+  WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], ok); if (!ok) return U();
+  if (!context->RequireObject(program)) return U();
+  if (!context->ValidateObject(program)) return U();
+  GLuint program_id = program->get_webgl_id();
+  GLuint shaders[2] = {0};
+  GLsizei count = 0;
+  glGetAttachedShaders(program_id, 2, &count, shaders);
+
+  v8::Local<v8::Array> array = v8::Array::New(count);
+  for (int i = 0; i < count; i++) {
+    WebGLShader* shader = context->IdToShader(shaders[i]);
+    if (shader)
+      array->Set(ToV8(i), shader->ToV8Object());
+  }
+  return array;
+}
 
 // GLint getAttribLocation(WebGLProgram program, DOMString name);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_getAttribLocation(const v8::Arguments& args) {
