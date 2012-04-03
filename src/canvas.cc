@@ -55,7 +55,7 @@ v8::Handle<v8::Value> Canvas::Callback_getContext(const v8::Arguments& args) {
   if (!canvas)
     return ThrowObjectDisposed();
   //XXX validate first arg is "experimental-webgl", handle optional second arg params
-  return canvas->GetRenderingContext()->ToV8();
+  return canvas->GetRenderingContext()->ToV8Object();
 }
 
 static void Setter_width(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {

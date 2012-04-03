@@ -58,7 +58,7 @@ template<class T, v8::ExternalArrayType TArrayType, typename TNative>
 class TypedArray : public V8Object<T>, public ArrayDataInterface {
  public:
   static v8::Handle<v8::Object> Create(TNative* values, uint32_t length) {
-    v8::Handle<v8::Value> argv[1] = { TypeToV8<uint32_t>(length) };
+    v8::Handle<v8::Value> argv[1] = { ToV8(length) };
     v8::Handle<v8::Object> array = V8Object<T>::Create(1, argv);
     if (array.IsEmpty())
       return array;
@@ -77,7 +77,7 @@ class TypedArray : public V8Object<T>, public ArrayDataInterface {
     v8::Handle<v8::ObjectTemplate> instance = constructor->InstanceTemplate();
     v8::Local<v8::Signature> signature = v8::Signature::New(constructor);
 
-    V8ObjectBase::AddConstant("BYTES_PER_ELEMENT", TypeToV8<uint32_t>(sizeof(TNative)), proto, constructor);
+    V8ObjectBase::AddConstant("BYTES_PER_ELEMENT", ToV8<uint32_t>(sizeof(TNative)), proto, constructor);
     //XXX need subarray and set() with array arg
   }
 
@@ -88,8 +88,8 @@ class TypedArray : public V8Object<T>, public ArrayDataInterface {
   static v8::Handle<v8::Value> ConstructorCallback(const v8::Arguments& args) {
     bool ok = true;
     v8::Handle<v8::Object> buffer_value;
-    unsigned int length = 0;
-    unsigned int byte_offset = 0;
+    uint32_t length = 0;
+    uint32_t byte_offset = 0;
 
     v8::Handle<v8::Object> self(args.This());
 
@@ -179,9 +179,9 @@ class TypedArray : public V8Object<T>, public ArrayDataInterface {
     }
 
     V8ObjectBase::SetProperty(self, "buffer", buffer_value);
-    V8ObjectBase::SetProperty(self, "length", TypeToV8<uint32_t>(length));
-    V8ObjectBase::SetProperty(self, "byteOffset", TypeToV8<uint32_t>(byte_offset));
-    V8ObjectBase::SetProperty(self, "byteLength", TypeToV8<uint32_t>(length * sizeof(TNative)));
+    V8ObjectBase::SetProperty(self, "length", ToV8(length));
+    V8ObjectBase::SetProperty(self, "byteOffset", ToV8(byte_offset));
+    V8ObjectBase::SetProperty(self, "byteLength", ToV8<uint32_t>(length * sizeof(TNative)));
 
     new T(self);
 
@@ -189,7 +189,7 @@ class TypedArray : public V8Object<T>, public ArrayDataInterface {
   }
 
   void* GetArrayData() {
-    v8::Handle<v8::Object> array = V8ObjectBase::ToV8();
+    v8::Handle<v8::Object> array = this->ToV8Object();
     return array->GetIndexedPropertiesExternalArrayData();
   }
 
@@ -202,7 +202,7 @@ class TypedArray : public V8Object<T>, public ArrayDataInterface {
   }
 
   uint32_t GetTypedArrayLength() {
-    v8::Handle<v8::Object> array = V8ObjectBase::ToV8();
+    v8::Handle<v8::Object> array = this->ToV8Object();
     return array->GetIndexedPropertiesExternalArrayDataLength();
   }
 

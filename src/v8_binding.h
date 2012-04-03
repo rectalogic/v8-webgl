@@ -32,27 +32,29 @@ inline v8::Handle<v8::Value> ThrowRangeError(const char* msg) {
   return v8::ThrowException(v8::Exception::RangeError(v8::String::New(msg)));
 }
 
+//////
+
 template<typename T>
-v8::Handle<v8::Value> TypeToV8(T value);
+v8::Handle<v8::Value> ToV8(T value);
 
 template<>
-inline v8::Handle<v8::Value> TypeToV8<bool>(bool value) {
+inline v8::Handle<v8::Value> ToV8<bool>(bool value) {
   return value ? v8::True() : v8::False();
 }
 template<>
-inline v8::Handle<v8::Value> TypeToV8<int32_t>(int32_t value) {
+inline v8::Handle<v8::Value> ToV8<int32_t>(int32_t value) {
   return v8::Integer::New(value);
 }
 template<>
-inline v8::Handle<v8::Value> TypeToV8<uint32_t>(uint32_t value) {
+inline v8::Handle<v8::Value> ToV8<uint32_t>(uint32_t value) {
   return v8::Integer::NewFromUnsigned(value);
 }
 template<>
-inline v8::Handle<v8::Value> TypeToV8<double>(double value) {
+inline v8::Handle<v8::Value> ToV8<double>(double value) {
   return v8::Number::New(value);
 }
 template<>
-inline v8::Handle<v8::Value> TypeToV8<const char*>(const char* value) {
+inline v8::Handle<v8::Value> ToV8<const char*>(const char* value) {
   return v8::String::New(value);
 }
 
@@ -60,7 +62,7 @@ template<typename T>
 v8::Handle<v8::Array> ArrayToV8(T* values, uint32_t length) {
   v8::Local<v8::Array> array = v8::Array::New(length);
   for (uint32_t i = 0; i < length; i++)
-    array->Set(TypeToV8<uint32_t>(i), TypeToV8<T>(values[i]));
+    array->Set(ToV8(i), ToV8<T>(values[i]));
   return array;
 }
 
@@ -147,7 +149,7 @@ class V8ObjectBase {
     return static_cast<V8ObjectBase*>(value->GetPointerFromInternalField(0));
   }
 
-  inline v8::Handle<v8::Object> ToV8() {
+  inline v8::Handle<v8::Object> ToV8Object() {
     return instance_;
   }
 
@@ -162,13 +164,13 @@ class V8ObjectBase {
   };
 
   inline static void AddConstant(const char* name, v8::Handle<v8::Value> value, v8::Handle<v8::ObjectTemplate> proto, v8::Handle<v8::FunctionTemplate> constructor) {
-    v8::Handle<v8::String> name_handle = v8::String::New(name);
+    v8::Handle<v8::String> name_handle(v8::String::New(name));
     constructor->Set(name_handle, value, static_cast<v8::PropertyAttribute>(v8::ReadOnly|v8::DontDelete));
     proto->Set(name_handle, value, static_cast<v8::PropertyAttribute>(v8::ReadOnly|v8::DontDelete));
   };
 
   inline static void SetProperty(v8::Handle<v8::Object> self, const char* name, v8::Handle<v8::Value> value) {
-    self->Set(v8::String::New(name), value,
+    self->Set(ToV8(name), value,
               static_cast<v8::PropertyAttribute>(v8::ReadOnly|v8::DontDelete));
   }
 

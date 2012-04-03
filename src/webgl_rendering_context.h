@@ -121,7 +121,7 @@ class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
   static void Log(Logger::Level level, std::string msg);
 
   static v8::Handle<v8::Value> ToV8OrNull(V8ObjectBase* object) {
-    return object ? static_cast<v8::Handle<v8::Value> >(object->ToV8()) : static_cast<v8::Handle<v8::Value> >(v8::Null());
+    return object ? static_cast<v8::Handle<v8::Value> >(object->ToV8Object()) : static_cast<v8::Handle<v8::Value> >(v8::Null());
   }
 
   bool ValidateObject(WebGLObjectInterface* object);

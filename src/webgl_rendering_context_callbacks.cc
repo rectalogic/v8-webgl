@@ -221,7 +221,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getContextAttributes(const
 // boolean isContextLost();
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_isContextLost(const v8::Arguments& args) {
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
-  return TypeToV8<bool>(false);
+  return ToV8(false);
 }
 
 // DOMString[ ] getSupportedExtensions();
@@ -478,9 +478,9 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_checkFramebufferStatus(con
   GLenum target = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   if (target != GL_FRAMEBUFFER) {
     context->set_gl_error(GL_INVALID_ENUM);
-    return TypeToV8<uint32_t>(0);
+    return ToV8<uint32_t>(0);
   }
-  return TypeToV8<uint32_t>(glCheckFramebufferStatus(target));
+  return ToV8(glCheckFramebufferStatus(target));
 }
 
 // void clear(GLbitfield mask);
@@ -602,7 +602,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_createBuffer(const v8::Arg
   GLuint buffer_id = 0;
   glGenBuffers(1, &buffer_id);
   WebGLBuffer* buffer = context->CreateBuffer(buffer_id);
-  return buffer->ToV8();
+  return buffer->ToV8Object();
 }
 
 // WebGLFramebuffer createFramebuffer();
@@ -612,7 +612,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_createFramebuffer(const v8
   //XXX glGenFramebuffersEXT etc.
   glGenFramebuffers(1, &framebuffer_id);
   WebGLFramebuffer* framebuffer = context->CreateFramebuffer(framebuffer_id);
-  return framebuffer->ToV8();
+  return framebuffer->ToV8Object();
 }
 
 // WebGLProgram createProgram();
@@ -620,7 +620,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_createProgram(const v8::Ar
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   GLuint program_id = glCreateProgram();
   WebGLProgram* program = context->CreateProgram(program_id);
-  return program->ToV8();
+  return program->ToV8Object();
 }
 
 // WebGLRenderbuffer createRenderbuffer();
@@ -630,7 +630,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_createRenderbuffer(const v
   //XXX glGenRenderbuffersEXT etc.
   glGenRenderbuffers(1, &renderbuffer_id);
   WebGLRenderbuffer* renderbuffer = context->CreateRenderbuffer(renderbuffer_id);
-  return renderbuffer->ToV8();
+  return renderbuffer->ToV8Object();
 }
 
 // WebGLShader createShader(GLenum type);
@@ -641,7 +641,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_createShader(const v8::Arg
   GLenum type = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   GLuint shader_id = glCreateShader(type);
   WebGLShader* shader = context->CreateShader(shader_id);
-  return shader->ToV8();
+  return shader->ToV8Object();
 }
 
 // WebGLTexture createTexture();
@@ -650,7 +650,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_createTexture(const v8::Ar
   GLuint texture_id = 0;
   glGenTextures(1, &texture_id);
   WebGLTexture* texture = context->CreateTexture(texture_id);
-  return texture->ToV8();
+  return texture->ToV8Object();
 }
 
 // void cullFace(GLenum mode);
@@ -947,7 +947,10 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_generateMipmap(const v8::A
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_getActiveAttrib(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
 // WebGLActiveInfo getActiveUniform(WebGLProgram program, GLuint index);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_getActiveUniform(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_getActiveUniform(const v8::Arguments& args) {
+  //XXX need to append "[0]" if name is array and doesn't have it
+  return U(); /*XXX finish*/
+}
 
 // WebGLShader[ ] getAttachedShaders(WebGLProgram program);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_getAttachedShaders(const v8::Arguments& args) { return U(); /*XXX finish*/ }
@@ -963,7 +966,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getAttribLocation(const v8
   GLuint program_id = program->get_webgl_id();
   std::string name = FromV8<std::string>(args[1], ok); if (!ok) return U();
   GLint location = glGetAttribLocation(program_id, name.c_str());
-  return TypeToV8<int32_t>(location);
+  return ToV8(location);
 }
 
 // any getParameter(GLenum pname);
@@ -998,7 +1001,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getParameter(const v8::Arg
     case GL_STENCIL_WRITEMASK: {
       GLint value = 0;
       glGetIntegerv(pname, &value);
-      return TypeToV8<uint32_t>(static_cast<uint32_t>(value));
+      return ToV8(static_cast<uint32_t>(value));
     }
 
     case GL_ALIASED_LINE_WIDTH_RANGE:
@@ -1034,17 +1037,17 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getParameter(const v8::Arg
     case GL_MAX_FRAGMENT_UNIFORM_VECTORS: {
       GLint value = 0;
       glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &value);
-      return TypeToV8<int32_t>(value / 4);
+      return ToV8(value / 4);
     }
     case GL_MAX_VERTEX_UNIFORM_VECTORS: {
       GLint value = 0;
       glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &value);
-      return TypeToV8<int32_t>(value / 4);
+      return ToV8(value / 4);
     }
     case GL_MAX_VARYING_VECTORS: {
       GLint value = 0;
       glGetIntegerv(GL_MAX_VARYING_FLOATS, &value);
-      return TypeToV8<int32_t>(value / 4);
+      return ToV8(value / 4);
     }
 
     case GL_ALPHA_BITS:
@@ -1074,7 +1077,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getParameter(const v8::Arg
     case GL_UNPACK_ALIGNMENT: {
       GLint value = 0;
       glGetIntegerv(pname, &value);
-      return TypeToV8<int32_t>(value);
+      return ToV8(value);
     }
 
     case GL_COLOR_WRITEMASK: {
@@ -1097,7 +1100,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getParameter(const v8::Arg
     case GL_STENCIL_TEST: {
       GLboolean value = 0;
       glGetBooleanv(pname, &value);
-      return TypeToV8<bool>(static_cast<bool>(value));
+      return ToV8(static_cast<bool>(value));
     }
 
     case GL_DEPTH_CLEAR_VALUE:
@@ -1107,7 +1110,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getParameter(const v8::Arg
     case GL_SAMPLE_COVERAGE_VALUE: {
       GLfloat value = 0;
       glGetFloatv(pname, &value);
-      return TypeToV8<double>(value);
+      return ToV8<double>(value);
     }
 
     case GL_ARRAY_BUFFER_BINDING:
@@ -1138,11 +1141,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getParameter(const v8::Arg
     }
 
     case GL_RENDERER:
-      return TypeToV8<const char*>("v8-webgl");
+      return ToV8("v8-webgl");
 
     case GL_SHADING_LANGUAGE_VERSION: {
       std::string version = std::string("WebGL GLSL ES 1.0 (") + std::string(reinterpret_cast<const char*>(glGetString(pname))) + std::string(")");
-      return TypeToV8<const char*>(version.c_str());
+      return ToV8(version.c_str());
     }
 
     case GL_TEXTURE_BINDING_2D:
@@ -1161,11 +1164,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getParameter(const v8::Arg
 #endif
 
     case GL_VENDOR:
-      return TypeToV8<const char*>("rectalogic");
+      return ToV8("rectalogic");
 
     case GL_VERSION: {
       std::string version = std::string("WebGL 1.0 (") + std::string(reinterpret_cast<const char*>(glGetString(pname))) + std::string(")");
-      return TypeToV8<const char*>(version.c_str());
+      return ToV8(version.c_str());
     }
 
 #if 0
@@ -1208,15 +1211,15 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getBufferParameter(const v
   GLint value = 0;
   glGetBufferParameteriv(target, pname, &value);
   if (pname == GL_BUFFER_SIZE)
-    return TypeToV8<int32_t>(value);
-  return TypeToV8<uint32_t>(static_cast<uint32_t>(value));
+    return ToV8(value);
+  return ToV8(static_cast<uint32_t>(value));
 }
 
 // GLenum getError();
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_getError(const v8::Arguments& args) {
   WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
   GLenum error = context->get_gl_error();
-  return TypeToV8<uint32_t>(error);
+  return ToV8(error);
 }
 
 // any getFramebufferAttachmentParameter(GLenum target, GLenum attachment, 
@@ -1253,10 +1256,10 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getFramebufferAttachmentPa
       }
     }
     case GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
-      return TypeToV8<uint32_t>(value);
+      return ToV8<uint32_t>(value);
     case GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
     case GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
-      return TypeToV8<int32_t>(value);
+      return ToV8(value);
     default:
       context->set_gl_error(GL_INVALID_ENUM);
       return v8::Null();
@@ -1280,11 +1283,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getProgramParameter(const 
     case GL_DELETE_STATUS:
     case GL_VALIDATE_STATUS:
     case GL_LINK_STATUS:
-      return TypeToV8<bool>(static_cast<bool>(value));
+      return ToV8(static_cast<bool>(value));
     case GL_ATTACHED_SHADERS:
     case GL_ACTIVE_ATTRIBUTES:
     case GL_ACTIVE_UNIFORMS:
-      return TypeToV8<int32_t>(value);
+      return ToV8(value);
     default:
       context->set_gl_error(GL_INVALID_ENUM);
       return v8::Null();
@@ -1311,7 +1314,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getRenderbufferParameter(c
   glGetRenderbufferParameteriv(target, pname, &value);
   switch (pname) {
     case GL_RENDERBUFFER_INTERNAL_FORMAT:
-      return TypeToV8<uint32_t>(static_cast<uint32_t>(value));
+      return ToV8(static_cast<uint32_t>(value));
     case GL_RENDERBUFFER_WIDTH:
     case GL_RENDERBUFFER_HEIGHT:
     case GL_RENDERBUFFER_RED_SIZE:
@@ -1320,7 +1323,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getRenderbufferParameter(c
     case GL_RENDERBUFFER_ALPHA_SIZE:
     case GL_RENDERBUFFER_DEPTH_SIZE:
     case GL_RENDERBUFFER_STENCIL_SIZE:
-      return TypeToV8<int32_t>(value);
+      return ToV8(value);
     default:
       context->set_gl_error(GL_INVALID_ENUM);
       return v8::Null();
@@ -1342,9 +1345,9 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getShaderParameter(const v
   switch (pname) {
     case GL_DELETE_STATUS:
     case GL_COMPILE_STATUS:
-      return TypeToV8<bool>(static_cast<bool>(value));
+      return ToV8(static_cast<bool>(value));
     case GL_SHADER_TYPE:
-      return TypeToV8<uint32_t>(value);
+      return ToV8<uint32_t>(value);
     default:
       context->set_gl_error(GL_INVALID_ENUM);
       return v8::Null();
@@ -1378,7 +1381,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getTexParameter(const v8::
   }
   GLint value = 0;
   glGetTexParameteriv(target, pname, &value);
-  return TypeToV8<uint32_t>(static_cast<uint32_t>(value));
+  return ToV8(static_cast<uint32_t>(value));
 }
 
 static bool UniformTypeToBaseLength(GLenum uniform_type, GLenum& uniform_base_type, uint32_t& length) {
@@ -1515,14 +1518,14 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getUniform(const v8::Argum
             GLfloat value[16] = {0};
             glGetUniformfv(program_id, location_id, value);
             if (length == 1)
-              return TypeToV8<double>(value[0]);
+              return ToV8<double>(value[0]);
             return Float32Array::Create(value, length);
           }
           case GL_INT: {
             GLint value[4] = {0};
             glGetUniformiv(program_id, location_id, value);
             if (length == 1)
-              return TypeToV8<int32_t>(value[0]);
+              return ToV8(value[0]);
             return Int32Array::Create(value, length);
           }
           case GL_BOOL: {
@@ -1534,7 +1537,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getUniform(const v8::Argum
                 bool_value[j] = static_cast<bool>(value[j]);
               return ArrayToV8<bool>(bool_value, length);
             }
-            return TypeToV8<bool>(static_cast<bool>(value[0]));
+            return ToV8(static_cast<bool>(value[0]));
           }
         }
       }
@@ -1557,7 +1560,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getUniformLocation(const v
   std::string name = FromV8<std::string>(args[1], ok); if (!ok) return U();
   GLint location_id = glGetUniformLocation(program_id, name.c_str());
   WebGLUniformLocation* location = context->CreateUniformLocation(program_id, location_id);
-  return location->ToV8();
+  return location->ToV8Object();
 }
 
 // any getVertexAttrib(GLuint index, GLenum pname);
@@ -1578,18 +1581,18 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getVertexAttrib(const v8::
     case GL_VERTEX_ATTRIB_ARRAY_NORMALIZED: {
       GLint value = 0;
       glGetVertexAttribiv(index, pname, &value);
-      return TypeToV8<bool>(static_cast<bool>(value));
+      return ToV8(static_cast<bool>(value));
     }
     case GL_VERTEX_ATTRIB_ARRAY_SIZE:
     case GL_VERTEX_ATTRIB_ARRAY_STRIDE: {
       GLint value = 0;
       glGetVertexAttribiv(index, pname, &value);
-      return TypeToV8<int32_t>(value);
+      return ToV8(value);
     }
     case GL_VERTEX_ATTRIB_ARRAY_TYPE: {
       GLint value = 0;
       glGetVertexAttribiv(index, pname, &value);
-      return TypeToV8<uint32_t>(static_cast<uint32_t>(value));
+      return ToV8(static_cast<uint32_t>(value));
     }
     case GL_CURRENT_VERTEX_ATTRIB: {
       GLfloat value[4] = {0};
@@ -1611,7 +1614,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getVertexAttribOffset(cons
   GLenum pname = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
   GLvoid* pointer = 0;
   glGetVertexAttribPointerv(index, pname, &pointer);
-  return TypeToV8<int32_t>(static_cast<GLsizeiptr>(reinterpret_cast<intptr_t>(pointer)));
+  return ToV8<int32_t>(static_cast<GLsizeiptr>(reinterpret_cast<intptr_t>(pointer)));
 }
 
 // void hint(GLenum target, GLenum mode);
@@ -1637,9 +1640,9 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isBuffer(const v8::Argumen
   if (args.Length() < 1) return ThrowArgCount();
   WebGLBuffer* buffer = NativeFromV8<WebGLBuffer>(args[0], ok); if (!ok) return U();
   if (!buffer)
-    return TypeToV8<bool>(false);
+    return ToV8(false);
   GLuint buffer_id = buffer ? buffer->get_webgl_id() : 0;
-  return TypeToV8<bool>(glIsBuffer(buffer_id));
+  return ToV8<bool>(glIsBuffer(buffer_id));
 }
 
 // GLboolean isEnabled(GLenum cap);
@@ -1649,7 +1652,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isEnabled(const v8::Argume
   if (args.Length() < 1) return ThrowArgCount();
   GLenum cap = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
   if (!context->ValidateCapability("isEnabled", cap))
-    return TypeToV8<bool>(false);
+    return ToV8(false);
   glIsEnabled(cap);
   return U();
 }
@@ -1661,9 +1664,9 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isFramebuffer(const v8::Ar
   if (args.Length() < 1) return ThrowArgCount();
   WebGLFramebuffer* framebuffer = NativeFromV8<WebGLFramebuffer>(args[0], ok); if (!ok) return U();
   if (!framebuffer)
-    return TypeToV8<bool>(false);
+    return ToV8(false);
   GLuint framebuffer_id = framebuffer ? framebuffer->get_webgl_id() : 0;
-  return TypeToV8<bool>(glIsFramebuffer(framebuffer_id));
+  return ToV8<bool>(glIsFramebuffer(framebuffer_id));
 }
 
 // GLboolean isProgram(WebGLProgram program);
@@ -1673,9 +1676,9 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isProgram(const v8::Argume
   if (args.Length() < 1) return ThrowArgCount();
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], ok); if (!ok) return U();
   if (!program)
-    return TypeToV8<bool>(false);
+    return ToV8(false);
   GLuint program_id = program ? program->get_webgl_id() : 0;
-  return TypeToV8<bool>(glIsProgram(program_id));
+  return ToV8<bool>(glIsProgram(program_id));
 }
 
 // GLboolean isRenderbuffer(WebGLRenderbuffer renderbuffer);
@@ -1685,9 +1688,9 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isRenderbuffer(const v8::A
   if (args.Length() < 1) return ThrowArgCount();
   WebGLRenderbuffer* renderbuffer = NativeFromV8<WebGLRenderbuffer>(args[0], ok); if (!ok) return U();
   if (!renderbuffer)
-    return TypeToV8<bool>(false);
+    return ToV8(false);
   GLuint renderbuffer_id = renderbuffer ? renderbuffer->get_webgl_id() : 0;
-  return TypeToV8<bool>(glIsRenderbuffer(renderbuffer_id));
+  return ToV8<bool>(glIsRenderbuffer(renderbuffer_id));
 }
 
 // GLboolean isShader(WebGLShader shader);
@@ -1697,9 +1700,9 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isShader(const v8::Argumen
   if (args.Length() < 1) return ThrowArgCount();
   WebGLShader* shader = NativeFromV8<WebGLShader>(args[0], ok); if (!ok) return U();
   if (!shader)
-    return TypeToV8<bool>(false);
+    return ToV8(false);
   GLuint shader_id = shader ? shader->get_webgl_id() : 0;
-  return TypeToV8<bool>(glIsShader(shader_id));
+  return ToV8<bool>(glIsShader(shader_id));
 }
 
 // GLboolean isTexture(WebGLTexture texture);
@@ -1709,9 +1712,9 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isTexture(const v8::Argume
   if (args.Length() < 1) return ThrowArgCount();
   WebGLTexture* texture = NativeFromV8<WebGLTexture>(args[0], ok); if (!ok) return U();
   if (!texture)
-    return TypeToV8<bool>(false);
+    return ToV8(false);
   GLuint texture_id = texture ? texture->get_webgl_id() : 0;
-  return TypeToV8<bool>(glIsTexture(texture_id));
+  return ToV8<bool>(glIsTexture(texture_id));
 }
 
 // void lineWidth(GLfloat width);

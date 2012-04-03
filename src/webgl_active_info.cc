@@ -8,11 +8,11 @@ namespace v8_webgl {
 
 WebGLActiveInfo::WebGLActiveInfo(GLint size, GLenum type, const char* name)
     : V8Object<WebGLActiveInfo>(true) {
-  v8::Handle<v8::Object> instance(ToV8());
+  v8::Handle<v8::Object> instance(ToV8Object());
   v8::PropertyAttribute attrs = static_cast<v8::PropertyAttribute>(v8::ReadOnly|v8::DontDelete);
-  instance->Set(TypeToV8("size"), TypeToV8(size), attrs);
-  instance->Set(TypeToV8("type"), TypeToV8(type), attrs);
-  instance->Set(TypeToV8("name"), TypeToV8(name), attrs);
+  instance->Set(ToV8("size"), ToV8(size), attrs);
+  instance->Set(ToV8("type"), ToV8(type), attrs);
+  instance->Set(ToV8("name"), ToV8(name), attrs);
 }
 
 
