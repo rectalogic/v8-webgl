@@ -248,11 +248,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_attachShader(const v8::Arg
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], ok); if (!ok) return U();
   if (!context->RequireObject(program)) return U();
   if (!context->ValidateObject(program)) return U();
-  GLuint program_id = program ? program->get_webgl_id() : 0;
+  GLuint program_id = program->get_webgl_id();
   WebGLShader* shader = NativeFromV8<WebGLShader>(args[1], ok); if (!ok) return U();
   if (!context->RequireObject(shader)) return U();
   if (!context->ValidateObject(shader)) return U();
-  GLuint shader_id = shader ? shader->get_webgl_id() : 0;
+  GLuint shader_id = shader->get_webgl_id();
   glAttachShader(program_id, shader_id);
   return U();
 }
@@ -265,7 +265,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bindAttribLocation(const v
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], ok); if (!ok) return U();
   if (!context->RequireObject(program)) return U();
   if (!context->ValidateObject(program)) return U();
-  GLuint program_id = program ? program->get_webgl_id() : 0;
+  GLuint program_id = program->get_webgl_id();
   GLuint index = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
   std::string name = FromV8<std::string>(args[2], ok); if (!ok) return U();
   glBindAttribLocation(program_id, index, name.c_str());
@@ -552,7 +552,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_compileShader(const v8::Ar
   WebGLShader* shader = NativeFromV8<WebGLShader>(args[0], ok); if (!ok) return U();
   if (!context->RequireObject(shader)) return U();
   if (!context->ValidateObject(shader)) return U();
-  GLuint shader_id = shader ? shader->get_webgl_id() : 0;
+  GLuint shader_id = shader->get_webgl_id();
   glCompileShader(shader_id);
   return U();
 }
@@ -782,11 +782,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_detachShader(const v8::Arg
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], ok); if (!ok) return U();
   if (!context->RequireObject(program)) return U();
   if (!context->ValidateObject(program)) return U();
-  GLuint program_id = program ? program->get_webgl_id() : 0;
+  GLuint program_id = program->get_webgl_id();
   WebGLShader* shader = NativeFromV8<WebGLShader>(args[1], ok); if (!ok) return U();
   if (!context->RequireObject(shader)) return U();
   if (!context->ValidateObject(shader)) return U();
-  GLuint shader_id = shader ? shader->get_webgl_id() : 0;
+  GLuint shader_id = shader->get_webgl_id();
   glDetachShader(program_id, shader_id);
   return U();
 }
@@ -952,7 +952,6 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getActiveUniform(const v8:
 // WebGLShader[ ] getAttachedShaders(WebGLProgram program);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_getAttachedShaders(const v8::Arguments& args) { return U(); /*XXX finish*/ }
 
-//XXX should return -1 (webkit) or 0 (firefox) on error, not Undefined - should preamble define a fail: label that can return whatever is needed?
 // GLint getAttribLocation(WebGLProgram program, DOMString name);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_getAttribLocation(const v8::Arguments& args) {
   bool ok = true;
@@ -961,7 +960,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getAttribLocation(const v8
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], ok); if (!ok) return U();
   if (!context->RequireObject(program)) return U();
   if (!context->ValidateObject(program)) return U();
-  GLuint program_id = program ? program->get_webgl_id() : 0;
+  GLuint program_id = program->get_webgl_id();
   std::string name = FromV8<std::string>(args[1], ok); if (!ok) return U();
   GLint location = glGetAttribLocation(program_id, name.c_str());
   return TypeToV8<int32_t>(location);
@@ -1272,7 +1271,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getProgramParameter(const 
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], ok); if (!ok) return U();
   if (!context->RequireObject(program)) return U();
   if (!context->ValidateObject(program)) return U();
-  GLuint program_id = program ? program->get_webgl_id() : 0;
+  GLuint program_id = program->get_webgl_id();
   GLenum pname = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
   GLint value = 0;
   glGetProgramiv(program_id, pname, &value);
@@ -1336,7 +1335,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getShaderParameter(const v
   WebGLShader* shader = NativeFromV8<WebGLShader>(args[0], ok); if (!ok) return U();
   if (!context->RequireObject(shader)) return U();
   if (!context->ValidateObject(shader)) return U();
-  GLuint shader_id = shader ? shader->get_webgl_id() : 0;
+  GLuint shader_id = shader->get_webgl_id();
   GLenum pname = FromV8<uint32_t>(args[1], ok); if (!ok) return U();
   GLint value = 0;
   glGetShaderiv(shader_id, pname, &value);
@@ -1463,13 +1462,13 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getUniform(const v8::Argum
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], ok); if (!ok) return U();
   if (!context->RequireObject(program)) return U();
   if (!context->ValidateObject(program)) return U();
-  GLuint program_id = program ? program->get_webgl_id() : 0;
+  GLuint program_id = program->get_webgl_id();
   WebGLUniformLocation* location = NativeFromV8<WebGLUniformLocation>(args[1], ok); if (!ok) return U();
   if (!context->RequireObject(location)) return U();
   if (!context->ValidateLocationProgram(location, program_id)) return U();
   //XXX need to catch std::bad_alloc from string/vector
 
-  GLint location_id = location ? location->get_webgl_id() : 0;
+  GLint location_id = location->get_webgl_id();
   GLint active_uniforms = 0;
   glGetProgramiv(program_id, GL_ACTIVE_UNIFORMS, &active_uniforms);
   GLint max_name_length = 0;
@@ -1554,7 +1553,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getUniformLocation(const v
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], ok); if (!ok) return U();
   if (!context->RequireObject(program)) return U();
   if (!context->ValidateObject(program)) return U();
-  GLuint program_id = program ? program->get_webgl_id() : 0;
+  GLuint program_id = program->get_webgl_id();
   std::string name = FromV8<std::string>(args[1], ok); if (!ok) return U();
   GLint location_id = glGetUniformLocation(program_id, name.c_str());
   WebGLUniformLocation* location = context->CreateUniformLocation(program_id, location_id);
@@ -1733,7 +1732,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_linkProgram(const v8::Argu
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], ok); if (!ok) return U();
   if (!context->RequireObject(program)) return U();
   if (!context->ValidateObject(program)) return U();
-  GLuint program_id = program ? program->get_webgl_id() : 0;
+  GLuint program_id = program->get_webgl_id();
   glLinkProgram(program_id);
   return U();
 }
@@ -2206,7 +2205,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4iv(const v8::Argum
 // void uniformMatrix2fv(WebGLUniformLocation location, GLboolean transpose, 
 //                       sequence<float> value);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniformMatrix2fv(const v8::Arguments& args) {
-  UniformMatrixHelper<GLfloat> h(glUniformMatrix2fv, 4);
+  UniformMatrixHelper<GLfloat> h(glUniformMatrix2fv, 2*2);
   return h.Process(args);
 }
 
@@ -2215,7 +2214,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniformMatrix2fv(const v8:
 // void uniformMatrix3fv(WebGLUniformLocation location, GLboolean transpose, 
 //                       sequence<float> value);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniformMatrix3fv(const v8::Arguments& args) {
-  UniformMatrixHelper<GLfloat> h(glUniformMatrix3fv, 9);
+  UniformMatrixHelper<GLfloat> h(glUniformMatrix3fv, 3*3);
   return h.Process(args);
 }
 
@@ -2224,12 +2223,22 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniformMatrix3fv(const v8:
 // void uniformMatrix4fv(WebGLUniformLocation location, GLboolean transpose, 
 //                       sequence<float> value);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniformMatrix4fv(const v8::Arguments& args) {
-  UniformMatrixHelper<GLfloat> h(glUniformMatrix4fv, 16);
+  UniformMatrixHelper<GLfloat> h(glUniformMatrix4fv, 4*4);
   return h.Process(args);
 }
 
 // void useProgram(WebGLProgram program);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_useProgram(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_useProgram(const v8::Arguments& args) {
+  bool ok = true;
+  WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
+  if (args.Length() < 1) return ThrowArgCount();
+  WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], ok); if (!ok) return U();
+  if (!context->RequireObject(program)) return U();
+  if (!context->ValidateObject(program)) return U();
+  GLuint program_id = program->get_webgl_id();
+  glUseProgram(program_id);
+  return U();
+}
 
 // void validateProgram(WebGLProgram program);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_validateProgram(const v8::Arguments& args) { return U(); /*XXX finish*/ }
