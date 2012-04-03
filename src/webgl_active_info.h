@@ -13,16 +13,12 @@ namespace v8_webgl {
 class WebGLActiveInfo : public V8Object<WebGLActiveInfo> {
  public:
   static const char* const ClassName() { return "WebGLActiveInfo"; }
-
-  bool ValidateContext(WebGLRenderingContext* context) { return context->get_context_id() == context_id_; }
+  static v8::Handle<v8::Value> ConstructorCallback(const v8::Arguments& args) {
+    return args.This();
+  }
 
  protected:
-  WebGLActiveInfo(WebGLRenderingContext* context)
-      : V8Object<WebGLActiveInfo>()
-      , context_id_(context->get_context_id()) {}
-
- private:
-  unsigned long context_id_;
+  WebGLActiveInfo(GLint size, GLenum type, const char* name);
 
   friend class WebGLRenderingContext;
 };

@@ -79,7 +79,7 @@ class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
     return it->second;
   }
 
-  WebGLActiveInfo* CreateActiveInfo();
+  WebGLActiveInfo* CreateActiveInfo(GLint size, GLenum type, const char* name);
   WebGLBuffer* CreateBuffer(GLuint buffer_id);
   WebGLFramebuffer* CreateFramebuffer(GLuint framebuffer_id);
   WebGLProgram* CreateProgram(GLuint program_id);

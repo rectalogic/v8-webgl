@@ -45,8 +45,8 @@ WebGLRenderingContext::~WebGLRenderingContext() {
   delete graphic_context_;
 }
 
-WebGLActiveInfo* WebGLRenderingContext::CreateActiveInfo() {
-  return new WebGLActiveInfo(this);
+WebGLActiveInfo* WebGLRenderingContext::CreateActiveInfo(GLint size, GLenum type, const char* name) {
+  return new WebGLActiveInfo(size, type, name);
 }
 
 WebGLBuffer* WebGLRenderingContext::CreateBuffer(GLuint buffer_id) {
