@@ -1,0 +1,3 @@
+[submodule "angleproject"]
+	path = angleproject
+	url = git@github.com:motionbox/angleproject.git
