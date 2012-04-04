@@ -13,9 +13,6 @@ namespace v8_webgl {
 class WebGLActiveInfo : public V8Object<WebGLActiveInfo> {
  public:
   static const char* const ClassName() { return "WebGLActiveInfo"; }
-  static v8::Handle<v8::Value> ConstructorCallback(const v8::Arguments& args) {
-    return args.This();
-  }
 
  protected:
   WebGLActiveInfo(GLint size, GLenum type, const char* name);
