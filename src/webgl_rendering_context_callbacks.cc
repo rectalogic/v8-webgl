@@ -1817,7 +1817,38 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_linkProgram(const v8::Argu
 
 //XXX this needs to deal with custom WebGL attrs like UNPACK_FLIP_Y_WEBGL
 // void pixelStorei(GLenum pname, GLint param);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_pixelStorei(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_pixelStorei(const v8::Arguments& args) {
+  bool ok = true;
+  WebGLRenderingContext* context = CallbackContext(args); if (!context) return ThrowObjectDisposed();
+  if (args.Length() < 2) return ThrowArgCount();
+  GLenum pname = FromV8<uint32_t>(args[0], ok); if (!ok) return U();
+  GLint param = FromV8<int32_t>(args[1], ok); if (!ok) return U();
+  switch (pname) {
+    case GL_UNPACK_FLIP_Y_WEBGL:
+    case GL_UNPACK_PREMULTIPLY_ALPHA_WEBGL:
+    case GL_UNPACK_COLORSPACE_CONVERSION_WEBGL:
+      //XXX how should we handle these?
+      return U();
+    case GL_PACK_ALIGNMENT:
+    case GL_UNPACK_ALIGNMENT:
+      switch (param) {
+        case 1:
+        case 2:
+        case 4:
+        case 8:
+          break;
+        default:
+          context->set_gl_error(GL_INVALID_VALUE);
+          return U();
+      }
+      break;
+    default:
+      context->set_gl_error(GL_INVALID_ENUM);
+      return U();
+  }
+  glPixelStorei(pname, param);
+  return U();
+}
 
 // void polygonOffset(GLfloat factor, GLfloat units);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_polygonOffset(const v8::Arguments& args) {
