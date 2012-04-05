@@ -37,11 +37,11 @@ class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
   static const char* const ClassName() { return "WebGLRenderingContext"; }
   static void ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> constructor);
 
-  void MakeCurrent() {
+  inline void MakeCurrent() {
     graphic_context_->MakeCurrent();
   }
 
-  void Resize(int width, int height) {
+  inline void Resize(int width, int height) {
     graphic_context_->Resize(width, height);
   }
 
@@ -77,6 +77,13 @@ class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
     if (it == map.end())
       return 0;
     return it->second;
+  }
+
+  // Wraps an InvocationCallback member function, making the context current first.
+  template<v8::Handle<v8::Value> (WebGLRenderingContext::*InvocationCallbackMember)(v8::Arguments const&)>
+  inline v8::Handle<v8::Value> MakeCurrentCallback(v8::Arguments const& args) {
+    MakeCurrent();
+    return ((*this).*(InvocationCallbackMember))(args);
   }
 
   WebGLActiveInfo* CreateActiveInfo(GLint size, GLenum type, const char* name);
@@ -155,7 +162,7 @@ class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
 
   friend class Canvas;
 
-#define CALLBACK(name) static v8::Handle<v8::Value> Callback_##name(const v8::Arguments& args)
+#define CALLBACK(name) v8::Handle<v8::Value> Callback_##name(const v8::Arguments& args)
   CALLBACK(getContextAttributes);
   CALLBACK(isContextLost);
   CALLBACK(getSupportedExtensions);

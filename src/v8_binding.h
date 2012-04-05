@@ -10,10 +10,28 @@
 
 namespace v8_webgl {
 
-template<v8::InvocationCallback CB>
-static v8::Handle<v8::Value> InvocationCallbackCatcher(v8::Arguments const& argv) {
+// InvocationCallback that does arg length checking and exception handling,
+// and invokes the callback instance member function on the wrapped native.
+template<class T, int Arity, v8::Handle<v8::Value> (T::*InvocationCallbackMember)(v8::Arguments const&)>
+static v8::Handle<v8::Value> InvocationCallbackDispatcher(v8::Arguments const& args) {
+  if (args.Length() < Arity)
+    return ThrowArgCount();
+  T* object = T::FromV8Object(args.Holder());
+  if (!object)
+    return ThrowObjectDisposed();
   try {
-    return CB(argv);
+    return ((*object).*(InvocationCallbackMember))(args);
+  } catch (std::exception const& e) {
+    return v8::ThrowException(v8::String::New(e.what()));
+  } catch (...) {
+    return v8::ThrowException(v8::String::New("Caught unknown native exception."));
+  }
+}
+
+template<v8::InvocationCallback CB>
+static v8::Handle<v8::Value> InvocationCallbackCatcher(v8::Arguments const& args) {
+  try {
+    return CB(args);
   } catch (std::exception const& e) {
     return v8::ThrowException(v8::String::New(e.what()));
   } catch (...) {

@@ -126,7 +126,6 @@ std::vector<T> ArrayFromV8(v8::Handle<v8::Value> value, bool* ok) {
   v8::Handle<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
   uint32_t length = array->Length();
   std::vector<T> vector(length);
-  bool entry_ok = true;
   for (uint32_t i = 0; i < length; i++) {
     v8::Local<v8::Value> entry = array->Get(i);
     vector[i] = FromV8<T>(entry, ok);

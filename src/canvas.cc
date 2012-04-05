@@ -49,11 +49,8 @@ void Canvas::set_height(int height) {
 
 // WebGLRenderingContext getContext(DOMString type, hash);
 v8::Handle<v8::Value> Canvas::Callback_getContext(const v8::Arguments& args) {
-  Canvas* canvas = Canvas::FromV8Object(args.Holder());
-  if (!canvas)
-    return ThrowObjectDisposed();
   //XXX validate first arg is "experimental-webgl", handle optional second arg params
-  return canvas->GetRenderingContext()->ToV8Object();
+  return GetRenderingContext()->ToV8Object();
 }
 
 void Canvas::Setter_width(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {
@@ -98,9 +95,9 @@ void Canvas::ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> c
   v8::Handle<v8::ObjectTemplate> instance = constructor->InstanceTemplate();
   v8::Local<v8::Signature> signature = v8::Signature::New(constructor);
 
-#define PROTO_METHOD(name) AddCallback(proto, #name, InvocationCallbackCatcher<Callback_##name>, signature)
+#define PROTO_METHOD(name, argc) AddCallback(proto, #name, InvocationCallbackDispatcher<Canvas, argc, &Canvas::Callback_##name>, signature)
 
-  PROTO_METHOD(getContext);
+  PROTO_METHOD(getContext, 0); //XXX should be 1 args, "experimental-webgl" and optional options hash
 
 #undef PROTO_METHOD
 

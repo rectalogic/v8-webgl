@@ -41,7 +41,7 @@ class Canvas : public V8Object<Canvas> {
   SETTER(height);
 #undef SETTER
 
-#define CALLBACK(name) static v8::Handle<v8::Value> Callback_##name(const v8::Arguments& args)
+#define CALLBACK(name) v8::Handle<v8::Value> Callback_##name(const v8::Arguments& args)
   CALLBACK(getContext);
 #undef CALLBACK
 };
