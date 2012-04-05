@@ -434,7 +434,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bufferData(const v8::Argum
   void* data = NULL;
   GLsizeiptr size = 0;
   uint32_t length = 0;
-  if (TypedArrayToData(args[1], data, length, &ok))
+  if (TypedArrayToData(args[1], &data, &length, &ok))
     size = length;
   else {
     if (!ok)
@@ -461,7 +461,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bufferSubData(const v8::Ar
   void* data = NULL;
   GLsizeiptr size = 0;
   uint32_t length = 0;
-  if (TypedArrayToData(args[2], data, length, &ok))
+  if (TypedArrayToData(args[2], &data, &length, &ok))
     size = length;
   else
     return U();

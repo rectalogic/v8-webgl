@@ -135,25 +135,25 @@ GLenum WebGLRenderingContext::get_gl_error() {
   return glGetError();
 }
 
-bool WebGLRenderingContext::TypedArrayToData(v8::Handle<v8::Value> value, void*& data, uint32_t& length, bool* ok) {
+bool WebGLRenderingContext::TypedArrayToData(v8::Handle<v8::Value> value, void** data, uint32_t* length, bool* ok) {
   SetOk(ok, true);
   if (ArrayBufferView::HasInstance(value) || ArrayBuffer::HasInstance(value)) {
     v8::Handle<v8::Object> object = value->ToObject();
     ArrayDataInterface* array_data = dynamic_cast<ArrayDataInterface*>(V8ObjectBase::FromV8Object(object));
     if (!array_data) {
       ThrowObjectDisposed();
-      length = 0;
-      data = NULL;
+      *length = 0;
+      *data = NULL;
       SetOk(ok, false);
       return false;
     }
 
-    length = array_data->GetArrayLength();
-    data = array_data->GetArrayData();
+    *length = array_data->GetArrayLength();
+    *data = array_data->GetArrayData();
     return true;
   }
-  length = 0;
-  data = NULL;
+  *length = 0;
+  *data = NULL;
   return false;
 }
 
