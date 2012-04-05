@@ -65,49 +65,53 @@ v8::Handle<v8::Array> ArrayToV8(T* values, uint32_t length) {
   return array;
 }
 
+inline void SetOk(bool *ok, bool value) {
+  if (ok)
+    *ok = value;
+}
+
 template<typename T>
-T FromV8(v8::Handle<v8::Value> value, bool& ok);
+T FromV8(v8::Handle<v8::Value> value, bool* ok);
 
 template<>
-std::string FromV8<std::string>(v8::Handle<v8::Value> value, bool& ok);
+std::string FromV8<std::string>(v8::Handle<v8::Value> value, bool* ok);
 
 template<>
-inline bool FromV8<bool>(v8::Handle<v8::Value> value, bool& ok) {
-  ok = true;
+inline bool FromV8<bool>(v8::Handle<v8::Value> value, bool* ok) {
+  SetOk(ok, true);
   return value->BooleanValue();
 }
 
 template<>
-double FromV8<double>(v8::Handle<v8::Value> value, bool& ok);
+double FromV8<double>(v8::Handle<v8::Value> value, bool* ok);
 
 template<>
-inline float FromV8<float>(v8::Handle<v8::Value> value, bool& ok) {
+inline float FromV8<float>(v8::Handle<v8::Value> value, bool* ok) {
   return static_cast<float>(FromV8<double>(value, ok));
 }
 
 template<>
-int32_t FromV8<int32_t>(v8::Handle<v8::Value> value, bool& ok);
+int32_t FromV8<int32_t>(v8::Handle<v8::Value> value, bool* ok);
 
 template<>
-uint32_t FromV8<uint32_t>(v8::Handle<v8::Value> value, bool& ok);
+uint32_t FromV8<uint32_t>(v8::Handle<v8::Value> value, bool* ok);
 
 
 template<class T>
-T* NativeFromV8(v8::Handle<v8::Value> value, bool& ok) {
-  ok = true;
-
+T* NativeFromV8(v8::Handle<v8::Value> value, bool* ok) {
+  SetOk(ok, true);
   // Not an error if undefined/null
   if (value->IsUndefined() || value->IsNull())
     return NULL;
 
   if (!T::HasInstance(value)) {
-    ok = false;
+    SetOk(ok, false);
     return NULL;
   }
   v8::Handle<v8::Object> object = value->ToObject();
   T* native = T::FromV8Object(object);
   if (!native) {
-    ok = false;
+    SetOk(ok, false);
     ThrowObjectDisposed();
     return NULL;
   }
@@ -115,22 +119,26 @@ T* NativeFromV8(v8::Handle<v8::Value> value, bool& ok) {
 }
 
 template<class T>
-std::vector<T> ArrayFromV8(v8::Handle<v8::Value> value, bool& ok) {
-  ok = true;
+std::vector<T> ArrayFromV8(v8::Handle<v8::Value> value, bool* ok) {
+  SetOk(ok, true);
+
   if (value->IsUndefined() || value->IsNull())
     return std::vector<T>();
   if (!value->IsArray()){
-    ok = false;
+    SetOk(ok, false);
     return std::vector<T>();
   }
   v8::Handle<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
   uint32_t length = array->Length();
   std::vector<T> vector(length);
+  bool entry_ok = true;
   for (uint32_t i = 0; i < length; i++) {
     v8::Local<v8::Value> entry = array->Get(i);
-    vector[i] = FromV8<T>(entry, ok);
-    if (!ok)
+    vector[i] = FromV8<T>(entry, &entry_ok);
+    if (!entry_ok) {
+      SetOk(ok, entry_ok);
       return std::vector<T>();
+    }
   }
   return vector;
 }

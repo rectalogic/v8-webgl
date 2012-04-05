@@ -135,8 +135,8 @@ GLenum WebGLRenderingContext::get_gl_error() {
   return glGetError();
 }
 
-bool WebGLRenderingContext::TypedArrayToData(v8::Handle<v8::Value> value, void*& data, uint32_t& length, bool& ok) {
-  ok = true;
+bool WebGLRenderingContext::TypedArrayToData(v8::Handle<v8::Value> value, void*& data, uint32_t& length, bool* ok) {
+  SetOk(ok, true);
   if (ArrayBufferView::HasInstance(value) || ArrayBuffer::HasInstance(value)) {
     v8::Handle<v8::Object> object = value->ToObject();
     ArrayDataInterface* array_data = dynamic_cast<ArrayDataInterface*>(V8ObjectBase::FromV8Object(object));
@@ -144,7 +144,7 @@ bool WebGLRenderingContext::TypedArrayToData(v8::Handle<v8::Value> value, void*&
       ThrowObjectDisposed();
       length = 0;
       data = NULL;
-      ok = false;
+      SetOk(ok, false);
       return false;
     }
 
@@ -159,7 +159,7 @@ bool WebGLRenderingContext::TypedArrayToData(v8::Handle<v8::Value> value, void*&
 
 WebGLUniformLocation* WebGLRenderingContext::UniformLocationFromV8(v8::Handle<v8::Value> value) {
   bool ok = true;
-  WebGLUniformLocation* location = NativeFromV8<WebGLUniformLocation>(value, ok);
+  WebGLUniformLocation* location = NativeFromV8<WebGLUniformLocation>(value, &ok);
   // It's not an error if location is null
   if (!location || !ok)
     return NULL;

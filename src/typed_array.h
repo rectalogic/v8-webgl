@@ -95,7 +95,7 @@ class TypedArray : public V8Object<T>, public ArrayDataInterface {
 
     // TypedArray(ArrayBuffer buffer, optional unsigned long byteOffset, optional unsigned long length)
     if (ArrayBuffer::HasInstance(args[0])) {
-      ArrayBuffer* buffer = NativeFromV8<ArrayBuffer>(args[0], ok);
+      ArrayBuffer* buffer = NativeFromV8<ArrayBuffer>(args[0], &ok);
       if (!ok)
         return v8::Undefined();
       buffer_value = v8::Handle<v8::Object>::Cast(args[0]);
@@ -103,17 +103,17 @@ class TypedArray : public V8Object<T>, public ArrayDataInterface {
 
       // byteOffset
       if (args.Length() >= 2) {
-        byte_offset = FromV8<uint32_t>(args[1], ok);
+        byte_offset = FromV8<uint32_t>(args[1], &ok);
         if (!ok)
           return v8::Undefined();
-        v8::Handle<v8::Value> err = CheckAlignment(byte_offset, ok);
+        v8::Handle<v8::Value> err = CheckAlignment(byte_offset, &ok);
         if (!ok)
           return err;
       }
 
       // length
       if (args.Length() >= 3) {
-        length = FromV8<uint32_t>(args[2], ok);
+        length = FromV8<uint32_t>(args[2], &ok);
         if (!ok)
           return v8::Undefined();
       }
@@ -121,7 +121,7 @@ class TypedArray : public V8Object<T>, public ArrayDataInterface {
         if (buflen <= byte_offset)
           return ThrowRangeError("Byte offset out of range.");
         // Byte length minus offset must be multiple of element size
-        v8::Handle<v8::Value> err = CheckAlignment(buflen - byte_offset, ok);
+        v8::Handle<v8::Value> err = CheckAlignment(buflen - byte_offset, &ok);
         if (!ok)
           return err;
 
@@ -140,14 +140,14 @@ class TypedArray : public V8Object<T>, public ArrayDataInterface {
     // TypedArray(type[] array)
     else if (args[0]->IsObject()) {
       v8::Local<v8::Object> object = v8::Local<v8::Object>::Cast(args[0]);
-      length = FromV8<uint32_t>(object->Get(v8::String::New("length")), ok);
+      length = FromV8<uint32_t>(object->Get(v8::String::New("length")), &ok);
       if (!ok)
         return v8::Undefined();
 
       buffer_value = ArrayBuffer::Create(length * sizeof(TNative));
       if (buffer_value.IsEmpty())
         return v8::Undefined();
-      ArrayBuffer* buffer = NativeFromV8<ArrayBuffer>(buffer_value, ok);
+      ArrayBuffer* buffer = NativeFromV8<ArrayBuffer>(buffer_value, &ok);
       if (!ok)
         return v8::Undefined();
 
@@ -162,7 +162,7 @@ class TypedArray : public V8Object<T>, public ArrayDataInterface {
     // TypedArray(unsigned long length)
     else {
       if (args.Length() >= 1) {
-        length = FromV8<uint32_t>(args[0], ok);
+        length = FromV8<uint32_t>(args[0], &ok);
         if (!ok)
           return v8::Undefined();
       }
@@ -170,7 +170,7 @@ class TypedArray : public V8Object<T>, public ArrayDataInterface {
       buffer_value = ArrayBuffer::Create(length * sizeof(TNative));
       if (buffer_value.IsEmpty())
         return v8::Undefined();
-      ArrayBuffer* buffer = NativeFromV8<ArrayBuffer>(buffer_value, ok);
+      ArrayBuffer* buffer = NativeFromV8<ArrayBuffer>(buffer_value, &ok);
       if (!ok)
         return v8::Undefined();
 
@@ -211,9 +211,10 @@ class TypedArray : public V8Object<T>, public ArrayDataInterface {
   : V8Object<T>(true, instance) {}
 
  private:
-  inline static v8::Handle<v8::Value> CheckAlignment(uint32_t val, bool& ok) {
-    ok = (val & (sizeof(TNative) - 1)) == 0;
-    if (!ok)
+  inline static v8::Handle<v8::Value> CheckAlignment(uint32_t val, bool* ok) {
+    bool ok_ = (val & (sizeof(TNative) - 1)) == 0;
+    SetOk(ok, ok_);
+    if (!ok_)
       return ThrowRangeError("Byte offset is not aligned.");
     return v8::Undefined();
   }
