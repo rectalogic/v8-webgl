@@ -31,6 +31,16 @@ class Canvas : public V8Object<Canvas> {
   int width_;
   int height_;
 
+#define GETTER(name) static v8::Handle<v8::Value> Getter_##name(v8::Local<v8::String>, const v8::AccessorInfo&)
+  GETTER(width);
+  GETTER(height);
+#undef GETTER
+
+#define SETTER(name) static void Setter_##name(v8::Local<v8::String>, v8::Local<v8::Value>, const v8::AccessorInfo&)
+  SETTER(width);
+  SETTER(height);
+#undef SETTER
+
 #define CALLBACK(name) static v8::Handle<v8::Value> Callback_##name(const v8::Arguments& args)
   CALLBACK(getContext);
 #undef CALLBACK

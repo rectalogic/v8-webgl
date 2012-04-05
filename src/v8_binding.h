@@ -117,27 +117,57 @@ T* NativeFromV8(v8::Handle<v8::Value> value, bool& ok) {
 
 template<class T>
 std::vector<T> ArrayFromV8(v8::Handle<v8::Value> value, bool& ok) {
-  try {
-    ok = true;
-    if (value->IsUndefined() || value->IsNull())
-      return std::vector<T>();
-    if (!value->IsArray()){
-      ok = false;
-      return std::vector<T>();
-    }
-    v8::Handle<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
-    uint32_t length = array->Length();
-    std::vector<T> vector(length);
-    for (uint32_t i = 0; i < length; i++) {
-      v8::Local<v8::Value> entry = array->Get(i);
-      vector[i] = FromV8<T>(entry, ok);
-      if (!ok)
-        return std::vector<T>();
-    }
-    return vector;
-  } catch (std::exception& e) {
+  ok = true;
+  if (value->IsUndefined() || value->IsNull())
+    return std::vector<T>();
+  if (!value->IsArray()){
     ok = false;
     return std::vector<T>();
+  }
+  v8::Handle<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
+  uint32_t length = array->Length();
+  std::vector<T> vector(length);
+  for (uint32_t i = 0; i < length; i++) {
+    v8::Local<v8::Value> entry = array->Get(i);
+    vector[i] = FromV8<T>(entry, ok);
+    if (!ok)
+      return std::vector<T>();
+  }
+  return vector;
+}
+
+//////
+
+template<v8::InvocationCallback CB>
+static v8::Handle<v8::Value> InvocationCallbackCatcher(v8::Arguments const& argv) {
+  try {
+    return CB(argv);
+  } catch (std::exception const& e) {
+    return v8::ThrowException(v8::String::New(e.what()));
+  } catch (...) {
+    return v8::ThrowException(v8::String::New("Caught unknown native exception."));
+  }
+}
+
+template<v8::AccessorGetter Getter>
+static v8::Handle<v8::Value> AccessorGetterCatcher(v8::Local<v8::String> property, const v8::AccessorInfo& info) {
+  try {
+    return Getter(property, info);
+  } catch (std::exception const& e) {
+    return v8::ThrowException(v8::String::New(e.what()));
+  } catch (...) {
+    return v8::ThrowException(v8::String::New("Caught unknown native exception."));
+  }
+}
+
+template<v8::AccessorSetter Setter>
+static void AccessorSetterCatcher(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {
+  try {
+    Setter(property, value, info);
+  } catch (std::exception const& e) {
+    v8::ThrowException(v8::String::New(e.what()));
+  } catch (...) {
+    v8::ThrowException(v8::String::New("Caught unknown native exception."));
   }
 }
 
@@ -172,6 +202,10 @@ class V8ObjectBase {
   inline static void SetProperty(v8::Handle<v8::Object> self, const char* name, v8::Handle<v8::Value> value) {
     self->Set(ToV8(name), value,
               static_cast<v8::PropertyAttribute>(v8::ReadOnly|v8::DontDelete));
+  }
+
+  inline static void SetAccessor(v8::Handle<v8::ObjectTemplate> instance, const char* name, v8::AccessorGetter getter, v8::AccessorSetter setter) {
+    instance->SetAccessor(v8::String::New(name), getter, setter);
   }
 
   static v8::Persistent<v8::FunctionTemplate> CreateConstructorTemplate(const char* class_name, v8::InvocationCallback callback);

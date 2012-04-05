@@ -22,11 +22,6 @@ namespace v8_webgl {
 
 unsigned long WebGLRenderingContext::s_context_counter = 0;
 
-#define PROTO_METHOD(name) AddCallback(proto, #name, WebGLRenderingContext::Callback_##name, signature)
-#define CONSTANT(name, value) AddConstant(#name, ToV8<int32_t>(value), proto, constructor)
-#define WEBGL_ID(object)                                        \
-  object ? object->get_webgl_id() : 0
-
 
 WebGLRenderingContext::WebGLRenderingContext(int width, int height)
     : V8Object<WebGLRenderingContext>()
@@ -186,12 +181,8 @@ void WebGLRenderingContext::Log(Logger::Level level, const char *fmt, ...) {
     va_start(ap, fmt);
     int n = vsnprintf(buf, sizeof(buf), fmt, ap);
     va_end(ap);
-    try {
-      std::string msg(buf, n);
-      logger->Log(level, msg);
-    } catch (std::exception& e) {
-      fprintf(stderr, "Logging failed: %s\n", e.what());
-    }
+    std::string msg(buf, n);
+    logger->Log(level, msg);
   }
 }
 
@@ -461,6 +452,8 @@ void WebGLRenderingContext::ConfigureConstructorTemplate(v8::Persistent<v8::Func
   v8::Handle<v8::ObjectTemplate> proto = constructor->PrototypeTemplate();
   v8::Local<v8::Signature> signature = v8::Signature::New(constructor);
 
+#define PROTO_METHOD(name) AddCallback(proto, #name, InvocationCallbackCatcher<WebGLRenderingContext::Callback_##name>, signature)
+
   PROTO_METHOD(getContextAttributes);
   PROTO_METHOD(isContextLost);
   PROTO_METHOD(getSupportedExtensions);
@@ -594,6 +587,10 @@ void WebGLRenderingContext::ConfigureConstructorTemplate(v8::Persistent<v8::Func
   PROTO_METHOD(vertexAttrib4fv);
   PROTO_METHOD(vertexAttribPointer);
   PROTO_METHOD(viewport);
+
+#undef PROTO_METHOD
+
+#define CONSTANT(name, value) AddConstant(#name, ToV8<int32_t>(value), proto, constructor)
 
   // ClearBufferMask
   CONSTANT(DEPTH_BUFFER_BIT, 0x00000100);
@@ -976,6 +973,7 @@ void WebGLRenderingContext::ConfigureConstructorTemplate(v8::Persistent<v8::Func
   CONSTANT(UNPACK_COLORSPACE_CONVERSION_WEBGL, 0x9243);
   CONSTANT(BROWSER_DEFAULT_WEBGL, 0x9244);
 
+#undef CONSTANT
   //XXX add attributes (canvas, drawingBufferWidth etc.)?
 }
 

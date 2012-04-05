@@ -9,8 +9,6 @@
 
 namespace v8_webgl {
 
-#define PROTO_METHOD(name) AddCallback(proto, #name, Callback_##name, signature)
-#define ACCESSOR(name) instance->SetAccessor(v8::String::New(#name), Getter_##name, Setter_##name)
 
 //XXX Canvas is weak - maybe should be strong with dispose method?
 Canvas::Canvas(v8::Handle<v8::Object> instance)
@@ -58,7 +56,7 @@ v8::Handle<v8::Value> Canvas::Callback_getContext(const v8::Arguments& args) {
   return canvas->GetRenderingContext()->ToV8Object();
 }
 
-static void Setter_width(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {
+void Canvas::Setter_width(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {
   Canvas* canvas = Canvas::FromV8Object(info.Holder());
   if (!canvas) {
     ThrowObjectDisposed();
@@ -67,14 +65,14 @@ static void Setter_width(v8::Local<v8::String> property, v8::Local<v8::Value> va
   canvas->set_width(value->Int32Value());
 }
 
-static v8::Handle<v8::Value> Getter_width(v8::Local<v8::String> property, const v8::AccessorInfo& info) {
+v8::Handle<v8::Value> Canvas::Getter_width(v8::Local<v8::String> property, const v8::AccessorInfo& info) {
   Canvas* canvas = Canvas::FromV8Object(info.Holder());
   if (!canvas)
     return ThrowObjectDisposed();
   return v8::Integer::New(canvas->get_width());
 }
 
-static void Setter_height(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {
+void Canvas::Setter_height(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {
   Canvas* canvas = Canvas::FromV8Object(info.Holder());
   if (!canvas) {
     ThrowObjectDisposed();
@@ -83,7 +81,7 @@ static void Setter_height(v8::Local<v8::String> property, v8::Local<v8::Value> v
   canvas->set_height(value->Int32Value());
 }
 
-static v8::Handle<v8::Value> Getter_height(v8::Local<v8::String> property, const v8::AccessorInfo& info) {
+v8::Handle<v8::Value> Canvas::Getter_height(v8::Local<v8::String> property, const v8::AccessorInfo& info) {
   Canvas* canvas = Canvas::FromV8Object(info.Holder());
   if (!canvas)
     return ThrowObjectDisposed();
@@ -100,9 +98,18 @@ void Canvas::ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> c
   v8::Handle<v8::ObjectTemplate> instance = constructor->InstanceTemplate();
   v8::Local<v8::Signature> signature = v8::Signature::New(constructor);
 
+#define PROTO_METHOD(name) AddCallback(proto, #name, InvocationCallbackCatcher<Callback_##name>, signature)
+
   PROTO_METHOD(getContext);
+
+#undef PROTO_METHOD
+
+#define ACCESSOR(name) SetAccessor(instance, #name, AccessorGetterCatcher<Getter_##name>, AccessorSetterCatcher<Setter_##name>)
+
   ACCESSOR(width);
   ACCESSOR(height);
+
+#undef ACCESSOR
 }
 
 }
