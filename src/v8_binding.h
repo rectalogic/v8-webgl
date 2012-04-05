@@ -116,7 +116,8 @@ class V8Object : public V8ObjectBase {
     if (!s_constructor_template.IsEmpty())
       return;
     v8::HandleScope scope;
-    s_constructor_template = CreateConstructorTemplate(T::ClassName(), T::ConstructorCallback);
+    s_constructor_template =
+        CreateConstructorTemplate(T::ClassName(), InvocationCallbackCatcher<T::ConstructorCallback>);
     T::ConfigureConstructorTemplate(s_constructor_template);
     T::ConfigureGlobal(global);
   }

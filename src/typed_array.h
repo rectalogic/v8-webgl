@@ -212,9 +212,8 @@ class TypedArray : public V8Object<T>, public ArrayDataInterface {
 
  private:
   inline static v8::Handle<v8::Value> CheckAlignment(uint32_t val, bool* ok) {
-    bool ok_ = (val & (sizeof(TNative) - 1)) == 0;
-    SetOk(ok, ok_);
-    if (!ok_)
+    *ok = (val & (sizeof(TNative) - 1)) == 0;
+    if (!*ok)
       return ThrowRangeError("Byte offset is not aligned.");
     return v8::Undefined();
   }

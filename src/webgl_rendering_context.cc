@@ -136,7 +136,7 @@ GLenum WebGLRenderingContext::get_gl_error() {
 }
 
 bool WebGLRenderingContext::TypedArrayToData(v8::Handle<v8::Value> value, void** data, uint32_t* length, bool* ok) {
-  SetOk(ok, true);
+  *ok = true;
   if (ArrayBufferView::HasInstance(value) || ArrayBuffer::HasInstance(value)) {
     v8::Handle<v8::Object> object = value->ToObject();
     ArrayDataInterface* array_data = dynamic_cast<ArrayDataInterface*>(V8ObjectBase::FromV8Object(object));
@@ -144,7 +144,7 @@ bool WebGLRenderingContext::TypedArrayToData(v8::Handle<v8::Value> value, void**
       ThrowObjectDisposed();
       *length = 0;
       *data = NULL;
-      SetOk(ok, false);
+      *ok = false;
       return false;
     }
 
