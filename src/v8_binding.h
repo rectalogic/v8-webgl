@@ -39,10 +39,13 @@ static v8::Handle<v8::Value> InvocationCallbackCatcher(v8::Arguments const& args
   }
 }
 
-template<v8::AccessorGetter Getter>
-static v8::Handle<v8::Value> AccessorGetterCatcher(v8::Local<v8::String> property, const v8::AccessorInfo& info) {
+template<class T, v8::Handle<v8::Value> (T::*AccessorGetterMember)(v8::Local<v8::String>, const v8::AccessorInfo&)>
+static v8::Handle<v8::Value> AccessorGetterDispatcher(v8::Local<v8::String> property, const v8::AccessorInfo& info) {
+  T* object = T::FromV8Object(info.Holder());
+  if (!object)
+    return ThrowObjectDisposed();
   try {
-    return Getter(property, info);
+    return ((*object).*(AccessorGetterMember))(property, info);
   } catch (std::exception const& e) {
     return v8::ThrowException(v8::String::New(e.what()));
   } catch (...) {
@@ -50,10 +53,15 @@ static v8::Handle<v8::Value> AccessorGetterCatcher(v8::Local<v8::String> propert
   }
 }
 
-template<v8::AccessorSetter Setter>
-static void AccessorSetterCatcher(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {
+template<class T, void (T::*AccessorSetterMember)(v8::Local<v8::String>, v8::Local<v8::Value>, const v8::AccessorInfo&)>
+static void AccessorSetterDispatcher(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {
+  T* object = T::FromV8Object(info.Holder());
+  if (!object) {
+    ThrowObjectDisposed();
+    return;
+  }
   try {
-    Setter(property, value, info);
+    ((*object).*(AccessorSetterMember))(property, value, info);
   } catch (std::exception const& e) {
     v8::ThrowException(v8::String::New(e.what()));
   } catch (...) {

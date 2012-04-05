@@ -54,35 +54,19 @@ v8::Handle<v8::Value> Canvas::Callback_getContext(const v8::Arguments& args) {
 }
 
 void Canvas::Setter_width(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {
-  Canvas* canvas = Canvas::FromV8Object(info.Holder());
-  if (!canvas) {
-    ThrowObjectDisposed();
-    return;
-  }
-  canvas->set_width(value->Int32Value());
+  set_width(value->Int32Value());
 }
 
 v8::Handle<v8::Value> Canvas::Getter_width(v8::Local<v8::String> property, const v8::AccessorInfo& info) {
-  Canvas* canvas = Canvas::FromV8Object(info.Holder());
-  if (!canvas)
-    return ThrowObjectDisposed();
-  return v8::Integer::New(canvas->get_width());
+  return v8::Integer::New(get_width());
 }
 
 void Canvas::Setter_height(v8::Local<v8::String> property, v8::Local<v8::Value> value, const v8::AccessorInfo& info) {
-  Canvas* canvas = Canvas::FromV8Object(info.Holder());
-  if (!canvas) {
-    ThrowObjectDisposed();
-    return;
-  }
-  canvas->set_height(value->Int32Value());
+  set_height(value->Int32Value());
 }
 
 v8::Handle<v8::Value> Canvas::Getter_height(v8::Local<v8::String> property, const v8::AccessorInfo& info) {
-  Canvas* canvas = Canvas::FromV8Object(info.Holder());
-  if (!canvas)
-    return ThrowObjectDisposed();
-  return v8::Integer::New(canvas->get_height());
+  return v8::Integer::New(get_height());
 }
 
 v8::Handle<v8::Value> Canvas::ConstructorCallback(const v8::Arguments& args) {
@@ -101,7 +85,7 @@ void Canvas::ConfigureConstructorTemplate(v8::Persistent<v8::FunctionTemplate> c
 
 #undef PROTO_METHOD
 
-#define ACCESSOR(name) SetAccessor(instance, #name, AccessorGetterCatcher<Getter_##name>, AccessorSetterCatcher<Setter_##name>)
+#define ACCESSOR(name) SetAccessor(instance, #name, AccessorGetterDispatcher<Canvas, &Canvas::Getter_##name>, AccessorSetterDispatcher<Canvas, &Canvas::Setter_##name>)
 
   ACCESSOR(width);
   ACCESSOR(height);
