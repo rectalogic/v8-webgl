@@ -56,6 +56,10 @@ template<>
 inline v8::Handle<v8::Value> ToV8<const char*>(const char* value) {
   return v8::String::New(value);
 }
+template<>
+inline v8::Handle<v8::Value> ToV8<std::string>(std::string value) {
+  return v8::String::New(value.data(), value.size());
+}
 
 template<typename T>
 v8::Handle<v8::Array> ArrayToV8(T* values, uint32_t length) {

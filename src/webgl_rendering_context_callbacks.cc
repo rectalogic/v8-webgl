@@ -19,25 +19,6 @@
 
 namespace v8_webgl {
 
-// Emulate GLES2 constants
-#ifndef GL_MAX_FRAGMENT_UNIFORM_VECTORS
-#define GL_MAX_FRAGMENT_UNIFORM_VECTORS 0x8DFD
-#endif
-#ifndef GL_MAX_VERTEX_UNIFORM_VECTORS
-#define GL_MAX_VERTEX_UNIFORM_VECTORS 0x8DFB
-#endif
-#ifndef GL_MAX_VARYING_VECTORS
-#define GL_MAX_VARYING_VECTORS 0x8DFC
-#endif
-#ifndef GL_RGB565
-#define GL_RGB565 0x8D62
-#endif
-
-// WebGL specific
-#define GL_UNPACK_FLIP_Y_WEBGL 0x9240
-#define GL_UNPACK_PREMULTIPLY_ALPHA_WEBGL 0x9241
-#define GL_UNPACK_COLORSPACE_CONVERSION_WEBGL 0x9243
-
 static inline v8::Handle<v8::Primitive> U() {
   return v8::Undefined();
 }
@@ -490,7 +471,6 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_colorMask(const v8::Argume
   return U();
 }
 
-//XXX need to use ANGLE to translate shader source - see GraphicsContext3D::compileShader
 // void compileShader(WebGLShader shader);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_compileShader(const v8::Arguments& args) {
   bool ok = true;
@@ -498,7 +478,33 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_compileShader(const v8::Ar
   if (!RequireObject(shader)) return U();
   if (!ValidateObject(shader)) return U();
   GLuint shader_id = shader->get_webgl_id();
+  GLint shader_type = 0;
+  glGetShaderiv(shader_id, GL_SHADER_TYPE, &shader_type);
+  if (shader_type == 0)
+    return U();
+
+  std::string translated_source;
+  std::string shader_log;
+  bool is_valid = shader_compiler_.TranslateShaderSource
+                  (shader->source().c_str(), shader_type,
+                   &translated_source, &shader_log);
+
+  shader->set_is_valid(is_valid);
+  shader->set_log(shader_log);
+  if (!is_valid)
+    return U();
+
+  // Compile translated source
+  const char* shader_source[] = { translated_source.c_str() };
+  glShaderSource(shader_id, 1, shader_source, NULL);
   glCompileShader(shader_id);
+
+  //XXX should assert translated compile status is GL_TRUE
+#if 0
+  GLint compile_status = 0;
+  glGetShaderiv(shader_id, GL_COMPILE_STATUS, &compile_status);
+#endif
+
   return U();
 }
 
@@ -944,7 +950,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getParameter(const v8::Arg
     case GL_STENCIL_VALUE_MASK:
     case GL_STENCIL_WRITEMASK: {
       GLint value = 0;
-      glGetIntegerv(pname, &value);
+      GetIntegerv(pname, &value);
       return ToV8(static_cast<uint32_t>(value));
     }
 
@@ -965,33 +971,15 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getParameter(const v8::Arg
 
     case GL_MAX_VIEWPORT_DIMS: {
       GLint value[2] = {0};
-      glGetIntegerv(pname, value);
+      GetIntegerv(pname, value);
       return Int32Array::Create(value, 2);
     }
 
     case GL_SCISSOR_BOX:
     case GL_VIEWPORT: {
       GLint value[4] = {0};
-      glGetIntegerv(pname, value);
+      GetIntegerv(pname, value);
       return Int32Array::Create(value, 4);
-    }
-
-    // Emulate GLES2 queries for desktop GL
-
-    case GL_MAX_FRAGMENT_UNIFORM_VECTORS: {
-      GLint value = 0;
-      glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &value);
-      return ToV8(value / 4);
-    }
-    case GL_MAX_VERTEX_UNIFORM_VECTORS: {
-      GLint value = 0;
-      glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &value);
-      return ToV8(value / 4);
-    }
-    case GL_MAX_VARYING_VECTORS: {
-      GLint value = 0;
-      glGetIntegerv(GL_MAX_VARYING_FLOATS, &value);
-      return ToV8(value / 4);
     }
 
     case GL_ALPHA_BITS:
@@ -1000,11 +988,14 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getParameter(const v8::Arg
     case GL_GREEN_BITS:
     case GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS:
     case GL_MAX_CUBE_MAP_TEXTURE_SIZE:
+    case GL_MAX_FRAGMENT_UNIFORM_VECTORS:
     case GL_MAX_RENDERBUFFER_SIZE:
     case GL_MAX_TEXTURE_IMAGE_UNITS:
     case GL_MAX_TEXTURE_SIZE:
+    case GL_MAX_VARYING_VECTORS:
     case GL_MAX_VERTEX_ATTRIBS:
     case GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS:
+    case GL_MAX_VERTEX_UNIFORM_VECTORS:
 #if 0
     case GL_NUM_SHADER_BINARY_FORMATS:
       //XXX not sure about this
@@ -1020,7 +1011,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getParameter(const v8::Arg
     case GL_SUBPIXEL_BITS:
     case GL_UNPACK_ALIGNMENT: {
       GLint value = 0;
-      glGetIntegerv(pname, &value);
+      GetIntegerv(pname, &value);
       return ToV8(value);
     }
 
@@ -1060,7 +1051,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getParameter(const v8::Arg
     case GL_ARRAY_BUFFER_BINDING:
     case GL_ELEMENT_ARRAY_BUFFER_BINDING: {
       GLint buffer_id = 0;
-      glGetIntegerv(pname, &buffer_id);
+      GetIntegerv(pname, &buffer_id);
       WebGLBuffer* buffer = IdToBuffer(buffer_id);
       return ToV8OrNull(buffer);
     }
@@ -1071,7 +1062,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getParameter(const v8::Arg
 
     case GL_CURRENT_PROGRAM: {
       GLint program_id = 0;
-      glGetIntegerv(pname, &program_id);
+      GetIntegerv(pname, &program_id);
       WebGLProgram* program = IdToProgram(program_id);
       return ToV8OrNull(program);
     }
@@ -1079,7 +1070,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getParameter(const v8::Arg
     case GL_FRAMEBUFFER_BINDING:
     case GL_RENDERBUFFER_BINDING: {
       GLint framebuffer_id = 0;
-      glGetIntegerv(pname, &framebuffer_id);
+      GetIntegerv(pname, &framebuffer_id);
       WebGLFramebuffer* framebuffer = IdToFramebuffer(framebuffer_id);
       return ToV8OrNull(framebuffer);
     }
@@ -1095,7 +1086,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getParameter(const v8::Arg
     case GL_TEXTURE_BINDING_2D:
     case GL_TEXTURE_BINDING_CUBE_MAP: {
       GLint texture_id = 0;
-      glGetIntegerv(pname, &texture_id);
+      GetIntegerv(pname, &texture_id);
       WebGLTexture* texture = IdToTexture(texture_id);
       return ToV8OrNull(texture);
     }
@@ -1229,9 +1220,23 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getProgramParameter(const 
   }
 }
 
-//XXX should use log from ANGLE
 // DOMString getProgramInfoLog(WebGLProgram program);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_getProgramInfoLog(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_getProgramInfoLog(const v8::Arguments& args) {
+  bool ok = true;
+  WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], &ok); if (!ok) return U();
+  if (!RequireObject(program)) return U();
+  if (!ValidateObject(program)) return U();
+  GLuint program_id = program->get_webgl_id();
+  GLint length = 0;
+  glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &length);
+  if (!length)
+    return v8::String::Empty();
+  GLsizei size = 0;
+  std::vector<char> buffer(length);
+  glGetProgramInfoLog(program_id, length, &size, &buffer[0]);
+  std::string log(&buffer[0], size);
+  return ToV8(log);
+}
 
 // any getRenderbufferParameter(GLenum target, GLenum pname);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_getRenderbufferParameter(const v8::Arguments& args) {
@@ -1271,14 +1276,19 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getShaderParameter(const v
   if (!ValidateObject(shader)) return U();
   GLuint shader_id = shader->get_webgl_id();
   GLenum pname = FromV8<uint32_t>(args[1], &ok); if (!ok) return U();
-  GLint value = 0;
-  glGetShaderiv(shader_id, pname, &value);
   switch (pname) {
-    case GL_DELETE_STATUS:
     case GL_COMPILE_STATUS:
-      return ToV8(static_cast<bool>(value));
-    case GL_SHADER_TYPE:
+      return ToV8(shader->is_valid());
+    case GL_DELETE_STATUS: {
+      GLint value = 0;
+      glGetShaderiv(shader_id, pname, &value);
+      return ToV8<bool>(static_cast<bool>(value));
+    }
+    case GL_SHADER_TYPE: {
+      GLint value = 0;
+      glGetShaderiv(shader_id, pname, &value);
       return ToV8<uint32_t>(value);
+    }
     default:
       set_gl_error(GL_INVALID_ENUM);
       return v8::Null();
@@ -1286,10 +1296,33 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getShaderParameter(const v
 }
 
 // DOMString getShaderInfoLog(WebGLShader shader);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_getShaderInfoLog(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_getShaderInfoLog(const v8::Arguments& args) {
+  bool ok = true;
+  WebGLShader* shader = NativeFromV8<WebGLShader>(args[0], &ok); if (!ok) return U();
+  if (!RequireObject(shader)) return U();
+  if (!ValidateObject(shader)) return U();
+  if (!shader->is_valid())
+    return ToV8(shader->log());
+
+  GLuint shader_id = shader->get_webgl_id();
+  GLint length = 0;
+  glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &length);
+  if (!length)
+    return v8::String::Empty();
+  GLsizei size = 0;
+  std::vector<char> vector(length);
+  glGetShaderInfoLog(shader_id, length, &size, &vector[0]);
+  return ToV8<const char*>(static_cast<const char*>(&vector[0]));
+}
 
 // DOMString getShaderSource(WebGLShader shader);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_getShaderSource(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_getShaderSource(const v8::Arguments& args) {
+  bool ok = true;
+  WebGLShader* shader = NativeFromV8<WebGLShader>(args[0], &ok); if (!ok) return U();
+  if (!RequireObject(shader)) return U();
+  if (!ValidateObject(shader)) return U();
+  return ToV8(shader->source());
+}
 
 // any getTexParameter(GLenum target, GLenum pname);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_getTexParameter(const v8::Arguments& args) {
@@ -1700,7 +1733,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_readPixels(const v8::Argum
   if (!RequireObject(array)) return U();
 
   GLint alignment = 4;
-  glGetIntegerv(GL_PACK_ALIGNMENT, &alignment);
+  GetIntegerv(GL_PACK_ALIGNMENT, &alignment);
   // GL_RGBA is 4 bytes per pixel
   uint32_t row_bytes = width * 4;
   if (row_bytes % alignment != 0)
@@ -1779,9 +1812,16 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_scissor(const v8::Argument
   return U();
 }
 
-//XXX stash this in shader for use with ANGLE when compiling?
 // void shaderSource(WebGLShader shader, DOMString source);
-v8::Handle<v8::Value> WebGLRenderingContext::Callback_shaderSource(const v8::Arguments& args) { return U(); /*XXX finish*/ }
+v8::Handle<v8::Value> WebGLRenderingContext::Callback_shaderSource(const v8::Arguments& args) {
+  bool ok = true;
+  WebGLShader* shader = NativeFromV8<WebGLShader>(args[0], &ok); if (!ok) return U();
+  if (!RequireObject(shader)) return U();
+  if (!ValidateObject(shader)) return U();
+  std::string source = FromV8<std::string>(args[1], &ok); if (!ok) return U();
+  shader->set_source(source);
+  return U();
+}
 
 // void stencilFunc(GLenum func, GLint ref, GLuint mask);
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_stencilFunc(const v8::Arguments& args) {

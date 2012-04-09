@@ -7,13 +7,10 @@
 
 #include <v8_webgl.h>
 #include "v8_binding.h"
+#include "shader_compiler.h"
 #include <map>
 
-#if defined(__APPLE__)
-#include <OpenGL/gl.h>
-#else
-#include <GL/gl.h>
-#endif
+#include "gl.h"
 
 namespace v8_webgl {
 class GraphicContext;
@@ -55,6 +52,7 @@ class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
   GraphicContext* graphic_context_;
   unsigned long context_id_;
   GLenum gl_error_;
+  ShaderCompiler shader_compiler_;
 
   std::map<GLuint, WebGLBuffer*> buffer_map_;
   std::map<GLuint, WebGLFramebuffer*> framebuffer_map_;
@@ -153,6 +151,9 @@ class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
   bool ValidateBufferDataParameters(const char* function, GLenum target, GLenum usage);
   bool ValidateTexParameter(const char* function, GLenum pname, GLint param);
 
+  // Use instead of glGetIntegerv
+  void GetIntegerv(GLenum pname, GLint* value);
+
   static unsigned long s_context_counter;
 
   template<typename> friend class UVAHelper;
@@ -161,6 +162,7 @@ class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
   template<typename> friend class VertexAttribHelper;
 
   friend class Canvas;
+  friend class ShaderCompiler;
 
 #define CALLBACK(name) v8::Handle<v8::Value> Callback_##name(const v8::Arguments& args)
   CALLBACK(getContextAttributes);

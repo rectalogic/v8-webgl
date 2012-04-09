@@ -28,6 +28,12 @@ WebGLRenderingContext::WebGLRenderingContext(int width, int height)
     , graphic_context_(GetFactory()->CreateGraphicContext(width, height))
     , context_id_(s_context_counter++)
     , gl_error_(GL_NONE) {
+  shader_compiler_.Init(this);
+
+  // https://bugs.webkit.org/show_bug.cgi?id=61945
+  glEnable(GL_POINT_SPRITE);
+  glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+  glClearColor(0, 0, 0, 0);
 }
 
 WebGLRenderingContext::~WebGLRenderingContext() {
@@ -133,6 +139,29 @@ GLenum WebGLRenderingContext::get_gl_error() {
     return err;
   }
   return glGetError();
+}
+
+void WebGLRenderingContext::GetIntegerv(GLenum pname, GLint* value) {
+  switch (pname) {
+    // Emulate GLES2 queries for desktop GL.
+    // Desktop returns number of components, GLES2 returns number of vectors
+    // (each vector has 4 components);
+    case GL_MAX_FRAGMENT_UNIFORM_VECTORS:
+      glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, value);
+      *value /= 4;
+      break;
+    case GL_MAX_VERTEX_UNIFORM_VECTORS:
+      glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, value);
+      *value /= 4;
+      break;
+    case GL_MAX_VARYING_VECTORS:
+      glGetIntegerv(GL_MAX_VARYING_FLOATS, value);
+      *value /= 4;
+      break;
+    default:
+      glGetIntegerv(pname, value);
+      break;
+  }
 }
 
 bool WebGLRenderingContext::TypedArrayToData(v8::Handle<v8::Value> value, void** data, uint32_t* length, bool* ok) {
