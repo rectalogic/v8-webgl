@@ -27,7 +27,7 @@ class WebGLObject : public V8Object<V>, public WebGLObjectInterface {
       , webgl_id_(webgl_id) {}
 
   bool ValidateContext(WebGLRenderingContext* context) { return context->get_context_id() == context_id_; }
-  T get_webgl_id() { return webgl_id_; }
+  T webgl_id() { return webgl_id_; }
 
  private:
   unsigned long context_id_;

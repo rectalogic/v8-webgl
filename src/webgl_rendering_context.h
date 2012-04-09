@@ -120,7 +120,7 @@ class WebGLRenderingContext : public V8Object<WebGLRenderingContext> {
   }
 
   void set_gl_error(GLenum error);
-  GLenum get_gl_error();
+  GLenum gl_error();
 
   static bool TypedArrayToData(v8::Handle<v8::Value> value, void** data, uint32_t* length, bool* ok);
   static void Log(Logger::Level level, const char *fmt, ...);

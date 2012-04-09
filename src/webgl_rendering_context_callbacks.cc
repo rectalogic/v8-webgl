@@ -89,7 +89,7 @@ class UniformHelper : public UVAHelper<TNative> {
     location_id_ = 0;
     WebGLUniformLocation* location = this->GetContext()->UniformLocationFromV8(args[0]);
     if (!location) return -1;
-    location_id_ = location->get_webgl_id();
+    location_id_ = location->webgl_id();
     return 1;
   }
   void InvokeGL(uint32_t array_length, const TNative* array_data) {
@@ -122,7 +122,7 @@ class UniformMatrixHelper : public UVAHelper<TNative> {
     location_id_ = 0;
     WebGLUniformLocation* location = this->GetContext()->UniformLocationFromV8(args[0]);
     if (!location) return -1;
-    location_id_ = location->get_webgl_id();
+    location_id_ = location->webgl_id();
     bool transpose = FromV8<bool>(args[1], &ok);
     if (!ok)
       return -1;
@@ -212,11 +212,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_attachShader(const v8::Arg
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], &ok); if (!ok) return U();
   if (!RequireObject(program)) return U();
   if (!ValidateObject(program)) return U();
-  GLuint program_id = program->get_webgl_id();
+  GLuint program_id = program->webgl_id();
   WebGLShader* shader = NativeFromV8<WebGLShader>(args[1], &ok); if (!ok) return U();
   if (!RequireObject(shader)) return U();
   if (!ValidateObject(shader)) return U();
-  GLuint shader_id = shader->get_webgl_id();
+  GLuint shader_id = shader->webgl_id();
   glAttachShader(program_id, shader_id);
   return U();
 }
@@ -227,7 +227,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bindAttribLocation(const v
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], &ok); if (!ok) return U();
   if (!RequireObject(program)) return U();
   if (!ValidateObject(program)) return U();
-  GLuint program_id = program->get_webgl_id();
+  GLuint program_id = program->webgl_id();
   GLuint index = FromV8<uint32_t>(args[1], &ok); if (!ok) return U();
   std::string name = FromV8<std::string>(args[2], &ok); if (!ok) return U();
   glBindAttribLocation(program_id, index, name.c_str());
@@ -248,7 +248,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bindBuffer(const v8::Argum
   }
   WebGLBuffer* buffer = NativeFromV8<WebGLBuffer>(args[1], &ok); if (!ok) return U();
   if (!ValidateObject(buffer)) return U();
-  GLuint buffer_id = buffer ? buffer->get_webgl_id() : 0;
+  GLuint buffer_id = buffer ? buffer->webgl_id() : 0;
   glBindBuffer(target, buffer_id);
   return U();
 }
@@ -263,7 +263,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bindFramebuffer(const v8::
   }
   WebGLFramebuffer* framebuffer = NativeFromV8<WebGLFramebuffer>(args[1], &ok); if (!ok) return U();
   if (!ValidateObject(framebuffer)) return U();
-  GLuint framebuffer_id = framebuffer ? framebuffer->get_webgl_id() : 0;
+  GLuint framebuffer_id = framebuffer ? framebuffer->webgl_id() : 0;
   //XXX glBindFramebufferEXT
   glBindFramebuffer(target, framebuffer_id);
   return U();
@@ -279,7 +279,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bindRenderbuffer(const v8:
   }
   WebGLRenderbuffer* renderbuffer = NativeFromV8<WebGLRenderbuffer>(args[1], &ok); if (!ok) return U();
   if (!ValidateObject(renderbuffer)) return U();
-  GLuint renderbuffer_id = renderbuffer ? renderbuffer->get_webgl_id() : 0;
+  GLuint renderbuffer_id = renderbuffer ? renderbuffer->webgl_id() : 0;
   //XXX glBindRenderbufferEXT
   glBindRenderbuffer(target, renderbuffer_id);
   return U();
@@ -299,7 +299,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_bindTexture(const v8::Argu
   }
   WebGLTexture* texture = NativeFromV8<WebGLTexture>(args[1], &ok); if (!ok) return U();
   if (!ValidateObject(texture)) return U();
-  GLuint texture_id = texture ? texture->get_webgl_id() : 0;
+  GLuint texture_id = texture ? texture->webgl_id() : 0;
   glBindTexture(target, texture_id);
   return U();
 }
@@ -477,7 +477,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_compileShader(const v8::Ar
   WebGLShader* shader = NativeFromV8<WebGLShader>(args[0], &ok); if (!ok) return U();
   if (!RequireObject(shader)) return U();
   if (!ValidateObject(shader)) return U();
-  GLuint shader_id = shader->get_webgl_id();
+  GLuint shader_id = shader->webgl_id();
   GLint shader_type = 0;
   glGetShaderiv(shader_id, GL_SHADER_TYPE, &shader_type);
   if (shader_type == 0)
@@ -606,7 +606,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_deleteBuffer(const v8::Arg
   bool ok = true;
   WebGLBuffer* buffer = NativeFromV8<WebGLBuffer>(args[0], &ok); if (!ok) return U();
   if (!ValidateObject(buffer)) return U();
-  GLuint buffer_id = buffer ? buffer->get_webgl_id() : 0;
+  GLuint buffer_id = buffer ? buffer->webgl_id() : 0;
   glDeleteBuffers(1, &buffer_id);
   DeleteBuffer(buffer);
   return U();
@@ -617,7 +617,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_deleteFramebuffer(const v8
   bool ok = true;
   WebGLFramebuffer* framebuffer = NativeFromV8<WebGLFramebuffer>(args[0], &ok); if (!ok) return U();
   if (!ValidateObject(framebuffer)) return U();
-  GLuint framebuffer_id = framebuffer ? framebuffer->get_webgl_id() : 0;
+  GLuint framebuffer_id = framebuffer ? framebuffer->webgl_id() : 0;
   //XXX glDeleteFramebuffersEXT etc.
   glDeleteFramebuffers(1, &framebuffer_id);
   DeleteFramebuffer(framebuffer);
@@ -629,7 +629,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_deleteProgram(const v8::Ar
   bool ok = true;
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], &ok); if (!ok) return U();
   if (!ValidateObject(program)) return U();
-  GLuint program_id = program ? program->get_webgl_id() : 0;
+  GLuint program_id = program ? program->webgl_id() : 0;
   glDeleteProgram(program_id);
   DeleteProgram(program);
   return U();
@@ -640,7 +640,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_deleteRenderbuffer(const v
   bool ok = true;
   WebGLRenderbuffer* renderbuffer = NativeFromV8<WebGLRenderbuffer>(args[0], &ok); if (!ok) return U();
   if (!ValidateObject(renderbuffer)) return U();
-  GLuint renderbuffer_id = renderbuffer ? renderbuffer->get_webgl_id() : 0;
+  GLuint renderbuffer_id = renderbuffer ? renderbuffer->webgl_id() : 0;
   //XXX glDeleteRenderbuffersEXT etc.
   glDeleteRenderbuffers(1, &renderbuffer_id);
   DeleteRenderbuffer(renderbuffer);
@@ -652,7 +652,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_deleteShader(const v8::Arg
   bool ok = true;
   WebGLShader* shader = NativeFromV8<WebGLShader>(args[0], &ok); if (!ok) return U();
   if (!ValidateObject(shader)) return U();
-  GLuint shader_id = shader ? shader->get_webgl_id() : 0;
+  GLuint shader_id = shader ? shader->webgl_id() : 0;
   glDeleteShader(shader_id);
   DeleteShader(shader);
   return U();
@@ -663,7 +663,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_deleteTexture(const v8::Ar
   bool ok = true;
   WebGLTexture* texture = NativeFromV8<WebGLTexture>(args[0], &ok); if (!ok) return U();
   if (!ValidateObject(texture)) return U();
-  GLuint texture_id = texture ? texture->get_webgl_id() : 0;
+  GLuint texture_id = texture ? texture->webgl_id() : 0;
   glDeleteTextures(1, &texture_id);
   DeleteTexture(texture);
   return U();
@@ -700,11 +700,11 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_detachShader(const v8::Arg
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], &ok); if (!ok) return U();
   if (!RequireObject(program)) return U();
   if (!ValidateObject(program)) return U();
-  GLuint program_id = program->get_webgl_id();
+  GLuint program_id = program->webgl_id();
   WebGLShader* shader = NativeFromV8<WebGLShader>(args[1], &ok); if (!ok) return U();
   if (!RequireObject(shader)) return U();
   if (!ValidateObject(shader)) return U();
-  GLuint shader_id = shader->get_webgl_id();
+  GLuint shader_id = shader->webgl_id();
   glDetachShader(program_id, shader_id);
   return U();
 }
@@ -798,7 +798,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_framebufferRenderbuffer(co
   }
   WebGLRenderbuffer* renderbuffer = NativeFromV8<WebGLRenderbuffer>(args[3], &ok); if (!ok) return U();
   if (!ValidateObject(renderbuffer)) return U();
-  GLuint renderbuffer_id = renderbuffer ? renderbuffer->get_webgl_id() : 0;
+  GLuint renderbuffer_id = renderbuffer ? renderbuffer->webgl_id() : 0;
   //XXX glFramebufferRenderbufferEXT
   glFramebufferRenderbuffer(target, attachment, renderbuffertarget, renderbuffer_id);
   return U();
@@ -815,7 +815,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_framebufferTexture2D(const
   GLenum textarget = FromV8<uint32_t>(args[2], &ok); if (!ok) return U();
   WebGLTexture* texture = NativeFromV8<WebGLTexture>(args[3], &ok); if (!ok) return U();
   if (!ValidateObject(texture)) return U();
-  GLuint texture_id = texture ? texture->get_webgl_id() : 0;
+  GLuint texture_id = texture ? texture->webgl_id() : 0;
   GLint level = FromV8<int32_t>(args[4], &ok); if (!ok) return U();
   //XXX glFramebufferTexture2DEXT
   glFramebufferTexture2D(target, attachment, textarget, texture_id, level);
@@ -845,7 +845,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getActiveAttrib(const v8::
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], &ok); if (!ok) return U();
   if (!RequireObject(program)) return U();
   if (!ValidateObject(program)) return U();
-  GLuint program_id = program->get_webgl_id();
+  GLuint program_id = program->webgl_id();
   GLuint index = FromV8<uint32_t>(args[1], &ok); if (!ok) return U();
 
   GLint max_name_length = 0;
@@ -865,7 +865,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getActiveUniform(const v8:
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], &ok); if (!ok) return U();
   if (!RequireObject(program)) return U();
   if (!ValidateObject(program)) return U();
-  GLuint program_id = program->get_webgl_id();
+  GLuint program_id = program->webgl_id();
   GLuint index = FromV8<uint32_t>(args[1], &ok); if (!ok) return U();
 
   GLint max_name_length = 0;
@@ -895,7 +895,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getAttachedShaders(const v
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], &ok); if (!ok) return U();
   if (!RequireObject(program)) return U();
   if (!ValidateObject(program)) return U();
-  GLuint program_id = program->get_webgl_id();
+  GLuint program_id = program->webgl_id();
   GLuint shaders[2] = {0};
   GLsizei count = 0;
   glGetAttachedShaders(program_id, 2, &count, shaders);
@@ -915,7 +915,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getAttribLocation(const v8
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], &ok); if (!ok) return U();
   if (!RequireObject(program)) return U();
   if (!ValidateObject(program)) return U();
-  GLuint program_id = program->get_webgl_id();
+  GLuint program_id = program->webgl_id();
   std::string name = FromV8<std::string>(args[1], &ok); if (!ok) return U();
   GLint location = glGetAttribLocation(program_id, name.c_str());
   return ToV8(location);
@@ -1148,7 +1148,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getBufferParameter(const v
 
 // GLenum getError();
 v8::Handle<v8::Value> WebGLRenderingContext::Callback_getError(const v8::Arguments& args) {
-  GLenum error = get_gl_error();
+  GLenum error = gl_error();
   return ToV8(error);
 }
 
@@ -1200,7 +1200,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getProgramParameter(const 
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], &ok); if (!ok) return U();
   if (!RequireObject(program)) return U();
   if (!ValidateObject(program)) return U();
-  GLuint program_id = program->get_webgl_id();
+  GLuint program_id = program->webgl_id();
   GLenum pname = FromV8<uint32_t>(args[1], &ok); if (!ok) return U();
   GLint value = 0;
   glGetProgramiv(program_id, pname, &value);
@@ -1226,7 +1226,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getProgramInfoLog(const v8
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], &ok); if (!ok) return U();
   if (!RequireObject(program)) return U();
   if (!ValidateObject(program)) return U();
-  GLuint program_id = program->get_webgl_id();
+  GLuint program_id = program->webgl_id();
   GLint length = 0;
   glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &length);
   if (!length)
@@ -1274,7 +1274,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getShaderParameter(const v
   WebGLShader* shader = NativeFromV8<WebGLShader>(args[0], &ok); if (!ok) return U();
   if (!RequireObject(shader)) return U();
   if (!ValidateObject(shader)) return U();
-  GLuint shader_id = shader->get_webgl_id();
+  GLuint shader_id = shader->webgl_id();
   GLenum pname = FromV8<uint32_t>(args[1], &ok); if (!ok) return U();
   switch (pname) {
     case GL_COMPILE_STATUS:
@@ -1304,7 +1304,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getShaderInfoLog(const v8:
   if (!shader->is_valid())
     return ToV8(shader->log());
 
-  GLuint shader_id = shader->get_webgl_id();
+  GLuint shader_id = shader->webgl_id();
   GLint length = 0;
   glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &length);
   if (!length)
@@ -1425,12 +1425,12 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getUniform(const v8::Argum
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], &ok); if (!ok) return U();
   if (!RequireObject(program)) return U();
   if (!ValidateObject(program)) return U();
-  GLuint program_id = program->get_webgl_id();
+  GLuint program_id = program->webgl_id();
   WebGLUniformLocation* location = NativeFromV8<WebGLUniformLocation>(args[1], &ok); if (!ok) return U();
   if (!RequireObject(location)) return U();
   if (!ValidateLocationProgram(location, program_id)) return U();
 
-  GLint location_id = location->get_webgl_id();
+  GLint location_id = location->webgl_id();
   GLint active_uniforms = 0;
   glGetProgramiv(program_id, GL_ACTIVE_UNIFORMS, &active_uniforms);
   GLint max_name_length = 0;
@@ -1513,7 +1513,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_getUniformLocation(const v
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], &ok); if (!ok) return U();
   if (!RequireObject(program)) return U();
   if (!ValidateObject(program)) return U();
-  GLuint program_id = program->get_webgl_id();
+  GLuint program_id = program->webgl_id();
   std::string name = FromV8<std::string>(args[1], &ok); if (!ok) return U();
   GLint location_id = glGetUniformLocation(program_id, name.c_str());
   WebGLUniformLocation* location = CreateUniformLocation(program_id, location_id);
@@ -1590,7 +1590,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isBuffer(const v8::Argumen
   WebGLBuffer* buffer = NativeFromV8<WebGLBuffer>(args[0], &ok); if (!ok) return U();
   if (!buffer)
     return ToV8(false);
-  GLuint buffer_id = buffer ? buffer->get_webgl_id() : 0;
+  GLuint buffer_id = buffer ? buffer->webgl_id() : 0;
   return ToV8<bool>(glIsBuffer(buffer_id));
 }
 
@@ -1610,7 +1610,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isFramebuffer(const v8::Ar
   WebGLFramebuffer* framebuffer = NativeFromV8<WebGLFramebuffer>(args[0], &ok); if (!ok) return U();
   if (!framebuffer)
     return ToV8(false);
-  GLuint framebuffer_id = framebuffer ? framebuffer->get_webgl_id() : 0;
+  GLuint framebuffer_id = framebuffer ? framebuffer->webgl_id() : 0;
   return ToV8<bool>(glIsFramebuffer(framebuffer_id));
 }
 
@@ -1620,7 +1620,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isProgram(const v8::Argume
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], &ok); if (!ok) return U();
   if (!program)
     return ToV8(false);
-  GLuint program_id = program ? program->get_webgl_id() : 0;
+  GLuint program_id = program ? program->webgl_id() : 0;
   return ToV8<bool>(glIsProgram(program_id));
 }
 
@@ -1630,7 +1630,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isRenderbuffer(const v8::A
   WebGLRenderbuffer* renderbuffer = NativeFromV8<WebGLRenderbuffer>(args[0], &ok); if (!ok) return U();
   if (!renderbuffer)
     return ToV8(false);
-  GLuint renderbuffer_id = renderbuffer ? renderbuffer->get_webgl_id() : 0;
+  GLuint renderbuffer_id = renderbuffer ? renderbuffer->webgl_id() : 0;
   return ToV8<bool>(glIsRenderbuffer(renderbuffer_id));
 }
 
@@ -1640,7 +1640,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isShader(const v8::Argumen
   WebGLShader* shader = NativeFromV8<WebGLShader>(args[0], &ok); if (!ok) return U();
   if (!shader)
     return ToV8(false);
-  GLuint shader_id = shader ? shader->get_webgl_id() : 0;
+  GLuint shader_id = shader ? shader->webgl_id() : 0;
   return ToV8<bool>(glIsShader(shader_id));
 }
 
@@ -1650,7 +1650,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_isTexture(const v8::Argume
   WebGLTexture* texture = NativeFromV8<WebGLTexture>(args[0], &ok); if (!ok) return U();
   if (!texture)
     return ToV8(false);
-  GLuint texture_id = texture ? texture->get_webgl_id() : 0;
+  GLuint texture_id = texture ? texture->webgl_id() : 0;
   return ToV8<bool>(glIsTexture(texture_id));
 }
 
@@ -1668,7 +1668,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_linkProgram(const v8::Argu
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], &ok); if (!ok) return U();
   if (!RequireObject(program)) return U();
   if (!ValidateObject(program)) return U();
-  GLuint program_id = program->get_webgl_id();
+  GLuint program_id = program->webgl_id();
   glLinkProgram(program_id);
   return U();
 }
@@ -1969,7 +1969,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1f(const v8::Argume
   bool ok = true;
   WebGLUniformLocation* location = UniformLocationFromV8(args[0]);
   if (!location) return U();
-  GLuint location_id = location->get_webgl_id();
+  GLuint location_id = location->webgl_id();
 
   GLfloat x = FromV8<float>(args[1], &ok); if (!ok) return U();
   glUniform1f(location_id, x);
@@ -1988,7 +1988,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform1i(const v8::Argume
   bool ok = true;
   WebGLUniformLocation* location = UniformLocationFromV8(args[0]);
   if (!location) return U();
-  GLuint location_id = location->get_webgl_id();
+  GLuint location_id = location->webgl_id();
 
   GLint x = FromV8<int32_t>(args[1], &ok); if (!ok) return U();
   glUniform1i(location_id, x);
@@ -2007,7 +2007,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform2f(const v8::Argume
   bool ok = true;
   WebGLUniformLocation* location = UniformLocationFromV8(args[0]);
   if (!location) return U();
-  GLuint location_id = location->get_webgl_id();
+  GLuint location_id = location->webgl_id();
 
   GLfloat x = FromV8<float>(args[1], &ok); if (!ok) return U();
   GLfloat y = FromV8<float>(args[2], &ok); if (!ok) return U();
@@ -2027,7 +2027,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform2i(const v8::Argume
   bool ok = true;
   WebGLUniformLocation* location = UniformLocationFromV8(args[0]);
   if (!location) return U();
-  GLuint location_id = location->get_webgl_id();
+  GLuint location_id = location->webgl_id();
 
   GLint x = FromV8<int32_t>(args[1], &ok); if (!ok) return U();
   GLint y = FromV8<int32_t>(args[2], &ok); if (!ok) return U();
@@ -2047,7 +2047,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform3f(const v8::Argume
   bool ok = true;
   WebGLUniformLocation* location = UniformLocationFromV8(args[0]);
   if (!location) return U();
-  GLuint location_id = location->get_webgl_id();
+  GLuint location_id = location->webgl_id();
 
   GLfloat x = FromV8<float>(args[1], &ok); if (!ok) return U();
   GLfloat y = FromV8<float>(args[2], &ok); if (!ok) return U();
@@ -2068,7 +2068,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform3i(const v8::Argume
   bool ok = true;
   WebGLUniformLocation* location = UniformLocationFromV8(args[0]);
   if (!location) return U();
-  GLuint location_id = location->get_webgl_id();
+  GLuint location_id = location->webgl_id();
 
   GLint x = FromV8<int32_t>(args[1], &ok); if (!ok) return U();
   GLint y = FromV8<int32_t>(args[2], &ok); if (!ok) return U();
@@ -2089,7 +2089,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4f(const v8::Argume
   bool ok = true;
   WebGLUniformLocation* location = UniformLocationFromV8(args[0]);
   if (!location) return U();
-  GLuint location_id = location->get_webgl_id();
+  GLuint location_id = location->webgl_id();
 
   GLfloat x = FromV8<float>(args[1], &ok); if (!ok) return U();
   GLfloat y = FromV8<float>(args[2], &ok); if (!ok) return U();
@@ -2111,7 +2111,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_uniform4i(const v8::Argume
   bool ok = true;
   WebGLUniformLocation* location = UniformLocationFromV8(args[0]);
   if (!location) return U();
-  GLuint location_id = location->get_webgl_id();
+  GLuint location_id = location->webgl_id();
 
   GLint x = FromV8<int32_t>(args[1], &ok); if (!ok) return U();
   GLint y = FromV8<int32_t>(args[2], &ok); if (!ok) return U();
@@ -2161,7 +2161,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_useProgram(const v8::Argum
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], &ok); if (!ok) return U();
   if (!RequireObject(program)) return U();
   if (!ValidateObject(program)) return U();
-  GLuint program_id = program->get_webgl_id();
+  GLuint program_id = program->webgl_id();
   glUseProgram(program_id);
   return U();
 }
@@ -2172,7 +2172,7 @@ v8::Handle<v8::Value> WebGLRenderingContext::Callback_validateProgram(const v8::
   WebGLProgram* program = NativeFromV8<WebGLProgram>(args[0], &ok); if (!ok) return U();
   if (!RequireObject(program)) return U();
   if (!ValidateObject(program)) return U();
-  GLuint program_id = program->get_webgl_id();
+  GLuint program_id = program->webgl_id();
   glValidateProgram(program_id);
   return U();
 }

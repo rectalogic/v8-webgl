@@ -93,37 +93,37 @@ WebGLUniformLocation* WebGLRenderingContext::CreateUniformLocation(GLuint progra
 
 void WebGLRenderingContext::DeleteBuffer(WebGLBuffer* buffer) {
   if (!buffer) return;
-  buffer_map_.erase(buffer->get_webgl_id());
+  buffer_map_.erase(buffer->webgl_id());
   delete buffer;
 }
 
 void WebGLRenderingContext::DeleteFramebuffer(WebGLFramebuffer* framebuffer) {
   if (!framebuffer) return;
-  framebuffer_map_.erase(framebuffer->get_webgl_id());
+  framebuffer_map_.erase(framebuffer->webgl_id());
   delete framebuffer;
 }
 
 void WebGLRenderingContext::DeleteProgram(WebGLProgram* program) {
   if (!program) return;
-  program_map_.erase(program->get_webgl_id());
+  program_map_.erase(program->webgl_id());
   delete program;
 }
 
 void WebGLRenderingContext::DeleteRenderbuffer(WebGLRenderbuffer* renderbuffer) {
   if (!renderbuffer) return;
-  renderbuffer_map_.erase(renderbuffer->get_webgl_id());
+  renderbuffer_map_.erase(renderbuffer->webgl_id());
   delete renderbuffer;
 }
 
 void WebGLRenderingContext::DeleteShader(WebGLShader* shader) {
   if (!shader) return;
-  shader_map_.erase(shader->get_webgl_id());
+  shader_map_.erase(shader->webgl_id());
   delete shader;
 }
 
 void WebGLRenderingContext::DeleteTexture(WebGLTexture* texture) {
   if (!texture) return;
-  texture_map_.erase(texture->get_webgl_id());
+  texture_map_.erase(texture->webgl_id());
   delete texture;
 }
 
@@ -132,7 +132,7 @@ void WebGLRenderingContext::set_gl_error(GLenum error) {
     gl_error_ = error;
 }
 
-GLenum WebGLRenderingContext::get_gl_error() {
+GLenum WebGLRenderingContext::gl_error() {
   if (gl_error_ != GL_NONE) {
     GLenum err = gl_error_;
     gl_error_ = GL_NONE;
