@@ -94,6 +94,7 @@ void Uninitialize() {
   Float64Array::Uninitialize();
 
   // Run GC until everything is freed
+  //XXX this isn't triggering weak callbacks. may need to expose dispose() method on canvas and have app cleanup explicitly? would need to explicitly delete the native ptr, and zero out the internal - and make methods deal with that
   while (!v8::V8::IdleNotification()) {}
 
   v8::V8::Dispose();

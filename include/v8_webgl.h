@@ -8,6 +8,9 @@
 #include <v8.h>
 #include <string>
 
+//XXX caller needs to use v8::Locker to "do anything" in v8 from another thread - i.e. if we use one isolate, then all access from multiple threads must be locked
+//XXX also GL context can be used from only one thread at a time - may need to expose thread switching API so we can optimize making GL context current? (e.g. can't stash current context, need to link it to it's thread)
+
 namespace v8_webgl {
 
 class GraphicContext {
